@@ -57,13 +57,21 @@ There are also other formats for categorical data, e.g. trees.  Those are beyond
 The rectangular data format is sufficiently general and powerful that, for many researchers and information workers, it is the only format they will need to work with.  It's hugely important in the economy, in management, government, and science.
 
 
-## Graphics and Glyphs
+## Zoology of Graphics
 
 Graphical presentations take on many diverse forms.
 
 Examples (e.g. from Andy Z's sheet.)
 
-Three major types:
+Think how you might classify such graphs.  Are there groups of similar structure?  What are the features that you can use to define what constitutes a group?
+
+## Graphics, Grammar, and Glyphs
+
+
+
+
+
+Three major types: *One*, *Two*, *Many*
 * cases
     * dots, bars, lines (as in parallel coordinates)
 * networks
