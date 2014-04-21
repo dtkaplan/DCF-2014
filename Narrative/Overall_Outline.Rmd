@@ -1,0 +1,141 @@
+---
+title: "DCF Narrative Outline"
+author: "Daniel Kaplan"
+date: "April 21, 2014"
+output: html_document
+---
+
+# Data and Computing Fundamentals
+
+## Case List
+
+* Gapminder Data
+* Medicare reimbursement 
+
+## Purpose
+
+This course aims to convey concepts and techniques for working with large-scale data in order to produce useful presentations.
+
+* "Large-scale" means perhaps 100 or more cases, 3 or more variables.  The techniques are sometimes uses for smaller data, and often useful for much larger data.
+* A presentation is a way of depicting data, to guide a decision or drawing conclusions.  
+    * We don't mean by "presentation" the sort of slide show often used in research communications, although such shows often contain presentations of data.
+    * Presentations can be tables, graphics, formulas, etc.
+    * Our emphasis will be on graphical presentations.  
+        * Why?  These are a good place to start since they can be largely understood without technical mathematical or statistical training.  They are good to use in communication because they can convey ideas to other people --- your colleagues or audience or the public --- who may not have technical mathematical or statistical training. 
+        * Important to keep in mind that there are many forms of presentation other than graphics.  These can take forms from the simple (summary statistics) to more technical (statistical models) and often include information about precision and uncertainty.
+    * We will also consider a few mathematical techniques, such as transformation, model fitting, and clustering, but mainly when there is a graphical depiction of the technique or its results that can be readily interpreted by an educated lay audience. 
+        
+Data presentations can be used for both honest and dishonest purposes.  In order to be honest, presentation methods have to be capable of depicting data at a level of complexity that suits the system under study.  
+* Problem of particular importance: **confounding**. This occurs when there is a major influence from a factor that has not been considered in the presentation.  As a result, the presentation can show a "correct" pattern in data, but a pattern which becomes meaningless when the other influential factors are included.
+
+**Presentation and purpose**.  Why you should be aware of your purpose when constructing a presentation of data.  What are the common purposes?
+
+* Prediction
+* Description, often description of relationships
+* Detection, as in credit card fraud or cancer
+ 
+        
+## Structure of Data
+
+Rectangular format familiar from spreadsheets.  (Not just spreadsheets as in computer software, but in their original sense.) (GIVE illustration of a book-keeper's spreadsheet.)
+
+Cases, variables
+
+Kinds of variables: quantitative and categorical
+
+There are many other forms that data can take:
+* photos (e.g. finger-prints, remote sensing planets)
+* signals (e.g. sound)
+* text
+
+Often, the process is to extract quantitative or categorical information from the photographs or signals and then format this information in the rectangular data format that we will be studying.
+
+EXAMPLE: Tagging photos in Facebook.  The photo is analyzed for faces.  At some point a human has provided information on a person's name and location in the photo.  This can be used 
+
+There are also other formats for categorical data, e.g. trees.  Those are beyond the scope of this course.  
+
+The rectangular data format is sufficiently general and powerful that, for many researchers and information workers, it is the only format they will need to work with.  It's hugely important in the economy, in management, government, and science.
+
+
+## Graphics and Glyphs
+
+Graphical presentations take on many diverse forms.
+
+Examples (e.g. from Andy Z's sheet.)
+
+Three major types:
+* cases
+    * dots, bars, lines (as in parallel coordinates)
+* networks
+    * glyph types: nodes and edges, direction, 
+* collectives (e.g. densities, ...)
+    * glyph types: bars, functions (e.g. densities), hex bin density, box-and-whisker plots...
+
+### Constructing Graphics
+
+How to map data onto glphys.
+
+Scales.
+
+### Deconstructing Graphics
+
+Parsing a graph to figure out what are the underlying data.
+
+## Backstories
+
+Data do not always come to you in a form that's ready for constructing graphics.  (We'll call such data: *glyph-ready* data.)  Often, the "raw" data is something other than what's in the graph.  The process of transforming data from its raw form into a glyph-ready form is often called *data manipulation*.  The word 'manipulation' has a negative connotation.  We will use **data wrangling** to refer to this process.
+
+The process of creating a presentation varies from one situation to another.  Often, the process is:
+
+1. Imagine a form of presentation that would help you to accomplish your purpose.
+2. Figure out the corresponding glyph-ready format for data.
+3. Take the data you have, in whatever form they may be, and use data wrangling techniques to transform them into the glyph-ready form.
+
+Often, this process is iterative, with previous findings guiding you to try out new forms of presentation.
+
+Example: Study of ectopic beats and mortality.
+
+A short illustration of one or two backstories from the scenarios used in Graphics and Glyphs.  Compare the graphics-ready data to the originally available data to trace out how the data were wrangled.
+
+Example: a map is a kind of scatter plot, that uses the polygon shape information.
+
+
+
+## Data Verbs
+
+### Mutate
+
+### Filter
+
+### Summarize
+
+### Group
+
+### Join
+
+1. Zip code to population and income
+2. Medicare reimbursement: how to split up the original data to make it much more compact.
+
+1. Gapminder data
+    * List of countries by vernacular names and translation table to an official designation.  
+    * **Anti-join** to find out which vernacular names are not in the translation table. 
+    * **Inner-join** to attach the official country designiation. prepare variable for making the map.
+    
+
+## Data Transformations
+
+Logs
+
+Clusters
+
+Trees
+
+Densities
+
+Categorizing and counting
+
+## Modeling and Conditioning 
+
+* linear models 
+* smoothers
+* stratifying

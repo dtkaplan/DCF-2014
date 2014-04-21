@@ -1,0 +1,85 @@
+---
+title: "Medical Treatment Reimbursement"
+author: "Daniel Kaplan"
+date: "April 18, 2014"
+output: html_document
+---
+
+This is drawn from Vic Paruchuri's blog posting at <http://vikparuchuri.com/blog/exploring-us-healthcare-data/>.
+
+The Centers for Medicare and Medicaid Services (CMS) make available data (as of April 2014) about how much each doctor charges Medicare and how much is paid, for many different types of treatments.  [CMS blog](http://blog.cms.gov/2014/04/09/historic-release-of-data-delivers-unprecedented-transparency-on-the-medical-services-physicians-provide-and-how-much-they-are-paid/) about the release.
+
+There are 9 million rows that cover a wide range of services.  Some treatments were omitted, particularly when the patient numbers were so low that confidentiality might be at issue.
+
+## Outpatient numbers by Hospital no procedures listed
+
+A smaller file (20,000 some rows) about how much each hospital was reimbursed.
+
+Link to a zipped [CSV file](http://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/Medicare-Provider-Charge-Data/Downloads/OPPS_APC_CSV.zip)  The file is Medicare_Provider_Charge_Outpatient_APC30_CY2011_v2.csv
+
+## Larger Scale data
+
+[Link to zip file](http://www.cms.gov/apps/ama/license-2011.asp?file=http://download.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/Medicare-Provider-Charge-Data/Downloads/Medicare-Physician-and-Other-Supplier-PUF-CY2012.zip)
+
+## Processing
+
+### Read in the Data
+
+```{r}
+dataFile <- "/Users/kaplan/Downloads/Medicare-Physician-and-Other-Supplier-PUF-CY2012/Medicare-Physician-and-Other-Supplier-PUF-CY2012.txt"
+orig <- read.delim2( dataFile, skip=0,nrows=1000000, na.strings=c('NA','') )
+```
+
+#### Pull out Provider Data
+
+```{r}
+uniqueProviders <- !duplicated(orig$npi)
+uniqueProviders[1] <- FALSE # drop the first row
+providers <- orig[uniqueProviders,c(1,5,6,7,10,11,12,13,14)]
+names(providers) <- c('npi','credential','gender','entity_code','city','zip','state','country','provider_type')
+```
+
+Will need to sort out the credentials.  There are too many different types. There are variations in spelling and mistakes.  Narrow it down to 10 or so levels.
+
+### Procedures
+
+```{r}
+uniqueHCPCS <- !duplicated( orig$hcpcs_code )
+procedures <- orig[uniqueHCPCS,17:18]
+```
+
+### Events
+
+```{r}
+occasions <- orig[,c(1,16,17,19:27)]
+names(occasions) <- c('npi','place','hcpcs_code','total_count','patient_count','patient_days','allowed_average','allowed_std','submitted_average','submitted_std','payment_average','payment_std')
+```
+
+### Save as CSV and R object
+
+```{r}
+write.csv(providers,'providers.csv',row.names=FALSE)
+write.csv(procedures,'procedures.csv',row.names=FALSE)
+write.csv(occasions,'occasions.csv',row.names=FALSE)
+save(providers, procedures, occasions, file='MedicareBilling.rda')
+```
+
+
+Get all the records: Read in each batch of 1,000,000 files and process them separately to create
+* providers: list of care-givers
+* procedures: list of procedures
+* occasions: all the medicare data
+
+
+
+### Small problems for students: 
+
+* [Grouping] Look at number of states per zip code.  Are there any mistakes?
+* [Classification and Subset] Are there any outliers in claim amount or reimbursement?  How would you detect this?  (perhaps reimbursement being completely different from claim)
+* [Cleaning,Join] the mistakes in credentials, e.g. OD, O.D., D.O., DO are all the same thing, mis-spellings, 
+
+* providers and billing --- what sorts of caregivers work in F (facilities) vs O (offices) `place_of_service`
+* how do the charges differ between F and O
+* how do the procedure types differ between F and O
+
+* [Grouping] `occasions`, which hcpcs seem to be a big deal, based on their price.

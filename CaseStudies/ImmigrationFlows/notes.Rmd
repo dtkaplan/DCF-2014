@@ -1,0 +1,242 @@
+---
+title: "Notes on Immigration Flows"
+author: DTK
+date: March 11, 2014
+output: html_document
+---
+
+### Technical notes
+
+* Be careful if using `plyr`: it overwrites `summarize()`.
+* I'm using `merge()` for now.  `inner_join()` crashes.
+
+```{r include=FALSE}
+require(dplyr)
+require(igraph)
+```
+
+The data come via Cory Stern
+
+The migration info came from the [Global Bilateral Migration Database](http://data.worldbank.org/data-catalog/global-bilateral-migration-database) (World Bank) and the GDP per capita data came from the [Maddison Project](http://www.ggdc.net/maddison/maddison-project/home.htm), which gives a historical view of GDP per capita.
+
+
+
+## Migration Data
+
+Went to the [Global Bilateral Migration Database](http://data.worldbank.org/data-catalog/global-bilateral-migration-database), from there to the [variable selection](http://databank.worldbank.org/data/views/variableselection/selectvariables.aspx?source=global-bilateral-migration#) page.  After some experimenting, I decided to download all countries versus all countries, for all years, for both sexes and total, about 160,000 rows.
+
+Download parameters
+
+Country origin: row
+Gender: page
+Destination: page
+Year: column
+
+The CSV file was read with `read.csv()` and then `save()` as a dataframe in R format, with name `MigrationData`.
+
+```{r}
+load( 'OrigMigration.Rdata' )
+```
+
+The names are awful, and there is a lot of duplication with names and codes.
+```{r}
+names(MigrationData)
+```
+
+Grab only columns
+* 1 sex
+* 4, 5 destination country name and code
+* 7, 8 origin country name and code
+* 9, 10, 11, 12, 13 Number of people in that decade (?)e
+
+```{r}
+MigrationFlows <- MigrationData[,c(1,5,8,9,10,11,12,13)]
+names(MigrationFlows) <- c("sex", "destcode","origincode","Y2000", "Y1990","Y1980","Y1970","Y1960")
+```
+
+Break out another table of country codes -> country name, and keep just the codes in the dataset.
+
+
+* What was the total immigration to France in Y2000?  (subset, group, sum)
+* What country had the largest immigration in Y2000?
+* Construct a bar plot of immigration for each country, sorted from least to most?  Log scale?
+* Which country had the largest inbalance between men and women (on a proportional basis)?
+
+* Construct the country-pair by country-pair inflow and outflow for Y2000?  (Rename columns, Join)
+
+* Which countries have the largest outflows?  (group (by different vars: origin and by destination), ntile(), subset() )
+
+
+
+### Description
+
+> Global matrices of bilateral migrant stocks spanning the period 1960-2000, disaggregated by gender and based primarily on the foreign-born concept are presented. Over one thousand census and population register records are combined to construct **decennial** matrices corresponding to the last five completed census rounds. For the first time, a comprehensive picture of bilateral global migration over the last half of the twentieth century emerges. The data reveal that the global migrant stock increased from 92 to 165 million between 1960 and 2000. South-North migration is the fastest growing component of international migration in both absolute and relative terms. The United States remains the most important migrant destination in the world, home to one fifth of the world’s migrants and the top destination for migrants from no less than sixty sending countries. Migration to Western Europe remains largely from elsewhere in Europe. The oil-rich Persian Gulf countries emerge as important destinations for migrants from the Middle East, North Africa and South and South-East Asia. Finally, although the global migrant stock is still predominantly male, the proportion of women increased noticeably between 1960 and 2000.
+
+
+### Population Data
+
+Population in 2012 (in thousands) with the same country codes as in the migration data.
+
+[web page](http://data.worldbank.org/data-catalog/Population-ranking-table)
+
+Raw file: `POP.csv`
+
+#### Putting into dataframe format
+
+```{r}
+pop <- read.csv(file="POP.csv", skip=5, nrows=214, header=FALSE)
+pop <- pop[,c(1,5)]
+names(pop) <- c("CODE", "Population")
+np <- as.numeric( gsub(",","",as.character(pop$Population)))
+pop$Population <- 1000*np # units of people
+```
+
+### Gross National Income
+
+Including PPP
+
+[web page](http://data.worldbank.org/data-catalog/GNI-per-capita-Atlas-and-PPP-table)
+
+Raw file: `GNIPC.csv`
+
+```{r}
+gni <- read.csv(file="GNIPC.csv", skip=7, nrows=183, header=FALSE)
+gni <- gni[,c(11,14)]
+names(gni) <- c("PPP","CODE")
+gni$PPP <- as.numeric( gsub(",","",as.character(gni$PPP)))
+```
+
+### Get the Code -> Country Name table
+
+```{r}
+ccodes <- read.csv(file="GNIPC.csv", skip=7, nrows=222, header=FALSE,
+                   stringsAsFactors=FALSE)
+ccodes <- ccodes[,c(10,14)]
+names(ccodes) <- c("Country","CODE")
+```
+
+### Plan
+
+Add two columns: total emigration for the origin and total immigration for the destination for year 2000. 
+
+```{r}
+outflow <- group_by(MigrationFlows, origincode ) %.%
+  summarize( outflow=sum(Y2000, na.rm=TRUE))  
+outflow <- plyr::rename(outflow, c('origincode'='CODE'))
+inflow <- summarize(
+  group_by( MigrationFlows, destcode ),
+  inflow =sum(Y2000, na.rm=TRUE))
+inflow <- plyr::rename(inflow, c('destcode'='CODE'))
+```
+
+Create inflow and outflow balance table:
+```{r}
+balance <- merge(merge(inflow,outflow),pop)
+balance <- mutate( balance, 
+                   ratio=inflow/outflow, 
+                   growth=inflow-outflow,
+                   fracGrowth=growth/Population,
+                   fracIn=inflow/Population,
+                   fracOut=outflow/Population)
+```
+
+Find the K most common destinations and origins:
+```{r}
+K <- 50
+deltaDest <- arrange(balance,desc(growth))$CODE[1:K]
+deltaOrig <- arrange(balance,growth)$CODE[1:K]
+biggies <- filter(MigrationFlows, 
+                  destcode %in% deltaDest, 
+                  origincode %in% deltaOrig,
+                  sex=="Total")
+```
+You're going to have to create a set of criteria so that the students can see different kinds of graphs.
+
+
+
+Make the graph.
+
+```{r fig.width=8,fig.height=8}
+foo <- subset(biggies,Y2000>20000)[,c(3,2)]
+goo <- graph.data.frame( foo, directed=TRUE)
+plot(goo)
+```
+
+
+Two more columns, Population for the origin and destination
+
+Two more columns, PPP for the origin and destination.
+
+`dplyr` operations: 
+
+* `group_by()` 
+* `summarize()` 
+* `mutate()` 
+* `filter()`
+* `select()` 
+* `arrange()`
+
+Join opperations are `inner_join()`, `left_join()`, etc.
+
+
+## Exercises 
+
+#### Maps
+
+Create variables like fraction of population emigrating.  Draw a map coloring each country according to this.  Net immigration is at one end of the color scale, emigration at the other.
+
+Keys: color scale, map, transformation
+
+#### Bar charts
+
+Create a bar chart showing countries ordered by fraction of population emigrating or number of people emigrating.
+
+Keys: bar chart, topology
+
+#### Creating Flag and Lumping
+
+Create a factor that lists the country for big players, and lumps the small players into one category.
+
+Keys: transformation, grouping (of the small players together)
+
+#### Group by PPP
+
+Divide up countries into, say, 10 categories by PPP.  Make the graph showing movement among these 10 categories.
+
+Keys: quantitative -> categorical, network
+
+#### One country at a time
+
+Make a map showing immigration to and from other countries from one given country.  (Say, Japan.)  Find all the edges that involve Japan and color & width code them according to direction and magnitude.  Place them geographically.
+
+Keys: subset, network
+
+#### Geographical groups
+
+Divide countries into geographical (or economic, or health-realted, or religious, or linquistic) groups.  Create the network among these groups.
+
+Keys: join, network, cluster (?)
+
+#### Clustering
+
+Use as a feature vector, the proportional emigration to each of several large countries.  Then do unsupervised clustering.
+
+keys: clustering
+
+#### Time comparisons
+
+Use edge width to encode the Y2000 movement and color to encode the change from Y1960 to Y2000
+
+keys: color scale, transformation (Y1960 to Y2000), network
+
+#### Regional and Global
+
+Pull out the major global sources and sinks and the countries in one region.  Make the map just among these.
+
+keys: subset, network
+
+#### Modeling (speculative)
+
+Create a model of emigration as a function of economic variables between two countries.  Then add in the interaction term between linquistics (or whatever) of source and destination countries.  Draw the graph showing how each combination of linqistic level flows to the others, *adjusting for* the economic variables.
+
+keys: modeling, summer project.
