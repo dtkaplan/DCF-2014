@@ -1,0 +1,50 @@
+---
+title: "DPLYR Style"
+author: "Daniel Kaplan"
+date: "April 21, 2014"
+output: html_document
+---
+
+
+```{r include=FALSE}
+require(dplyr)
+require(mosaic)
+```
+
+Style for doing some basic things with `dplyr`
+
+## Counting
+
+**DECIDE** whether to use `tally()`
+
+```{r}
+group_by(Galton, sex) %.% tally( )
+```
+
+Or `summarize()` and `n()` so that names can be used and other quantities calculated at the same time?
+```{r}
+group_by(Galton, sex) %.% summarize( count=n(),hgt=mean(height)/median(height) )
+```
+
+
+## Rename Variables
+
+### A Single variable
+
+Use `select()` with `new=old`
+```{r}
+Galton <- select(Galton, child=height)
+head(Galton)
+```
+
+### Change prefixes on a bunch of variables
+
+```{r}
+head(select(iris, pl = starts_with("Petal")))
+```
+
+## Joining
+
+When joining, use only the needed columns: specify them with `select()`.  That way, you can rename them as needed for matching variables in the join.
+
+

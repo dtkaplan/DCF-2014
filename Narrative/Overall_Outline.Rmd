@@ -83,6 +83,8 @@ Three major types: *One*, *Two*, *Many*
 
 How to map data onto glphys.
 
+From MedicareProcedures, give separate data files for each question, e.g. proportion bar plot of credential broken down by sex, ordered by the proportion of women in each credential.  They play with such data files.  Then, in backstory, go back to how to create those datafiles from the raw data.
+
 Scales.
 
 ### Deconstructing Graphics

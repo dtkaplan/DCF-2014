@@ -66,22 +66,18 @@ What's the strategy here?  For each credential, find the proportion of women.  T
 Look at the proportion in each credential.
 
 ```{r}
-credCount <- tally( group_by(providers,credential) )
-names(credCount)[2] <- 'total'
-credFCount <- tally( group_by(filter(providers, gender=="F"),credential))
-credSexCount <- tally( group_by(providers, credential, gender))
-both <- join(credFCount, credCount)
-both <- mutate(both, prop=n/total)
-both <- select(both, -n)
-both2 <- join(credSexCount,both)
+group_by(providers, credential) %.% 
+  summarize( propF=mean(gender=='F')) -> credFprop
+head(credFprop)
+group_by(providers, credential, gender) %.% 
+  tally() %.% join(credFprop)  -> result
 ```
 
 ```{r echo=FALSE}
-ggplot(data=both2,aes(x=reorder(credential,prop),y=n ,fill=gender))+geom_bar(stat='identity',position=position_fill(width=.9)) + theme(axis.text.x=element_text(angle=60,hjust=1)) 
+ggplot(data=result,aes(x=reorder(credential,propF),y=n ,fill=gender))+geom_bar(stat='identity',position=position_fill(width=.9)) + theme(axis.text.x=element_text(angle=60,hjust=1)) 
 ```
 
 
-That's horrible!
 
 
 
