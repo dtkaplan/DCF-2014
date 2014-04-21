@@ -1,0 +1,87 @@
+---
+title: "Medicare Procedures Analysis in dplyr"
+author: "Daniel Kaplan"
+date: "April 21, 2014"
+output: html_document
+---
+
+```{r include=FALSE}
+require(dplyr)
+require(plyr)
+require(mosaic) # for mPlot()
+require(DCF) # for mBar()
+```
+
+Read in the three tables: `occasions`, `procedures`, and `providers`
+```{r}
+load('MedicareBilling.rda')
+occasions_small <- occasions[1:10000,]
+```
+
+## Simple summaries
+
+### How many providers of each qualification
+
+The `dplyr` function `tally()` is a wrapper for `summarize()`
+```{r}
+quals <- arrange( 
+  tally(group_by(providers,credential)),
+  desc(n))
+```
+
+```{r echo=FALSE}
+ggplot(data=quals,aes(x=reorder(credential,n),y=n ))+geom_bar(stat='identity',position=position_stack(width=.9)) + theme(axis.text.x=element_text(angle=60,hjust=1)) 
+```
+
+### Break down credentials according to the entity code
+
+```{r}
+quals2 <- arrange( 
+  tally(group_by(providers,credential,entity_code)),
+  desc(n))
+```
+
+Evidently, nurses aids are the O-type entities
+```{r echo=FALSE}
+ggplot(data=quals2,aes(x=reorder(credential,n),y=n ,fill=entity_code))+geom_bar(stat='identity',position=position_stack(width=.9)) + theme(axis.text.x=element_text(angle=60,hjust=1)) 
+```
+
+### Break down credentials by sex
+
+```{r}
+quals3 <- arrange( 
+  tally(group_by(providers,credential,gender)),
+  desc(n))
+```
+
+Evidently, nurses aids are the O-type entities
+```{r echo=FALSE}
+ggplot(data=quals3,aes(x=reorder(credential,n),y=n,order=reorder(gender,n),fill=gender))+geom_bar(stat='identity',position=position_stack(width=.9)) + theme(axis.text.x=element_text(angle=60,hjust=1))
+```
+
+Improve graph by plotting the proportion, and ordering it by a variable that gives the proportion.
+
+What's the strategy here?  For each credential, find the proportion of women.  Then join that with the counts of credentials broken down by sex.  **JOIN** **GROUP**  **COUNT**
+
+Look at the proportion in each credential.
+
+```{r}
+credCount <- tally( group_by(providers,credential) )
+names(credCount)[2] <- 'total'
+credFCount <- tally( group_by(filter(providers, gender=="F"),credential))
+credSexCount <- tally( group_by(providers, credential, gender))
+both <- join(credFCount, credCount)
+both <- mutate(both, prop=n/total)
+both <- select(both, -n)
+both2 <- join(credSexCount,both)
+```
+
+```{r echo=FALSE}
+ggplot(data=both2,aes(x=reorder(credential,prop),y=n ,fill=gender))+geom_bar(stat='identity',position=position_fill(width=.9)) + theme(axis.text.x=element_text(angle=60,hjust=1)) 
+```
+
+
+That's horrible!
+
+
+
