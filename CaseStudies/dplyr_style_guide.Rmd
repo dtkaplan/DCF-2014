@@ -13,17 +13,26 @@ require(mosaic)
 
 Style for doing some basic things with `dplyr`
 
+## Watch Out!
+
+`plyr` also has a `summarize()` function.  
+
+`plyr` has `join()`. For the `dplyr` versions, it must be `inner_join()`, `left_join()`, `semi_join()`, `anti_join()`.
+
+`mosaic` and `dplyr` both have `tally()`.
+
 ## Counting
 
 **DECIDE** whether to use `tally()`
 
 ```{r}
-group_by(Galton, sex) %.% tally( )
+group_by(Galton, sex) %.% dplyr::tally( )
 ```
 
 Or `summarize()` and `n()` so that names can be used and other quantities calculated at the same time?
 ```{r}
-group_by(Galton, sex) %.% summarize( count=n(),hgt=mean(height)/median(height) )
+group_by(Galton, sex) %.% 
+  dplyr::summarize( count=n(),hgt=mean(height)/median(height) )
 ```
 
 

@@ -1,0 +1,139 @@
+---
+title: "Bird and Airplanes"
+author: "Daniel Kaplan"
+date: "April 23, 2014"
+output: html_document
+---
+
+[FAA data site](http://wildlife.faa.gov/database.aspx).  You can do one airport at a time.
+
+```{r include=FALSE}
+# Can't read the .xls files with this package.  So, they have been
+# resaved as CSV files
+require(XLConnect) # Package for reading rectangular regions of XLS spreadsheets
+require(dplyr)
+require(lattice)
+```
+
+### Read in the FAA database
+
+```{r}
+strikesRaw <- data.frame()
+for (dataFileName in c('MSP.csv','CA.csv')){
+tmp <- read.csv(dataFileName)
+strikesRaw <- rbind(strikesRaw,tmp)
+}
+```
+
+#### Columns to keep
+
+For the incident-by-incident data
+```{r}
+keepCols <- c("STATE","AIRPORT_ID","AIRPORT","OPID","ATYPE",                "SPECIES_ID","DAMAGE", "COST_REPAIRS", "AC_CLASS",              "INCIDENT_MONTH","INCIDENT_YEAR","TIME_OF_DAY",         
+"TIME", "HEIGHT", "SPEED","DISTANCE","EFFECT","SKY","PRECIP", "BIRDS_SEEN", "BIRDS_STRUCK","SIZE","WARNED","INDICATED_DAMAGE")
+incidents <- subset(strikesRaw,select=keepCols)
+```
+
+### FAA Tables
+
+```{r}
+damage <- data.frame(DAMAGE=c('N','M','M?','S','D','A','B','C','D'),
+  DamageDesc=c('None','Minor','Uncertain','Substantial','Destroyed'
+               '>$2000K','>$500K','>$50K',,'$50K.or.less' ))
+```
+
+
+### Extract sub-tables
+
+```{r}
+aircraft <- unique(
+  subset(strikesRaw,
+         select=c('ATYPE',"AC_CLASS","AC_MASS",'NUM_ENGS')
+         )
+  )
+```
+
+#### Airline
+
+```{r}
+airlines <- unique(subset(strikesRaw,select=c('OPERATOR','OPID')))
+```
+
+#### Airports
+
+```{r}
+airports <- unique(subset(strikesRaw,select=c('AIRPORT_ID', 'AIRPORT')))
+```
+
+#### Species
+
+```{r}
+species <- unique(subset(strikesRaw,select=c('SPECIES_ID', 'SPECIES')))
+```
+
+### Save in RDA format
+
+```{r eval=FALSE}
+save(incidents,airlines,airports,species,file='FAA_Bird_Strikes.Rda')
+```
+
+## Questions
+
+### What are the most common types of birds?
+
+#### Tally and arrange
+
+**group** **tally**
+```{r}
+group_by(incidents,SPECIES_ID) %.% tally(sort=TRUE) -> speciesCount
+```
+
+Add in the species name: **inner join** **arrange**
+```{r}
+inner_join(speciesCount,species) %.% arrange(desc(n))
+```
+
+#### How are TIME and TIME_OF_DAY related?
+
+**bwplot**
+
+```{r}
+bwplot( TIME ~ TIME_OF_DAY, data=incidents )
+```
+
+#### What altitudes?
+
+This is a **density** problem.
+
+```{r}
+densityplot( ~HEIGHT, subset(incidents,HEIGHT>0))
+```
+
+#### Does the time of day depend on the `INCIDENT_MONTH`?
+
+**Group** two variables, **tally**, **scatterplot** with groups
+
+```{r}
+res <- group_by(incidents,TIME_OF_DAY,INCIDENT_MONTH) %.% tally()
+```
+
+From `mPlot(res)`
+```{r}
+ggplot(data=res, aes(x=INCIDENT_MONTH, y=n)) + geom_point()  + aes(colour=TIME_OF_DAY)  + stat_smooth(method=loess) + theme(legend.position="top") + labs(title="")
+```
+
+### Species with Time of Day and Month
+
+Find the n most common species:
+
+```{r}
+nspecies=10
+scount <- group_by(incidents, SPECIES_ID) %.% tally() %.% 
+  arrange(sort=TRUE)
+topspecies <- scount[1:nspecies]
+small <- select(incidents)
+
+
+## ADVANCED
+ADVANCED: PULL OUT THE 10 most common in each state.  Reduce this to a list of birds overall.  Plot the distribution versus MONTH, TIME, HEIGHT
+

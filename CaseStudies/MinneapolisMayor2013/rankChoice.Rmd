@@ -1,0 +1,75 @@
+---
+title: "Rank Choice Voting in Minneapolis"
+author: "Daniel Kaplan"
+date: "April 24, 2014"
+output: html_document
+---
+
+
+
+[MPR Story](http://minnesota.publicradio.org/display/web/2013/11/22/politics/ranked-choice-vote-count-programmers)
+
+```{r include=FALSE}
+library(dplyr)
+library(lattice)
+library(ggplot2)
+```
+
+## The Votes
+
+```{r}
+votes <- read.csv("MinneapolisMayor-2013.csv",as.is==TRUE)
+votes <- select(votes,2:4)
+names(votes) <- c("First","Second","Third")
+votes <- mutate(votes,whichPlace=1,currentVote=First)
+```
+
+Maybe give them first the data with the minor candates (after the first four), listed as 'minor'
+
+***cases and variables***
+
+Ask, what are the cases?  What are the variables?
+
+
+## Simple Tally
+
+Count the votes and present the results in order from largest to smallest.
+
+***tally***, ***barplot***
+```{r}
+group_by(votes, currentVote) %.% tally(sort=TRUE) -> voteCount
+```
+
+```{r}
+ggplot(data=voteCount,aes(x=reorder(currentVote,n),y=n ))+geom_bar(stat='identity',position=position_stack(width=.9)) + theme(axis.text.x=element_text(angle=60,hjust=1)) 
+```
+
+***inner_join***
+
+```{r}
+simpleVotes <- inner_join(votes,voteCount)
+# replace the minors
+simpleVotes <- mutate(simpleVotes,
+                      First=ifelse(n<5000,'Minor',First),
+                      Second=ifelse(n<5000,'Minor',Second),
+                      Third=ifelse(n<5000,'Minor',Third))
+```
+```
+
+### Pick out the loser
+
+***head***, ***tail***, ***arrange***, ***sort***, ***order***
+
+```{r}
+loser <- tail(voteCount,1)
+```
+
+***conditional choice***
+
+```{r}
+afterOne <- mutate(votes, 
+                   loser=currentVote=='JOHN CHARLES WILSON',
+                   whichPlace=ifelse(loser,2,whichPlace),
+                   currentVote=ifelse(loser,Second,currentVote))
+# or, loser$First, but that's ugly
+```
