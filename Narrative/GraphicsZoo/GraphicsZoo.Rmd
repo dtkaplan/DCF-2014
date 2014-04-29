@@ -15,7 +15,7 @@ Consider these graphics:
 <figcaption>[Source](http://lamages.blogspot.com/2014/03/sankey-diagrams-with-googlevis.html)</figcaption>
 </figure></td>
 <td><figure>
-<img src='http://metvurst.files.wordpress.com/2014/04/wpid-unnamed-chunk-17.png?w=640' width='250px' >
+<img src='../Images/wpid-unnamed-chunk-17.png' width='250px' >
 <figcaption>Source [this blog](http://metvurst.wordpress.com/2014/04/18/reot-empirical-orthogonal-teleconnections-in-r-2/)</figcaption>
 </figure></td>
 <td><figure>
@@ -117,6 +117,12 @@ To get a start, look carefully at the collection and try to identify sets of ind
 
 English grammar (and that of other languages) is often used to identify which structures are correct and which incorrect.  This is a normative or prescriptive use.  For instance, here is a correct sentence: 
 
+> "Four horses pulled the king's carriage."
+
+versus
+
+> "King four's carriage horses."
+
 > "Amy gave Bill a pen."  
 
 And here is a another expression that uses many of the same words: 
@@ -126,7 +132,13 @@ And here is a another expression that uses many of the same words:
 The first is comprehensible; a real sentence.  It follows the rules of English grammar for a sentence.  This one has a noun, a verb, a direct and indirect object.
 The second does not: it is just a set of words.
 
-There's another use for grammar: to identify the roles of different words or phrases and help in the construction of complex expressions.  You can use grammar to take a sentence apart --- noun, verb, object --- and then create more complex or detailed sentences by substituting new expressions for the old ones.  "Amy gave Bill a pen," might be restyled, "The girl from the soccer team ended up handing over the red ballpoint to her friend."
+There's another use for grammar: to identify the roles of different words or phrases and help in the construction of complex expressions.  You can use grammar to take a sentence apart --- noun, verb, object --- and then create more complex or detailed sentences by substituting new expressions for the old ones.  "Amy gave Bill a pen," might be restyled, "The girl from the soccer team ended up handing over the red ballpoint to her friend." 
+
+> "Four weary old horses reluctantly dragged the worn-out carriage."
+
+> "Horses pulled four kings' carriages."
+
+**New** Changing the sentence, for instance putting modifiers such as "four" or "weary" changes the meaning of the sentence.  Some such changes improve the expressiveness of the sentence, others obscure or deceive. 
 
 A grammar of graphics has been proposed [Wilkinson, L. (2005),The Grammar of Graphics(2nd ed.). Statistics and Computing, New York: Springer] that enables graphics to be taken apart and put together.  One use for such a grammar is to enable people to describe the graphics they want so that computer can do the drawing.  The description has to be precise and unambiguous.  The use of grammar to define the interface between people and computers is important, [Wickham, [A layered grammar of graphics](http://mimno.infosci.cornell.edu/info3300/readings/layered-grammar.pdf).] particularly for software designers [Ref: `ggplot2`]
 
@@ -138,11 +150,66 @@ Usually when describing data-driven graphics [[is that a good name, **data-drive
 
 As you'll see, it can help to have more general categories.  The categories and components to be used here may seem at first to be abstract and counter-intuitive.  For instance, scatterplots, bar plots, pie charts and maps are all different forms of the same kind of entity, even though they look very different.
 
-### Glyphs, Frames, and Fields
+### Frames and Glyphs
 
-(Is that what it's called, a frame?)
+Maybe it's old fashioned, but start with a piece of paper.  You're going to draw a data-driven graphic, and you have the data at hand in the form of a data table, for instance:
 
-* A histogram is a kind of field.  There are others.
+Age | Height | Sex | Sport 
+----|--------|-----|-----
+34  | 180    |  M  | Basketball
+
+and so on.
+
+You might have any of several motivations for making the graph.  Suppose the goal of the graph is to demonstrate the relationship between height, weight, and sport played.
+
+Before you do any drawing, you have to decide what position on the paper means.  This is called the **frame** of the graphic.  It's likely that you've seen a particular kind of frame, the *cartesian coordinate system*.  In this frame, horizontal position means one thing, vertical position another.  In mathematics a Cartesian frame is often drawn like this:
+
+![Cartesian Grid](http://etc.usf.edu/clipart/49300/49307/49307_graph_1010i_md.gif) 
+
+or, without the grid, like this:
+
+![No grid](http://etc.usf.edu/clipart/48600/48655/48655_graph_1010_md.gif)
+
+An example of a frame for data-driven graphics:
+
+<img src='http://cms.pewresearch.org/pewinternet/files/2013/12/PI_14.02.06_BroadbandUse-copy.png' width='40%' >
+
+Each axis has a meaning in terms of the data.  In the above graph, position along the horizontal axis represents year, while position along the vertical axis represents the fraction of households.
+
+Such Cartesian coordinates are very common in graphics, but there are others.  In the following graphic, position on the vertical axis represents the concentration of enzyme: a quantity.  Position along the horizontal axis represents a quality or category: a particular gene.
+
+<img src='../Images/AndyZ-4.png' width='250px' >
+
+Of course, a gene is itself not a position on a paper.  Position is being used metaphorically to stand for gene. The frame establishes how position corresponds to gene.
+
+Sometimes, the frame is based on physical position. For instance, in this graphic the position on the paper corresponds to a position on the surface of the Earth.
+
+<img src='http://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/WOA09_sea-surf_SAL_AYool.png/800px-WOA09_sea-surf_SAL_AYool.png' width='250px' >
+
+Data tables themselves provide a frame.  The vertical position tells which variable, the horizontal position tells which case.  We don't usually think of tables as graphics, but the distinction is one of type-setting, not content.
+
+#### Exercises
+
+* Describe the frame for each of these graphics ...
+
+* One of these graphics has a value of a categorical variable represented by *vertical* position.  Which one?
+
+* 
+
+#### Callout
+
+Radial coordinates.  Still two values give position.  The pie chart.
+
+Map projections.
+
+#### CALLOUT
+
+Three-dimensional frames.  How three variables can be represented on a piece of paper.
+
+
+### Glyphs
+
+
 
 ### Three basic kinds of graphics
 
@@ -160,6 +227,10 @@ Remember that data, as the word is used here, consists of cases and variables.  
 
 [[[It's not called a glyph here]]] but a field.
 
+
+* A histogram is a kind of field.  There are others.
+
+
 ### Other elements of graphics
 
 * Guide
@@ -169,6 +240,6 @@ Remember that data, as the word is used here, consists of cases and variables.  
 ### Layered graphics
 
 
-
+Take apart the circular cladistics graph.
 
 
