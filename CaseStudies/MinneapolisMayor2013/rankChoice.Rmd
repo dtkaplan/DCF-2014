@@ -13,15 +13,16 @@ output: html_document
 library(dplyr)
 library(lattice)
 library(ggplot2)
+require(igraph)
 ```
 
 ## The Votes
 
 ```{r}
-votes <- read.csv("MinneapolisMayor-2013.csv",as.is==TRUE)
+votes <- read.csv("MinneapolisMayor-2013.csv",stringsAsFactors=FALSE)
 votes <- select(votes,2:4)
 names(votes) <- c("First","Second","Third")
-votes <- mutate(votes,whichPlace=1,currentVote=First)
+votes <- mutate(votes,whoFrom=First,currentVote=First)
 ```
 
 Maybe give them first the data with the minor candates (after the first four), listed as 'minor'
@@ -37,39 +38,102 @@ Count the votes and present the results in order from largest to smallest.
 
 ***tally***, ***barplot***
 ```{r}
-group_by(votes, currentVote) %.% tally(sort=TRUE) -> voteCount
+group_by(votes, currentVote) %.% dplyr::tally(sort=TRUE) -> 
+  voteCount
 ```
 
 ```{r}
 ggplot(data=voteCount,aes(x=reorder(currentVote,n),y=n ))+geom_bar(stat='identity',position=position_stack(width=.9)) + theme(axis.text.x=element_text(angle=60,hjust=1)) 
 ```
 
-***inner_join***
+Just creating a simpler dataset for the students to start with.
+```{r}
+keepers <- filter(voteCount,n>500)$currentVote
+# replace the minors
+simpleVotes <- mutate(votes,
+                       First=ifelse(First %in% keepers,First,'Minor'),
+                       Second=ifelse(Second %in% keepers,Second,'Minor'),
+                       Third=ifelse(Third %in% keepers,Third,'Minor'),
+                       currentVote=First,whichGroup=First)
+
+```
+
+
+### Who is the second-place vote for each first-place
 
 ```{r}
-simpleVotes <- inner_join(votes,voteCount)
-# replace the minors
-simpleVotes <- mutate(simpleVotes,
-                      First=ifelse(n<5000,'Minor',First),
-                      Second=ifelse(n<5000,'Minor',Second),
-                      Third=ifelse(n<5000,'Minor',Third))
-```
+group_by(simpleVotes,First,Second) %.% dplyr::tally(sort=TRUE) -> pairs
+ggplot(data=pairs,aes(x=reorder(First,n),y=n ,fill=Second))+geom_bar(stat='identity',position=position_fill(width=.9)) + theme(axis.text.x=element_text(angle=60,hjust=1)) 
 ```
 
-### Pick out the loser
+### A Network 
+
+***connections***
+
+```{r}
+filter(pairs, n>200) -> foo 
+gg <- graph.data.frame(select(foo,First,Second),directed=FALSE)
+E(gg)$color <- 'red'
+E(gg)$width <- 10*sqrt(foo$n/5000)
+plot(gg)
+gg$layout <- layout.circle
+plot(gg)
+```
+
+[A blog tutorial on igraph](http://www.r-bloggers.com/network-visualization-in-r-with-the-igraph-package/) shows how to set colors, etc.
+
+### The vote-counting process
 
 ***head***, ***tail***, ***arrange***, ***sort***, ***order***
 
-```{r}
-loser <- tail(voteCount,1)
-```
+
 
 ***conditional choice***
 
 ```{r}
-afterOne <- mutate(votes, 
-                   loser=currentVote=='JOHN CHARLES WILSON',
-                   whichPlace=ifelse(loser,2,whichPlace),
-                   currentVote=ifelse(loser,Second,currentVote))
-# or, loser$First, but that's ugly
+removeOne <- function(V,who=NULL,round=0){
+  if(is.null(who)) {
+    # Find the person with the lowest vote total
+    group_by(V,currentVote) %.% dplyr::tally(sort=TRUE) %.% 
+      filter(currentVote!='none') -> tmp
+    who <- tail(tmp,1)$currentVote
+  }
+  message(paste('Candidate dropped:', who))
+  return( 
+    mutate(V,
+           Third=ifelse(Third==who,'none',Third),
+           Second=ifelse(Second==who,Third,Second),
+           First=ifelse(First==who,Second,First),
+           whoFrom=ifelse(currentVote==First,whoFrom,currentVote),
+           currentVote=First
+           )
+    )
+  }
 ```
+
+# Work through the process
+```{r}
+makePlot <- function(Votes) {
+  group_by(Votes,currentVote,whoFrom) %.% dplyr::tally(sort=TRUE) %.%
+filter(currentVote != 'none') -> Counts
+  ggplot(data=Counts,aes(x=reorder(currentVote,n),y=n ,fill=whoFrom))+geom_bar(stat='identity',position=position_stack(width=.9)) + theme(axis.text.x=element_text(angle=60,hjust=1)) + xlab("") + ylab('Number of Votes')
+  }
+```
+
+## The sequence of plots
+
+***stacked barplot***
+
+```{r}
+step <- simpleVotes
+makePlot(step)
+for (k in 1:10) {
+  step <- removeOne(step)
+  print(makePlot(step))
+}
+```
+
+
+
+# Process the simpleVotes
+

@@ -1,0 +1,174 @@
+---
+title: "Kinds of Data-Driven Graphs"
+author: "Daniel Kaplan"
+date: "April 29, 2014"
+output: html_document
+---
+
+Stories have different genres and styles: mystery, romance, thriller, sci-fi, etc.  Similarly, graphics have different formats, different ways of presenting information.
+
+Consider these graphics:
+<table>
+<tr>
+<td><figure>
+<img src='../Images/sankey.png' width='250px' >
+<figcaption>[Source](http://lamages.blogspot.com/2014/03/sankey-diagrams-with-googlevis.html)</figcaption>
+</figure></td>
+<td><figure>
+<img src='http://metvurst.files.wordpress.com/2014/04/wpid-unnamed-chunk-17.png?w=640' width='250px' >
+<figcaption>Source [this blog](http://metvurst.wordpress.com/2014/04/18/reot-empirical-orthogonal-teleconnections-in-r-2/)</figcaption>
+</figure></td>
+<td><figure>
+<img src='http://upload.wikimedia.org/wikipedia/commons/c/c4/Scatter_plot.jpg' width='250px' >
+<figcaption>The caption</figcaption>
+</figure></td></tr>
+
+<tr>
+<td><figure>
+<img src='../Images/AndyZ-1.png' width='250px' >
+<figcaption>From [Andy Z](https://mail.google.com/mail/u/0/#search/overvoorde%40macalester.edu/1440cfd4222969ad)</figcaption>
+</figure></td>
+<td><figure>
+<img src='../Images/AndyZ-2.png' width='250px' >
+<figcaption>From [Andy Z](https://mail.google.com/mail/u/0/#search/overvoorde%40macalester.edu/1440cfd4222969ad)</figcaption>
+</figure></td>
+<td><figure>
+<img src='../Images/AndyZCladistics.png' width='250px' >
+<figcaption>From [Andy Z](https://mail.google.com/mail/u/0/#search/overvoorde%40macalester.edu/1440cfd4222969ad),
+[Source](http://msb.embopress.org/content/9/1/713)</figcaption>
+</figure></td></tr>
+
+<tr>
+<td><figure>
+<img src='../Images/AndyZ-3.png' width='250px%' >
+<figcaption>From [Andy Z](https://mail.google.com/mail/u/0/#search/overvoorde%40macalester.edu/1440cfd4222969ad)</figcaption>
+</figure></td>
+<td><figure>
+<img src='../Images/AndyZ-4.png' width='250px' >
+<figcaption>[source](http://msb.embopress.org/content/9/1/709)</figcaption>
+</figure></td>
+<td><figure>
+<img src='http://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Heatmap.png/600px-Heatmap.png' width='250px' >
+<figcaption>heat map</figcaption>
+</figure></td></tr>
+
+<tr><td><figure>
+<img src='http://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/WOA09_sea-surf_SAL_AYool.png/800px-WOA09_sea-surf_SAL_AYool.png' width='250px' >
+<figcaption>Another heat map</figcaption>
+</figure></td>
+<td><figure>
+<img src='http://i.stack.imgur.com/lAacy.jpg' width='250px' >
+<figcaption>Parallel Coordinates</figcaption>
+</figure></td>
+<td><figure>
+<img src='http://peltiertech.com/images/2013-09/03-DivergingStackedBarChart.png' width='250px' >
+<figcaption>Stacked Bar Chart</figcaption>
+</figure></td></tr>
+
+<tr><td><figure>
+<img src='http://upload.wikimedia.org/wikipedia/commons/2/2e/Pie_chart_EP_election_2004.svg' width='250px' >
+<figcaption></figcaption>
+</figure></td>
+<td><figure>
+<img src='http://www.graphgraph.com/blog/wp-content/uploads/2011/11/PieChartSmall.png' width='250px' >
+<figcaption></figcaption>
+</figure></td>
+<td><figure>
+<img src='http://www.petercollingridge.co.uk/sites/files/peter/Gambiense%20Cases%20(2006).png' width='250px' >
+<figcaption></figcaption>
+</figure></td></tr>
+
+<tr><td><figure>
+<img src='http://geographyfieldwork.com/Choropleth2.gif' width='250px' >
+<figcaption>Trying too hard!</figcaption>
+</figure></td>
+<td><figure>
+<img src='http://4.bp.blogspot.com/--yDM6oV9S2g/UEfAua-Hn2I/AAAAAAAAAAc/kVqggFLaBu8/s1600/Proportional+symbol+map.jpg' width='250px' >
+<figcaption></figcaption>
+</figure></td>
+<td><figure>
+<img src='http://cms.pewresearch.org/pewinternet/files/2013/12/PI_14.02.06_BroadbandUse-copy.png' width='250px' >
+<figcaption></figcaption>
+</figure></td></tr>
+
+<tr><td><figure>
+<img src='' width='250px' >
+<figcaption></figcaption>
+</figure></td>
+<td><figure>
+<img src='' width='250px' >
+<figcaption></figcaption>
+</figure></td>
+<td><figure>
+<img src='' width='250px' >
+<figcaption></figcaption>
+</figure></td></tr>
+
+
+</table>
+
+There is great diversity here.  The various graphics have different formats, use different symbols, differ in complexity. Some have bars, some have lines, some have trees, some vary color over an area. Each one of the graphics was thought by the person who created it to convey a message effectively for a given purpose.   The purpose might have been to organize data or --- in the worst cases --- to decorative.  The designer might have displayed good judgement or bad; the graphic might be effective or not. 
+
+To make effective graphics, it helps to be able to think about the *different kinds* of graphics and which kinds might advance your purpose.  But what is the meaning of "different kinds of graphics"?
+
+To get a start, look carefully at the collection and try to identify sets of individual graphs that have something important in common about the way they present data.  Try to imagine the sort of data that might have gone in to making the graphs.
+
+## The Grammar of Graphics
+
+English grammar (and that of other languages) is often used to identify which structures are correct and which incorrect.  This is a normative or prescriptive use.  For instance, here is a correct sentence: 
+
+> "Amy gave Bill a pen."  
+
+And here is a another expression that uses many of the same words: 
+
+> "Pen Bill Amy a."  
+
+The first is comprehensible; a real sentence.  It follows the rules of English grammar for a sentence.  This one has a noun, a verb, a direct and indirect object.
+The second does not: it is just a set of words.
+
+There's another use for grammar: to identify the roles of different words or phrases and help in the construction of complex expressions.  You can use grammar to take a sentence apart --- noun, verb, object --- and then create more complex or detailed sentences by substituting new expressions for the old ones.  "Amy gave Bill a pen," might be restyled, "The girl from the soccer team ended up handing over the red ballpoint to her friend."
+
+A grammar of graphics has been proposed [Wilkinson, L. (2005),The Grammar of Graphics(2nd ed.). Statistics and Computing, New York: Springer] that enables graphics to be taken apart and put together.  One use for such a grammar is to enable people to describe the graphics they want so that computer can do the drawing.  The description has to be precise and unambiguous.  The use of grammar to define the interface between people and computers is important, [Wickham, [A layered grammar of graphics](http://mimno.infosci.cornell.edu/info3300/readings/layered-grammar.pdf).] particularly for software designers [Ref: `ggplot2`]
+
+A grammar is also useful for the purpose of designing and thinking about graphics.  Among other things, it allows the designer to identify broad types of the components of graphics and to consider how to replace a given form of a component for one that might be better suited for the purpose at hand.  Taking apart the sentence, "Amy gave Bill a pen," allows you to think about how you might make the sentence more effective for your purpose. Noun, verb, indirect object, direct object. So "Amy" can be replaced with "The girl from the soccer team," or "the teacher," or "the sales clerk," among the infinity of possibilities.   All of the possibilities  play the role of a noun; some of them might accurately describe the situation.  Similarly, you might replace the verb (past tense) "gave" with another form of verb phrase that can take a direct and indirect object: "handed," "will present", "had given", "will have had given," etc.
+
+Once you know that "Amy" is a noun, you can think about what other noun phrases might be more appropriate.  The grammar allows you to avoid limiting yourself.  For instance, a noun doesn't have to be a person: "The dispenser gave Bill a pen."
+
+Usually when describing data-driven graphics [[is that a good name, **data-driven**]], people resort to naming the objects --- scatter plot, histogram, bar plot, pie chart, maps, etc. --- and describing the quantities or categories to be rendered: make a scatter plot of weight versus age.
+
+As you'll see, it can help to have more general categories.  The categories and components to be used here may seem at first to be abstract and counter-intuitive.  For instance, scatterplots, bar plots, pie charts and maps are all different forms of the same kind of entity, even though they look very different.
+
+### Glyphs, Frames, and Fields
+
+(Is that what it's called, a frame?)
+
+* A histogram is a kind of field.  There are others.
+
+### Three basic kinds of graphics
+
+Data-driven graphics relate data to graphical elements.  That's obvious.  A useful basic categorization of "kinds of graphics," will consider the structure of data and how that structure relates to the structure of the graphics, in particular to glyphs and frames.
+
+Remember that data, as the word is used here, consists of cases and variables.  The characterization of graphics in terms of data must identify the roles played by cases and variables.  It might not be what you are expecting.
+
+
+
+#### One case per glyph
+
+#### Two (or more) cases per glyphs
+
+#### Fields and the collective features of data 
+
+[[[It's not called a glyph here]]] but a field.
+
+### Other elements of graphics
+
+* Guide
+* Scale
+* Axis
+
+### Layered graphics
+
+
+
+
+

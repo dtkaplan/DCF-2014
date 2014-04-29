@@ -11,6 +11,13 @@ output: html_document
 
 * Gapminder Data
 * Medicare reimbursement 
+* FAA bird strike
+    * Students to collect data from more states.
+* CherryBlossom.  I have data 1999-2008.  Get more recent data, either from Duncan or by scraping directly from the site.
+* Gasoline Log
+    * Convert the MATLAB daynum into a calendar date.
+    * Add the more recent entries from the scanned files.
+* Mayoral election
 
 ## Purpose
 

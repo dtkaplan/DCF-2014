@@ -7,6 +7,7 @@ output: html_document
 
 [FAA data site](http://wildlife.faa.gov/database.aspx).  You can do one airport at a time.
 
+A [blog entry](http://genedan.com/tag/faa-strike-wildlife-strike-database/) on these data and `ggplot`
 ```{r include=FALSE}
 # Can't read the .xls files with this package.  So, they have been
 # resaved as CSV files

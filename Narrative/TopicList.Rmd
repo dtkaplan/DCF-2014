@@ -1,0 +1,114 @@
+---
+title: "DCF Topics"
+author: "Daniel Kaplan"
+date: "April 23, 2014"
+output: html_document
+---
+
+See also : `DCF-2014/Narrative/Overall_Outline.Rmd`  Consolidate that file into this one.
+
+Also `Narrative/Ideas.Rmd`.
+
+Also `Sections/Introduction/Overview.Rmd`
+
+## Data Organization
+
+1) Cases and variables
+
+Call it a **datatable**: one word to give it a technical meaning, restricted to a rigid format.
+
+Rows and columns
+
+Quantitative and categorical
+
+There are other forms of data, e.g. photographs, movies, text.  The datatable is arguably the most important.  Many other forms of data eventually get reduced to datatables for the purposes of display and analysis.
+
+Emphasis the **case**.
+
+* How the meaning of an individual case can change.  A datatable gives a **view of data**.  There are typically other views possible, sometimes derived from a particular view.
+
+Runners as individuals and as groups, e.g. by sex, by age group, by sex and age group.
+
+Flight data involving two airports compared to airport data (e.g. latitude and longitude) on its own.  Taxi time versus airport.  Airplane model data: mass and engines
+
+### Wide and narrow: 
+
+What's a case and what's a variable is somewhat fluid.
+
+* Individual runners in multiple years: wide and narrow
+* 96-well plate and spectrophotometer
+* UN data where the case is a country and where the case is a country in a year and where the case is a particular measurement in a country in a year
+
+It's not that one form is right and the others are wrong.  Some forms are better for a particular purpose, e.g. making a scatterplot of year-2 versus year-1 is easily handled with wide data.
+
+**Shaping** data means transcribing data from one datatable form to another. (It doesn't mean distorting data or altering or redacting).
+
+Many of the techniques for working with data are about shaping it, so that you can present it in the way that you think best rather than in the ways that happen to match the original shapes.
+
+**Database** is a collection of datatables.  Often, the datatables have different cases.
+
+
+## Graphics
+
+
+[Graphics Zoo](GraphicsZoo/GraphicsZoo.html)
+
+
+Why is a picture worth a thousand words? 
+
+What are the basic features we want to display? Comparison, extent, individual cases in context, relationships, connections, ...
+
+### One Case at a Time: **Individuals**
+
+1) Scatterplot
+#) Dotplot
+#) Box-and-whiskers plot
+#) Barplot
+    a) stacked
+#) Parallel Axes
+
+
+### Two Cases at a Time: **Connections**
+
+1) Graph
+    [A blog tutorial on igraph](http://www.r-bloggers.com/network-visualization-in-r-with-the-igraph-package/) shows how to set colors, etc.  [A more detailed tutorial](http://www.lsi.upc.edu/~CSN/lab/session1.pdf)
+    a) Directed
+    #) Undirected
+#) Tree
+
+### Many Cases at a Time: **Collectives**
+
+1) density
+#) histogram
+#) hexbin
+
+
+## Data Table Operations
+
+1) Select variables  (Relational PROJECT)
+#) Filter  (RELATIONAL SELECT)
+    a) head, tail --- to pull out the early ones
+#) Mutate
+    a) conditional choice
+#) Group  (RELATIONAL GROUP)
+    a) tally
+        * Minneapolis Mayor's race.  Do a simple tally and ask "Who won?"  Actually the law requires ... and move on to `removeOne()`.
+#) Arrange (RELATIONAL SORT)
+#) Join (RELATIONAL JOIN)
+    a) inner
+    b) left
+    c) semi
+    d) anti
+    
+    
+## Dimension Reduction
+
+1) Clustering
+#) Principal components
+
+## Modeling
+
+1) Linear
+#) Smoother
+#) Classification Tree
+

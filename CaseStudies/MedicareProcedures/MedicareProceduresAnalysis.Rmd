@@ -7,7 +7,6 @@ output: html_document
 
 ```{r include=FALSE}
 require(dplyr)
-require(plyr)
 require(mosaic) # for mPlot()
 require(DCF) # for mBar()
 ```
@@ -70,7 +69,7 @@ group_by(providers, credential) %.%
   summarize( propF=mean(gender=='F')) -> credFprop
 head(credFprop)
 group_by(providers, credential, gender) %.% 
-  tally() %.% join(credFprop)  -> result
+  tally() %.% inner_join(credFprop)  -> result
 ```
 
 ```{r echo=FALSE}

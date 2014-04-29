@@ -1,0 +1,22 @@
+
+
+The directory with my original longitudinal compilation of runners is 
+
+2014-03-17-backup/kaplanfiles/stats-book/DataSets/CherryBlossom/
+
+This needs to be brought forward to 2013 --- a student can do this.
+
+### Topics
+
+***densities*** ***fields*** ***group***
+
+### Simple
+
+1) Show the different densities of net time for men and women
+2) Show net time versus age: ***scatter*** ***hexbin*** 
+3) Fit a smoother of time versus age.  Are they different for men and women?
+4) Fit individual models and report back the slope.
+
+
+See plots in the associated CherryBlossom.pdf file.
+

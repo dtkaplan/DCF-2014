@@ -1,0 +1,11 @@
+
+
+# A catalog of miscellaneous graphis
+
+## Fields
+
+Atmospheric Science: Winter mean 700 mb height over the Northern Hemisphere
+
+![Winter mean 700 mb](Winter700mb.png)
+
+Source: <http://metvurst.wordpress.com/2014/04/18/reot-empirical-orthogonal-teleconnections-in-r-2/>
