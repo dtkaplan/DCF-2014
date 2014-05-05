@@ -7,7 +7,7 @@ output: html_document
 
 This is drawn from Vic Paruchuri's blog posting at <http://vikparuchuri.com/blog/exploring-us-healthcare-data/>.
 
-The Centers for Medicare and Medicaid Services (CMS) make available data (as of April 2014) about how much each doctor charges Medicare and how much is paid, for many different types of treatments.  [CMS blog](http://blog.cms.gov/2014/04/09/historic-release-of-data-delivers-unprecedented-transparency-on-the-medical-services-physicians-provide-and-how-much-they-are-paid/) about the release.
+The Centers for Medicare and Medicaid Services (CMS) make available data (as of April 2014) about how much each doctor charges Medicare and how much is paid, for many different types of treatments.  [CMS blog](http://blog.cms.gov/2014/04/09/historic-release-of-data-delivers-unprecedented-transparency-on-the-medical-services-physicians-provide-and-how-much-they-are-paid/) about the release.  An article from the [NYTimes](http://www.nytimes.com/2014/04/28/business/one-therapist-4-million-in-2012-medicare-billing.html) based on these data.
 
 There are 9 million rows that cover a wide range of services.  Some treatments were omitted, particularly when the patient numbers were so low that confidentiality might be at issue.
 

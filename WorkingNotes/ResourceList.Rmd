@@ -16,6 +16,12 @@ A large list of miscellaneous data: http://www.inside-r.org/howto/finding-data-i
 
 Web Scraping [the basics](http://quantifyingmemory.blogspot.co.uk/2014/02/web-scraping-basics.html), [two](http://quantifyingmemory.blogspot.co.uk/2014/02/web-scraping-part2-digging-deeper.html), [three](http://quantifyingmemory.blogspot.com/2014/03/web-scraping-scaling-up-digital-data.html),  [part four](http://quantifyingmemory.blogspot.com/2014/03/web-scraping-working-with-apis.html)
 
+### Facebook
+
+Shiny app that displays [FaceBook Network](http://tuxette.nathalievilla.org/?tag=igraph&lang=en) this seems to include scraping software.
+
+Data mining on facebook friends <http://tuxette.nathalievilla.org/?p=953&lang=en>
+
 [Description of an R bootcamp for scientists](http://gettinggeneticsdone.blogspot.com/2014/03/software-carpentry-at-uva-redux.html)
 
 
@@ -49,4 +55,13 @@ Network diagrams showing flows and subsets.  See [this blog](http://lamages.blog
 
 This [book](http://blog.revolutionanalytics.com/2014/03/free-ebook-on-big-data-and-data-science.html) is free.
 
+### Materials from Graphics Editor at NYT
+
+http://simplystatistics.org/2012/06/01/interview-with-amanda-cox-graphics-editor-at-the-new/
+
+And some other pointers to Amanda Cox’s work and thoughts:
+
+https://source.opennews.org/en-US/articles/nyts-amanda-cox-wins-internet/
+
+https://twitter.com/search?q=amanda%20cox&src=typd
 
