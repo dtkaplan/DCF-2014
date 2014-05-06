@@ -65,3 +65,22 @@ https://source.opennews.org/en-US/articles/nyts-amanda-cox-wins-internet/
 
 https://twitter.com/search?q=amanda%20cox&src=typd
 
+### Large list of data-science resources
+
+http://datascienc.es/resources/
+
+### Lots of visualizations
+
+http://www.manyeyes.com/software/analytics/manyeyes/
+
+### Video about Data Journalism
+
+http://datajournalism.stanford.edu/
+
+#### and another
+
+http://learning.blogs.nytimes.com/2010/08/23/teaching-with-infographics-places-to-start/
+
+### Data Graphics Blogs
+
+<http://inspiredm.com/20-essential-infographics-data-visualization-blogs/>

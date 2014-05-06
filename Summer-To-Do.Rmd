@@ -1,0 +1,47 @@
+---
+title: "Summer-To-Do"
+author: "Daniel Kaplan"
+date: "May 6, 2014"
+output: html_document
+---
+
+## Build Shiny Apps out of the mosaicManip apps
+
+One directory for each app.
+
+Try the shiny-Rmd for some of them.
+
+## Country data
+
+Create a table of synonymous country names and codes.  `CaseStudies/Countries`
+
+* `countrycode_data` in `countrycode` package
+* The map package (used in 2013) has a table 
+
+## Scrape the Zip-Code data
+
+They are in URLs like <http://www.brainyzip.com/state/zip_newyork.html>
+
+## Bring the Cherry Blossom race up to date
+
+See `CaseStudies/CherryBlossomRace/notes.Rmd`
+
+## Apps for data operations
+
+### Mutate
+
+
+
+* Fixed set of example data -or- Pick a data set and create the mutation you want by writing in the expression.
+* Show the head of the mutated data and the new column alongside.
+* Show the statement that will do the job.
+* Some quiz exercises.
+    * Quiz results: Get the userID, then code the table of results for them to send in.  Or, can we arrange to send it automatically?
+
+### Join
+
+* Selection of kind of join
+* Have a list of example data types, and 
+* Selection of tables to join from the local disk
+* Choose kind of join
+* Choose vars to join on.   Choice from table A -> Choice from table B

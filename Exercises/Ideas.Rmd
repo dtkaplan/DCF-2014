@@ -1,0 +1,44 @@
+---
+title: "Ideas and Resources for Exercises"
+author: "Daniel Kaplan"
+date: "May 5, 2014"
+output: html_document
+---
+
+## Parsing Graphics
+
+<http://www.nytimes.com/interactive/2007/12/15/us/politics/DEBATE.html?_r=0>
+
+* How many layers are there?  (Make separate judgments for static and dynamic)
+* For each layer, what is the frame?
+* For each frame, what does the data table look like that underlies the graph?
+
+
+Lots of examples of visualizations: <http://learning.blogs.nytimes.com/2011/04/08/data-visualized-more-on-teaching-with-infographics/?action=click&module=Search&region=searchResults&mabReward=relbias%3Ar&url=http%3A%2F%2Fquery.nytimes.com%2Fsearch%2Fsitesearch%2F%3Faction%3Dclick%26region%3DMasthead%26pgtype%3DHomepage%26module%3DSearchSubmit%26contentCollection%3DHomepage%26t%3Dqry401%23%2Fdata+visualization>
+
+Trajectory infographic: explain what the glyphs are and what data they encode.
+
+* <http://www.flickr.com/photos/shanair/4288246965/in/set-72157622648454054/>
+* <http://richworks.in/wp-content/uploads/2010/04/431.jpg>
+
+## Making Graphics
+
+Create a scatter plot showing the location of the world's largest cities.  Code the population glyph with a radius that's the square-root of the population.  Use colors to indicate countries or deciles of the population, or regions.
+
+`CaseStudies/Cities/ListOfCities.RData`
+
+## Summarize
+
+Find the mean of the latitude and longitude for each country.  Plot these out with total urban population as the glyph size.
+
+`CaseStudies/Cities/ListOfCities.RData`
+
+## Join
+
+Find the population of each country.  Join this with the population in cities $> 1,000,000$.  Make a map showing the "large urban population fraction" in each country.
+
+Also need to join in the country names.
+
+
+
+

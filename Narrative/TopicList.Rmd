@@ -157,7 +157,9 @@ Give a `summary()` of a data frame.  Ask how many distinct groups will be produc
 * `group_by( data, onevar)`
 * `group_by( data, first, second)`
 
-Galton: ask to group by family and find the standard deviation of father, mother, and nkids.  Then filter to see if there are any mistakes.  GENERALLY, use filter to pull out cases not in a set of standard cases.
+Galton: ask to group by family and find the standard deviation of father, mother, and nkids.  Then group on whether this is zero, and tally.   GENERALLY, use filter to pull out cases not in a set of standard cases.
+
+I have a data table like this [ungrouped] and I want to get to one like this [summarized and grouped].  DCF and DCF mean height by sex and diabetic.
 
 
 
@@ -206,4 +208,14 @@ summary(mosaic::Galton)
 1) Linear
 #) Smoother
 #) Classification Tree
+
+
+
+## Cleaning Data
+
+* substitution: getting rid of the commas in the zip-code population data.  See
+<file:///Users/kaplan/KaplanFiles/DCF/DCF-2013/Data/ZipCodes/getZipPopulation.html>
+
+* Checking numbers, mis-spellings: DCF 2013 `Notes/Day4/CleaningTheBirds.html`
+
 
