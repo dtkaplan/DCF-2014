@@ -61,8 +61,64 @@ Different ways data are distributed: interactive, static files, via URL
 
 Data Scraping
 
+## Basics of Markdown
+
+Start them out with the knitr side-by-side display function, so that things are re-run as they get changed.
+
+## Templates
+
+## Basics of R
+
+* prompt, expression, value
+* values and arithmetic and grouping parentheses
+* functions, arguments and parentheses
+    * help
+    * tab in RStudio
+* assignment with `<-`
+* named arguments with `=`, ... name`=`value`.  Note, the name comes
+* character strings.  You're welcome to use quotes around the name of an argument.
+    * names of files, labels, levels of categorical variables
+* data frames
+* numeric, factor, character data
+    * We often think of factors as if they were characters.
+    * Technical stuff: factors vs character, class()
+* booleans and comparison
+    * `==` not `=` to test for equality.  Testing for equality is different than giving a named argument.
+* packages and names like `mosaic::Galton`
+    * names are case sensitive
+    * how you can see that a package is not installed
+    * how you can see that a package is not loaded
+    * how to install a package
+    * CRAN and gitHub packages
+* copying and replacing
+    * functions return a value that is distinct from the original
+    * Use assignment `<-` with a new name to make a copy.
+    * Use `<-` with an existing name to replace the existing object
+    
+
+Bailing out:
+
+* ESC
+
+Commands, dialogs, chunks, environments
+* In the console, you can't scroll up to edit, as you might do with a word processor.
+* In an Rmd file, you can scroll up and edit, but remember that you have to re-run the commands.
+* When compiling a Rmd file, it's always done in a new environment.  That differs from running the chunks
+
+
 ## Graphics
 
+### Presentation Tables
+
+It may seem odd to start a section on graphics with text, but concise text, easily assimulated by eye, is a form of graphics.
+
+#### Example: Word Counts
+
+Look at different genres --- show the leading non-common words.
+
+#### Word Cloud
+
+Counts don't always do it.
 
 [Graphics Zoo](GraphicsZoo/GraphicsZoo.html)
 
@@ -95,89 +151,6 @@ What are the basic features we want to display? Comparison, extent, individual c
 #) histogram
 #) hexbin
 
-## Developing Data
-
-It's convenient when data come to you in glyph-ready form.  But often, the data you have with are not exactly what you need.  They contain information of interest, but not in a form that's ready for presentation.  The process of putting your data into the right form for your purpose is called **data wrangling**.  This differs from **data collection** or **data acquisition**.  In wrangling, you're not recording new information but re-arranging or transforming existing information to a more helpful form.  
-
-The word "wrangling" is motivated by the image of cowboys at work.  Cowboys round up cattle, go after strays, and generally put the cattle in good order for the purpose at hand, whether that be leading the cattle up to a spring meadow, moving them to market, or preparing them for feeding.  You won't be feeding your data, but after you've spent some time with them, you'll get the sense that data need care: curating.
-
-Wrangling data takes thought.  Usually, it's not that hard to sketch out the final form you imagine you need (e.g. the glyph-ready form).  Computers provide the operations and effort needed, but you need to know how to use and sequence those operations.
-
-This section describes a small set of operations that are useful for wrangling.  The individual operations are simple.  Yet they can be combined in an infinite variety of ways.  You have to find the combination and sequence that leads you from the form of data you have to the form required for the presentation you want to make.
-
-It's worthwhile to memorize the set of operations, even before you know what they do.  The names used here will are chosen to make it easy to remember the R functions that you will use in these notes. (Aside: Reference and describe Hadley Wickham's `dplyr` package.) Other computer systems use different names, but the concepts remain the same.
-
-* Summarize
-* Group
-* Filter
-* Mutate
-* Select
-* Join
-
-[[Note in DRAFT: I'm leaving out `arrange()`.  What others??]]
-
-Notice that these are all verbs.  Using these operations, you're going to be doing things to data tables.  Each of these operations will take an input and produce an output.  The input will always be one (or more) data tables along with details of the operation. The output will always be a data table, usually one that has different cases or variables than the input.
-
-### Group and Summarize
-
-In general, a summary is a concise description that leaves out details that are not central.  The summarize operation on data tables works along these lines these lines but is very much more specific.  Whereas a data table in general can have many cases and variables, the output from summarizing is a data table with **only one row per group**.  You get to choose what aspects of the input data table you put in that single row.
-
-To illustrate, consider the Galton data on the heights of parents and their adult children:
-```{r}
-str(mosaic::Galton)
-```
-
-The `summarize()` function reduces all the cases in a group to a single case that contains the quantities you specify.
-
-```{r}
-summarize( mosaic::Galton, mKid=mean(height)  )
-```
-
-Unless you specify differently, a data table has only one group.  You can change this with the `groupBy()` function.  Here, for instance, the Galton data is broken down into two groups, one for each sex.
-
-```{r}
-GaltonBySex <- group_by( mosaic::Galton, sex )
-```
-
-`Summarize()` recognizes the grouping and does what you would expect:
-```{r}
-summarize( GaltonBySex, mKid=mean(height)  )
-```
-
-
-You can calculate more than one thing in the same operation, but always the output will have just one case for each input group.
-
-```{r}
-summarize( GaltonBySex, mKid=mean(height), mMother=mean(mother)  )
-```
-
-#### EXERCISES
-
-Give a `summary()` of a data frame.  Ask how many distinct groups will be produced by
-* `group_by( data, onevar)`
-* `group_by( data, first, second)`
-
-Galton: ask to group by family and find the standard deviation of father, mother, and nkids.  Then group on whether this is zero, and tally.   GENERALLY, use filter to pull out cases not in a set of standard cases.
-
-I have a data table like this [ungrouped] and I want to get to one like this [summarized and grouped].  DCF and DCF mean height by sex and diabetic.
-
-
-
-#### Technical stuff
-
-Count with `n()`
-
-ASIDE: Chaining with `%.%`
-
-Naming the grouping variables
-
-Using `ntiles()` on a categorical variable.
-
-TIP:  Don't confuse the `summarize()` function with other tools such as `str()` for presenting data in short form.  For instance, the `summary()` function gives a quick overview of a data table, e.g.
-```{r}
-summary(mosaic::Galton)
-```
-`Summary()` and `summarize()` have little in common except the first six letters of their names.
 
 ## Data Table Operations
 
@@ -213,9 +186,13 @@ summary(mosaic::Galton)
 
 ## Cleaning Data
 
+Define a function for each of the really important things.  Make this into a `cleaningFunctions` package.
+
 * substitution: getting rid of the commas in the zip-code population data.  See
 <file:///Users/kaplan/KaplanFiles/DCF/DCF-2013/Data/ZipCodes/getZipPopulation.html>
 
 * Checking numbers, mis-spellings: DCF 2013 `Notes/Day4/CleaningTheBirds.html`
+
+* Break text into individual words.
 
 

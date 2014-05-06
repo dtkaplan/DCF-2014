@@ -5,11 +5,19 @@ date: "May 6, 2014"
 output: html_document
 ---
 
+## Look at the `knitr` side-by-side display app.
+
 ## Build Shiny Apps out of the mosaicManip apps
 
 One directory for each app.
 
 Try the shiny-Rmd for some of them.
+
+Do this for just a few, so you'll be in a position to write new, DCF apps.
+
+## Create a Pivot-vs-Fold app
+
+Like the one on p.88 of *Data Transformation_ Skills of the Agile Data Wrangler Presentation.pdf* , but interactive.
 
 ## Country data
 
@@ -21,6 +29,14 @@ Create a table of synonymous country names and codes.  `CaseStudies/Countries`
 ## Scrape the Zip-Code data
 
 They are in URLs like <http://www.brainyzip.com/state/zip_newyork.html>
+
+Sort out what's useful in `CaseStudies/ZipCodes/zip_codes_states.csv` which is from <http://notebook.gaslampmedia.com/download-zip-code-latitude-longitude-city-state-county-csv/>.  Note that leading zeros have been dropped from the zip code.  A data cleaning exercise?
+
+## Scrape the County data
+
+<http://quickfacts.census.gov/qfd/download_data.html> has a database
+
+<http://censtats.census.gov/usa/usa.shtml>
 
 ## Bring the Cherry Blossom race up to date
 
