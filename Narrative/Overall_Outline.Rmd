@@ -19,6 +19,8 @@ output: html_document
     * Add the more recent entries from the scanned files.
 * Mayoral election
 
+Arrange to have a section on "The expert view" for each case, telling briefly what the real issues are rather than the issues driven by illustrating computing with data.
+
 ## Purpose
 
 This course aims to convey concepts and techniques for working with large-scale data in order to produce useful presentations.

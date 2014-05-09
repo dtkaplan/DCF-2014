@@ -5,6 +5,8 @@ date: "April 23, 2014"
 output: html_document
 ---
 
+A blog on [graphics and the bird-strike database](http://genedan.com/tag/faa-strike-wildlife-strike-database/)
+
 [FAA data site](http://wildlife.faa.gov/database.aspx).  You can do one airport at a time.
 
 A [blog entry](http://genedan.com/tag/faa-strike-wildlife-strike-database/) on these data and `ggplot`

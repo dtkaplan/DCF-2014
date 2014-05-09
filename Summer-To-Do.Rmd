@@ -7,6 +7,24 @@ output: html_document
 
 ## Look at the `knitr` side-by-side display app.
 
+See the `inst/shiny` directory on the knitr GitHub site.
+
+Make a few example documents that people can play with.  E.g. show them a bulleted list, ask them to add an item, to create a sublist, to make a new section.  To make a new block and do some R calculation in it.
+
+## Graphics
+
+### simple map-drawing functions
+
+See `SummerTasks/MapProgram.Rmd[html]`
+
+### Look for on-line lovely graphics producing programs
+
+See what format data needs to be in, how to upload it, and create examples of using it.  I want to open up the graphics from the pure R functions.
+
+### Pick out some compelling interactive graphics from here
+
+A large collection of interactive graphs: http://rcharts.io/gallery/
+
 ## Build Shiny Apps out of the mosaicManip apps
 
 One directory for each app.
@@ -42,6 +60,10 @@ Sort out what's useful in `CaseStudies/ZipCodes/zip_codes_states.csv` which is f
 
 See `CaseStudies/CherryBlossomRace/notes.Rmd`
 
+## Federal Election Commission case study
+
+Hadley provides software for reading the file.  Do this (out of the project --- it's too large to include on github) and then extract a manageable subset.
+
 ## Apps for data operations
 
 ### Mutate
@@ -61,3 +83,8 @@ See `CaseStudies/CherryBlossomRace/notes.Rmd`
 * Selection of tables to join from the local disk
 * Choose kind of join
 * Choose vars to join on.   Choice from table A -> Choice from table B
+
+### Set up a course web site with Jekyll
+
+Resources, syllabi (perhaps multiple) that refer to the resources.
+

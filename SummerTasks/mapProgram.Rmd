@@ -1,0 +1,118 @@
+---
+title: "Making Maps with ggplot2, maps, and mapproj"
+author: "Daniel Kaplan"
+date: "May 9, 2014"
+output: html_document
+---
+
+```{r include=FALSE}
+library(dplyr)
+library(maps)
+library(mapproj)
+library(ggplot2)
+```
+
+Some notes on how to make world/country/county maps.
+
+Goal: Produce a small set of functions that we can use to streamline map-making from data.
+
+You need the shapefiles from `maps` and the projections from `mapproj`, as well as `ggplot2` to do the drawing.
+
+```{r}
+library(dplyr) #always!
+library(maps)
+library(mapproj)
+library(ggplot2)
+```
+
+### 1. Choose a Region 
+
+We can use this directly.
+
+```{r}
+shapes <- map_data('world')
+```
+
+### 2. Get data 
+
+Get data for the units of the map, e.g. countries.  These are identified under `region` in `shapes`. 
+
+General data operations.  Let's have a few sample files.
+
+### 3. Reconcile the codes in your map to those in the shapes file.
+
+Write a function that compares the shape info and data to point out any missing or mismatched ones.  I think there is already functionality in the `rworldmap` package to do this.  Use that if it will work.
+
+
+### 4. Merge the reconciled data with the shapefile.
+
+I'm thinking that it might be good to provide one function that takes the shapefile and the reconciled data, merges them, calls `ggplot()` and returns a ggplot object which has no layers.
+
+In writing the function, use syntax like this 
+```{r eval=FALSE}
+myMap <- makeMap(shapefile,datafile,varname)
+```
+
+> For the next items, I'm going to make a bogus dataset in the right form.  Since the `shapes$regions` are `chars`, I need to make sure that the conversion in `myData` is correct.
+
+```{r}
+countryNames <- unique(shapes$region)
+myData <- data.frame( val=runif(length(countryNames)),
+                      region=countryNames,stringsAsFactors=FALSE )
+shapesAndData <- inner_join(shapes,myData)
+```
+
+> Now use `shapesAndData` for the plotting.
+
+The basic `ggplot2` syntax is
+
+```{r}
+myMap <- ggplot(shapesAndData, aes(x=long,y=lat,group=group,order=order))
+```
+
+Notice, the `fill=val` argument.  `val` stands for the name of the variable to be plotted, which is coming from `datafile`.
+
+, myData)
+```
+### 5. Plot out the map 
+
+Add the layers.  Two basic types: outlines and fills.
+
+Outlines:
+```{r}
+myMap + geom_polygon(color='blue',fill=NA)
+```                       
+
+Fills:
+```{r}        
+myMap + geom_polygon(aes(fill=val)) + geom_polygon(color='white',alpha=0.5,size=0.2)
+```
+
+`size` controls the width of the boundaries.  `alpha` sets the translucence.
+
+### Use the with the bells and whistles of `ggplot2`.
+
+Add in more features.  Provide a list of examples
+
+Important one: ```coord_map(project='aitoff')``` or `'mercator'` or `'polyconic'`.  See the `mapproj` package for more info.
+
+```{r}
+myMap + geom_polygon(aes(fill=val)) + geom_polygon(color='white',alpha=0.5,size=0.2) +
+  coord_map(project='polyconic')  # <---- the bell and whistle
+```
+
+
+* The pallete?  Or make this an argument to `makeMap()`
+* Suppress axis ticks or box around plot.
+
+### Miscellaneous
+
+* There seem to be some points from USSR that are given in longitude west (negative) rather than longitude east (positive).  It might be a good exercise to fix them.
+
+* More generally, the world map is out of date.  Some suggestions for fixing this are [here](http://stackoverflow.com/questions/15757793/updated-world-map-for-r-maps-package).  But there is a whole literature here (see `maptools` package) and we don't want to get too deeply involved.
+> Is there a way to convert `maptools::wrld_simpl` into a format that can be used by `map_data()`?
+
+
+
+
+

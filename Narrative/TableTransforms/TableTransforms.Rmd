@@ -30,9 +30,65 @@ It's worthwhile to memorize the set of operations, even before you know what the
     Melt and cast are Hadley's terms.  Pivot and Fold are from *Data Transformation_ Skills of the Agile Data Wrangler Presentation.pdf*.  Fold takes multiple columns and turns them into multiple cases.  Pivot goes the other way.  A "pivot table" in Excel seems to be along the same lines as the pivot operation.  Fold takes wide to long.  Pivot takes long to wide.
 * Join
 
+* Arrange is useful when you want to have a nice order for a printed table.  Also useful for plotting multiple trajectories, e.g. ordering each case by time.
+
 [[Note in DRAFT: I'm leaving out `arrange()`.  What others??]]
 
 Notice that these are all verbs.  Using these operations, you're going to be doing things to data tables.  Each of these operations will take an input and produce an output.  The input will always be one (or more) data tables along with details of the operation. The output will always be a data table, usually one that has different cases or variables than the input.
+
+### Grouping
+
+
+Break down by.
+
+The cases in a data table can be divided into groups by one or more variables.  This is useful, for instance, when you want to find something out about each group.  For instance, you might find yourself wanting to 
+
+The `group_by()` allows you to specify the groups that you want to break your data table into.  For example:
+
+* The two sexes in Galton's data
+```{r}
+G <- group_by(mosaic::Galton, sex)
+```
+
+* The different sex, race, and party affiliations in the Wake County voters data
+```{r eval=FALSE}
+# Need to get the data into the package
+voters < group_by(mosaic::WakeVoters,sex, party, race)
+```
+
+A surprising aspect of `group_by()` is that it doesn't seem to change the data table: the input and the output have the same variables and the same cases.
+```{r}
+names(mosaic::Galton)
+nrow(mosaic::Galton)
+names(G)
+nrow(G)
+head(mosaic::Galton, 3)
+head(G,3)
+```
+
+The `group_By()` function does something subtle: it marks the data table so that other operations can do things group-by-group.
+
+If you want to remind yourself what variables define the groups, use the `groups()` function:
+```{r}
+groups(G)
+```
+For an ungrouped data frame, `groups()` gives nothing as a value, or, rather, it gives a nothing.  It might seem that "a nothing" is not grammatical, but functions return values, and there is a special value, `NULL`, that stands for "nothing":
+
+```{r}
+groups(mosaic::Galton)
+```
+
+Multiple grouping variables: All the combinations of the values of the individual groups.
+
+
+You can give different names to groups if you want:
+```{r}
+G <- group_by( mosaic::Galton, gender=sex)
+groups(G)
+```
+
+If you group an already grouped data table, the resulting table will be marked for breaking down by both the old and the new groups.
+
 
 ### Mutate: calculate a new variable
 
@@ -40,7 +96,22 @@ Difference between wife's and husband's height.
 
 NHANES --- create a new body-mass index which is height/weight or maybe height/sqrt(weight) or (using simple geometrical arguments), height^3 / weight.  Show that the standard BMI is the  one that is most independent of height or weight.  That is, it doesn't contain the same information as height or weight.
 
-### Group and Summarize
+#### Mutating a Grouped Table
+
+When the input data table is grouped, `mutate()` will work separately on each group.  In particular, you can refer to groupwise quantities in the expression for constructing the new variable, e.g.
+```{r}
+G <- group_by( mosaic::Galton, sex )
+G <- mutate( G, count=n(), averageH=mean(height) )
+```
+
+This is something like `summarize()`, but rather than giving one case for each group (as `summarize()` does), `mutate()` adds the new variables on to the original cases.
+```{r}
+sample(G, size=5)
+```
+Notice that all the women have the same `averageH` and the same `count`, but the women's values are different from the men's.
+
+
+### Summarize
 
 In general, a summary is a concise description that leaves out details that are not central.  The summarize operation on data tables works along these lines these lines but is very much more specific.  Whereas a data table in general can have many cases and variables, the output from summarizing is a data table with **only one row per group**.  You get to choose what aspects of the input data table you put in that single row.
 
@@ -72,6 +143,17 @@ You can calculate more than one thing in the same operation, but always the outp
 ```{r}
 summarize( GaltonBySex, mKid=mean(height), mMother=mean(mother)  )
 ```
+
+There's no limit to the number of possible summaries.  Here are some of the most commonly used:
+
+```{r}
+* `n=n()` : count the cases
+* `mean(var)`: find the mean.  Also `sd(var)`, `median(var)`, `quantile(var, 0.6)`
+* `max(var)`, `min(var)`
+* `sum(var)`
+
+What will `mean(var)*n()` calculate.
+
 
 #### Counting cases
 
@@ -155,6 +237,33 @@ ex2 <- filter( mosaic::Galton, mother >= father + 3)
 nrow(ex2)
 ```
 
+### Filtering a Grouped Variable
+
+This is the same as an ordinary filter, but you can include groupwise properties in defining your criteria.
+
+```{r}
+nrow( mosaic::Galton )
+G <- group_by( mosaic::Galton, sex )
+summarize( G, n=n() )
+Gtall <- filter( G, height > mean(height)+2*sd(height) )
+nrow(Gtall)
+summarize(Gtall, n=n() )
+```
+
+
+### The extremes
+
+Filter using Hadley's `rank()` functions.
+
+#### Exercises
+
+Pull out the zip codes for counties greater than the mean in their state.
+
+Show the most populous five counties in each state.
+
+Which are the bird species which have more than 10 cases in the dataset?
+
+
 #### Note
 
 Distinction between `group_by()` and `filter()`.  Grouping might initially look like filtering, but none of the cases that are in the output are verbatim input cases.
@@ -169,9 +278,6 @@ Distinction between `group_by()` and `filter()`.  Grouping might initially look 
 
 
 
-How does Filter and Select get applied by groups?
-
-
 ### Pivot and Fold
 
 ![pivot and fold diagram](pivot_and_fold.png) from *Data Transformation_ Skills of the Agile Data Wrangler Presentation.pdf*
@@ -180,6 +286,17 @@ How does Filter and Select get applied by groups?
 
 * Merge zip code location with city population data: `CaseStudies/Cities` and `CaseStudies/ZipCodes/zip_codes_state.csv`
 * Getting rid of very common words in word counts: is this `anti_join()`.  Count the words, define a threshold, then perhaps edit the list by hand.   Compare to Mosteller's *Federalist Papers*, where they used very common words to identify authors.  Get their description of what they did.
+
+
+
+The `group_by()` then `filter()` or `mutate()` can be done also with a `summarize()` and a `join()`.  The point of mentioning this is two-fold:
+
+1. It may help your understanding of `join()`
+2. When working with other data processing systems, there may not be a `group_by()` setup. (Is this right?  How about SQL?)
+
+### EXERCISES
+
+
 
 
 #### Technical stuff
