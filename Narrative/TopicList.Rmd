@@ -112,6 +112,8 @@ Commands, dialogs, chunks, environments
 
 It may seem odd to start a section on graphics with text, but concise text, easily assimulated by eye, is a form of graphics.
 
+
+
 #### Example: Word Counts
 
 Look at different genres --- show the leading non-common words.
@@ -151,6 +153,14 @@ What are the basic features we want to display? Comparison, extent, individual c
 #) histogram
 #) hexbin
 
+
+
+### Time Series
+
+You could think about these as a single case with an elaborate glyph.
+
+Need some case studies with time series.  Economics?  Growth?  The runners times over the years
+in Cherry Blossom?
 
 ## Data Table Operations
 

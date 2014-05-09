@@ -1,0 +1,16 @@
+---
+title: "Ideas for Parsing Graphics"
+author: "Daniel Kaplan"
+date: "May 9, 2014"
+output: html_document
+---
+
+### Facets
+
+#### Maps
+
+Gelman's blog about graphics: <http://andrewgelman.com/2009/11/19/senators_and_he/>
+
+Gelmans graph of expenditures across state by income and age: <http://i.stack.imgur.com/j2xjm.png>
+
+Containing blog <http://stackoverflow.com/questions/9186529/grid-with-choropleth-maps-in-ggplot2>

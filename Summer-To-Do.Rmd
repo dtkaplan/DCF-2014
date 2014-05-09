@@ -5,6 +5,18 @@ date: "May 6, 2014"
 output: html_document
 ---
 
+## First day
+
+* Figure out about laptop.  Maybe Danny's office machine.
+* Install git
+* Install [preview version of RStudio](http://www.rstudio.com/ide/download/preview)
+* Install latest version of R
+* Write and make a screenflow video of how to do this. (3 minutes)
+    * Review the whole process with slides, including links
+    * Illustrate each step in the process
+    * Maybe process this as a tutorial with embedded videos.  See [HTML5 video tag](http://www.w3schools.com/html/html5_video.asp)
+
+
 ## Look at the `knitr` side-by-side display app.
 
 See the `inst/shiny` directory on the knitr GitHub site.
