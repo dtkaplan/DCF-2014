@@ -1,0 +1,110 @@
+---
+title: "Brainstorming about Disasters"
+date: "May 23, 2014"
+output: html_document
+---
+
+Dominant tasks: 
+
+* scatter plot  map as guide
+* counts, sums, mutate (new variable)
+
+choropleths
+
+The `emdatr` package provides access to the International Disaster Database, EMDAT, from the Center for Research on the Epidemiology of Disasters.
+
+```{r include=FALSE}
+require(emdatr)
+```
+
+Extract the 2013 data:
+```{r}
+D2013 <- extract_emdat() # for 2013 by default
+# Whole dataset
+#    D <- extract_emdat(sample_only=FALSE)
+# I saved this as a local file, for speed
+load("WholeDataset.Rda")
+```
+
+Watch out.  `Killed` and `TotAffected` are integers, convert to numeric before using.
+
+## Which type of disaster has had the most impact in terms of deaths and people affected.
+
+```{r}
+Dsize <- group_by(D,Type) %.% 
+  summarize( killed=sum(as.numeric(Killed),na.rm=TRUE), 
+             size=sum(as.numeric(TotAffected), na.rm=TRUE))
+Dsize
+```
+
+## Number of disasters versus Year
+
+plot out count against year.  group_by
+
+order by count, to show the distribution of the years.
+
+Same for total estimated damage in each year.  Order by total damage.
+
+
+## Group by GDP per capita
+
+Show what type of disaster varies for the different GDP/capita groups.
+
+Total count in GDP group versus population in that group.
+
+Does it vary by total GDP?
+
+## Group by Latitude
+
+More near the equator.
+
+
+## Plot out location of extreme temperatures
+
+1. Get the country location data --- MAKE PART OF DCF PACKAGE
+2. Join location with disaster
+3. Dot plot of `TotAffect` or something else about temperatures.  
+   * Use to illustrate log or sqrt transformations.
+   
+Other levels aside from extreme temperatures: where do they happen
+
+put border geom on top of dot plot.
+
+But we'll save the data `as.numeric()`
+
+## Is there a preferred month for disasters?
+
+Break down by group/type of disaster.
+
+## How long do disasters last?
+
+## Cleaning or strsplit()
+
+Turn the Start & Stop into a month
+
+```{r eval=FALSE}
+# This doesn't work: Use the date functions.
+broken_up <- unlist(strsplit(D$Start,'/'))
+first <- broken_up[seq(1,length(broken_up),by=3)]
+second <- broken_up[seq(2,length(broken_up),by=3)]
+third <- broken_up[seq(3,length(broken_up),by=3)]
+```
+
+# Get this to work
+
+```
+head(as.Date(D$Start, "%d/%b/%y")) # Doesn't work
+```
+
+SOFTWARE TO WRITE:
+Function that takes a string, figures out about the format (heuristically), and depending on the flag, turns it into a POSIX date, or a month, day, or year.
+
+
+## Population related
+
+Look at number affected 
+
+* as function of population
+* as function of GDP per population
+
+NEED A POPULATION table to merge with.  GapMinder: narrow to wide, interpolate, each year.
