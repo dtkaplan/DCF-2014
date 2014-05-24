@@ -8,8 +8,10 @@ Dominant tasks:
 
 * scatter plot  map as guide
 * counts, sums, mutate (new variable)
+* join to bring in other country or year variables.
 
-choropleths
+
+
 
 The `emdatr` package provides access to the International Disaster Database, EMDAT, from the Center for Research on the Epidemiology of Disasters.
 
@@ -45,6 +47,8 @@ order by count, to show the distribution of the years.
 
 Same for total estimated damage in each year.  Order by total damage.
 
+
+The number of disasters has been increasing over the years.  Is this because population has been increasing?  Use `volcano` and `earthquake`, which shouldn't depend on population to calibrate the number.
 
 ## Group by GDP per capita
 
