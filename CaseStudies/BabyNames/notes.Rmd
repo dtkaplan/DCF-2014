@@ -1,0 +1,140 @@
+---
+title: "Baby Names over Time"
+author: "Daniel Kaplan"
+date: "May 26, 2014"
+output: html_document
+---
+
+```{r include=FALSE}
+require(dplyr)
+```
+
+Baby names from 1880 to 2012 from Social Security Administration [link](http://www.ssa.gov/oact/babynames/names.zip), [baby names in New York](http://catalog.data.gov/dataset/baby-names-beginning-2007)  
+
+The site at the [SSA](http://www.ssa.gov/oact/babynames/names.zip) gives a zip containing a file `yobYYYY.txt` containing lists like this.  On May 26, 2014, I downloaded this file, unzipped it, and went through the sequence of years.
+
+```{r}
+getNewData <- FALSE  # Get these data?
+```
+
+```{r eval=getNewData}
+fileLocation <- "/Users/kaplan/Downloads/names/yob"
+res <- data.frame()
+for (year in 1880:2013){
+  babyNames <- read.csv(paste(fileLocation,year,'.txt',sep=''), header=FALSE)
+  names(babyNames) <- c('name','sex','count')
+  babyNames <- mutate(babyNames, year=year)
+  res <- rbind(res,babyNames)
+  }
+babyNames <- res
+```
+
+And save this to a file
+```{r eval=getNewData}
+save(babyNames, file='SSA-babyNames.Rda')
+```
+Otherwise, read it from the file:
+```{r eval=!getNewData}
+load('babyNames.rda')
+```
+
+## Some simple questions
+
+***group***, ***length***, ***unique***
+
+1. How many different names?
+```{r}
+summarize(babyNames, n=length(unique(name)))
+```
+2. How many different names for boys and girls?
+```{r}
+group_by(babyNames,sex) %.% summarize(n=length(unique(name)))
+```
+3. Make a plot showing the number of kids and the number of names in each sex over the years.
+```{r eval=getNewData}
+babyNamesYearly<- group_by(babyNames,year,sex) %.% summarize(nnames=length(unique(name)),nbirths=sum(count))
+head( babyNamesYearly )
+save(babyNamesYearly, file='babyNamesYearly.Rda')
+```
+```{r eval=!getNewData}
+load('babyNamesYearly.Rda')
+```
+
+### Introductory
+
+The file `babyNamesYearly.Rda` contains the Social Security Administration's yearly count of the number of births and the unique first names for each sex.
+
+Plot out the number of births over time.
+```{r}
+graph1 <- ggplot(data=babyNamesYearly, aes( x=year, y=nbirths, color=sex)) + geom_line() 
+```
+
+Interpret the graph:
+
+1. When was the "baby boom?"
+2. What happened during the Great Depression? (1930-1938)  Plot out a detail of the graph from 1920 to 1950.  (Hint: `xlim(1920,1950)`)
+3. HARD.  The Social Security Act was passed in 1935.  Nowadays, most people are registered when they are babies, but in the first decades, people didn't register until they reached the age of eligibility for social security (about 65 years old). What do you think explains the difference in the number of registered male and female births from 1875 to 1910?
+
+
+
+### For Plotting
+
+Use `ggplot()` to set up a new graphic based on `babyNamesYearly` with x-axis corresponding to year, y-axis corresponding to the number of births, and color and line type corresponding to sex.
+```{r}
+graph1 <- ggplot(data=babyNamesYearly, aes(x=year, y=n, color=sex)) 
+```
+
+Make a line plot. (hint: `geom_line()`)
+
+Make a graph showing the number of unique names over the years.
+
+```{r}
+graph2 <- ggplot(data=babyNamesYearly, aes(x=year, y=nnames, color=sex))
+graph2 + geom_line()
+```
+
+## Summarizing
+
+* What is the total number of kids, altogether.
+* What is the total number of kids, year-by-year adding together the different sexes?
+
+Why can't you calculate the total number of unique names over the period? What sort of data would you need?  What would be the case, what the variables?
+
+Then work with the original name data:
+
+* What fraction of kids in each year has the most popular name?
+* HARDER: What fraction of kids in each year has one of the 10 most popular names?
+
+Name-by-name, pull out those names that, over all the years, have a rough balance of sexes.
+
+Has the use of such names increased or decreased over the years?
+
+How did the popularity of Dick and Jane vary over the years?
+
+Are there boys named Sue?
+
+Faith, Prudence, Hope, Charity
+
+### For Join
+
+Get a list of faith-oriented words.  Pull out the names/years matching these.
+
+### Moses and Mohammed
+
+
+
+
+See also this graphic.
+![](https://camo.githubusercontent.com/89439bc4c7db3bfe0113e1acd22910f6c5d7a1f5/68747470733a2f2f7261772e6769746875622e636f6d2f6c6d756c6c656e2f67656e6465722f6d61737465722f6368616e67696e672d6e616d65732e706e67)
+in [this blog](https://github.com/ropensci/gender)
+
+Exercise Idea:  Here's a graphic and a dataset of baby-names over the years.  Describe the graphic in terms of glyphs, etc.  Outline a strategy for transforming the dataset into a form appropriate for the graph.
+
+Extra: Make the graph.
+
+**counting**
+
+**arranging**
+
+**paths**
+

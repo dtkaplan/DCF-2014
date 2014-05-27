@@ -1,0 +1,43 @@
+---
+title: "MammalianSpecies"
+author: "Daniel Kaplan"
+date: "May 25, 2014"
+output: html_document
+---
+
+```{r include=FALSE}
+require(dplyr)
+require(ggplot2)
+```
+
+The dataset `msw3-all.csv` comes from Don E. Wilson & DeeAnn M. Reeder (editors). 2005. *Mammal Species of the World. A Taxonomic and Geographic Reference* (3rd ed), Johns Hopkins University Press <http://www.departments.bucknell.edu/biology/resources/msw3/>
+
+The original file has much information about the source of the original classification and distribution.
+
+### Simplified Dataset
+
+```{r eval=TRUE}
+M <- read.csv("/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/Mammals/msw3-all.csv")
+keep <- M[,c(1,2,6,9,11,12,13,14,15,18,26)]
+M <- keep
+save(M, file='speciesM.Rda')
+```
+
+### How many of each Taxon Level?
+
+```{r}
+group_by( M, TaxonLevel) %.% tally() %.% arrange(-n)
+```
+
+### Are there any distinct species with the same order, etc.
+
+
+
+
+### Cleaning
+
+What can we do with the location data?
+
+Fixing the Years for easier analysis.
+
+If they have a suborder, then they have an order.  True?

@@ -1,10 +1,14 @@
 
+## SNPS in R
+
+<https://github.com/rOpenSci/rsnps> ask Paul O about this.
+
 
 [Paper on Rmd in undergraduate work](http://escholarship.org/uc/item/90b2f5xh) summarized in [phys.org](http://phys.org/news/2014-02-scientific-young.html)
 
 Many (mostly useless) [open data from government sites](http://www.data.gov/open-gov/)
 
-Baby names from 1880 to 2012 from Social Security Administration [link](http://www.ssa.gov/oact/babynames/names.zip), [baby names in New York](http://catalog.data.gov/dataset/baby-names-beginning-2007)
+Baby names from 1880 to 2012 from Social Security Administration [link](http://www.ssa.gov/oact/babynames/names.zip), [baby names in New York](http://catalog.data.gov/dataset/baby-names-beginning-2007)  See also this graphic.  
 
 A large collection of interactive graphs: http://rcharts.io/gallery/
 
@@ -28,6 +32,10 @@ Data mining on facebook friends <http://tuxette.nathalievilla.org/?p=953&lang=en
 [Huge baseball database](http://www.seanlahman.com/baseball-archive/statistics/) which can be read into R using the `Lahman` package.
 
 * Reading Google Drive docs into R [blog description](http://www.r-bloggers.com/download-all-documents-from-google-drive-with-r/?utm_source=feedburner&utm_medium=email&utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29)
+
+### XKCD Graphics
+
+<http://stackoverflow.com/questions/12675147/how-can-we-make-xkcd-style-graphs-in-r>
 
 ### Maps
 
@@ -84,3 +92,13 @@ http://learning.blogs.nytimes.com/2010/08/23/teaching-with-infographics-places-t
 ### Data Graphics Blogs
 
 <http://inspiredm.com/20-essential-infographics-data-visualization-blogs/>
+
+### Taxonomy Package
+
+<http://www.r-bloggers.com/taxize-v0-3-0-update-a-new-data-source-taxonomy-in-writing-and-ubio-examples/>
+
+### Network Diagrams 
+
+[In ggplot2](http://is-r.tumblr.com/post/38459242505/beautiful-network-diagrams-with-ggplot2)
+
+[and this one](http://sumtxt.wordpress.com/2011/07/02/visualizing-networks-with-ggplot2-in-r/)

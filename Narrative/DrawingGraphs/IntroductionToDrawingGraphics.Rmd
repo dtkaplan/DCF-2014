@@ -1,0 +1,40 @@
+---
+title: "Drawing Graphs"
+author: "Daniel Kaplan"
+date: "May 26, 2014"
+output: html_document
+---
+
+### Scatter plots
+
+Cities: latitude and longitude
+
+Dot size as 
+
+1. radius is population
+2. radius is sqrt(population)
+
+Transform:
+
+Use Cartesian and one or more of the map transforms.
+
+Overplotting
+
+1. Cities overlap.  Plot them with an alpha transparency to retain a sense of the density.
+
+### Line plots (or paths)
+
+Baby name.  Pull out the 10 most common names over the last hundred years.  Draw:
+
+* Line plot of number of kids over time for each of the names.  (That is, group by name.)
+
+### Bar plot
+
+Stacked and proportional bar plot of the 10 most common names over the years.
+
+Bar plot of name frequency arranged in descending order over all years.  
+
+Facet by the decade.
+### Polygons
+
+Countries (add as a layer over the cities)
