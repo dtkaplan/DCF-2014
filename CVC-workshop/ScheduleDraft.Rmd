@@ -1,0 +1,90 @@
+---
+title: "CVC Schedule DRAFT"
+output: html_document
+---
+
+## Monday
+
+1. RStudio and Rmd
+    i. ACTIVITY: Write and publish a description of some straightforward, data-oriented topic you'd like to present in class.  Keep it simple.  We'll do more complex things in the 2nd half of the workshop.
+#. Basic R
+    a. arithmetic and syntax
+    #. basic data types: numeric, character, factor
+    #. variable names versus strings
+    #. vectors, lists, dataframes
+    #. formulas
+    #. NA, NaN, and NULL
+#. Data Organization
+    a. Table/case/variable/row/column
+    #. Why Common excel formats violate this
+    #. Brief examination of table operations:
+        i. mosaic table-making operators and the formula notation
+        #. `mutate()`, `summarize()`, and `group_by()1
+#. Parts of graphics
+    a. Frame, Scale, Glyph, Guide, Facet
+        i. Use "named" graphics at first: scatterplot, barplot 
+    #. Information encoding in glyphs  
+#. Introducing `ggplot`
+    a. Dynamite plots
+        i. give a simple dataset that can be translated into a dynamite plot
+        #. show some alternatives
+    #. Other geoms with other data sets
+    #. `mPlot()` and `mBar()`
+#. Graph to data: 
+    a. Figure out what the glyph-ready data looks like
+#. Data to graph
+    i. Draw this graph
+    ii. Data that's not yet ready.  Identify what you need to do to get it in shape.
+#. The idea of a backstory
+    a. Show sort of data that underlies the dynamite plot
+    #. Something that involves a join.
+#. `summarize()`
+#. `mutate()` and common sorts of operations
+    #. ratios, rates
+    #. ???
+#. `filter()`
+#. `group_by()` these operations (using groupwise properties)
+
+
+#. Report on your mini-case (first 6 people or groups @ 5 minutes)
+
+## Tuesday
+
+1. Sources of data, and how to get it in to R
+    #. Files, URLs, CSV, Workspaces, 
+    #. From Excel
+#. Identifying sources of data from your mini-case study
+    #. Work in groups?  
+#. Join operation
+    
+#. Report on your mini-case (second 6 people or groups @ 5 minutes)
+
+## Wednesday 
+
+### Morning
+
+### Afternoon
+
+
+## Thursday
+
+## Friday 
+
+
+## Notes
+
+The first 2.5 days includes:
+
+* an introduction to using R for handling data and graphics
+* deconstructing graphs to the underlying data
+* constructing graphics from data
+* data wrangling: operations to get data in the right form for graphics
+
+The second 2.5 days includes:
+
+* quick review of the first half of workshop
+* one-on-one or small group (by discipline) development of case studies.
+* summarizing data with models
+* data cleaning
+* data web-scraping basics 
+* programming in R (as needed)

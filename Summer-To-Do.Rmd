@@ -2,8 +2,13 @@
 title: "Summer-To-Do"
 author: "Daniel Kaplan"
 date: "May 6, 2014"
-output: html_document
+output: pdf_document
 ---
+
+```{r include=FALSE}
+require(ggplot2)
+require(dplyr)
+```
 
 ## First day
 
@@ -16,6 +21,9 @@ output: html_document
     * Illustrate each step in the process
     * Maybe process this as a tutorial with embedded videos.  See [HTML5 video tag](http://www.w3schools.com/html/html5_video.asp)
 
+## Set up a stub Jekyll site for a course
+
+## Get direct reading of Google Spreadsheets to work
 
 ## Look at the `knitr` side-by-side display app.
 
@@ -75,6 +83,49 @@ See `CaseStudies/CherryBlossomRace/notes.Rmd`
 ## Federal Election Commission case study
 
 Hadley provides software for reading the file.  Do this (out of the project --- it's too large to include on github) and then extract a manageable subset.
+
+## Crime Data
+
+As in [Houston](http://www.houstontx.gov/police/cs/stats2.htm)
+
+Break-down crime by day-of-week and offense.  Quick start: `ggmap::crime`
+
+[FBI data](http://www.fbi.gov/about-us/cjis/ucr/ucr-program-data-collections#National)
+
+This one uses: 
+
+* `group_by()` see summarize()
+* `summarize()` counting events by offense, day, hour, month, etc.
+* `filter()` pulling out specific crimes
+* `mutate()` turning the number in a day into the percent for that day
+* `select()` getting rid of extraneous variables
+
+```{r eval=FALSE}
+f <- ggmap::crime
+ff <- select(f, hour, day, offense, month)
+gff <- group_by(ff, hour)
+hcount <- summarize(gff, n=n())
+ggplot(hcount, aes(x=hour,y=n)) + geom_line(color="blue",width=4)
+crimeCount <- group_by(ff,offense,hour) %.% tally()
+ggplot(crimeCount,aes(x=hour,y=n,fill=offense)) + geom_bar(stat='identity',position=position_stack(width=.9)) +facet_wrap(~day)
+# Do all three types: position_fill, position_dodge, position_stack
+ggplot(filter(propCrimeCount,offense%in%c('rape','murder')),
+       aes(x=hour,y=p,fill=offense)) + geom_bar(stat='identity',position=position_dodge(width=.9)) 
+# Now reduce each to the proportion
+propCrimeCount <- group_by(crimeCount,offense) %.% mutate(p=n/sum(n))
+ggplot(filter(propCrimeCount,offense%in%c('rape','murder')),
+       aes(x=hour,y=p,fill=offense)) + geom_bar(stat='identity',position=position_dodge(width=.9)) 
+```
+
+## European Temperature data
+
+For fields and mutation, wide, long, ....
+
+<http://www.datasciencecentral.com/group/resources/forum/topics/importing-100-years-of-climate-change-into-r>
+
+## US Health Data
+
+[Data site](http://www.tycho.pitt.edu/)  [NEJM article](http://www.nejm.org/doi/pdf/10.1056/NEJMms1215400)
 
 ## Apps for data operations
 
