@@ -1,0 +1,110 @@
+---
+title: "NCI Data"
+author: "Daniel Kaplan"
+date: "May 8, 2014"
+output: html_document
+---
+
+## Made4 package
+
+Seems not to be available for R > 3.0.  The raw data are available here <http://www.bioinf.ucd.ie/people/aedin/R/full_datasets/>
+
+Also, the data available here: <http://www.biomedcentral.com/1471-2105/4/59>
+
+or here <http://discover.nci.nih.gov/nature2000/natureintromain.jsp>.  The gene expression dataset looks good. 
+
+The R genetics task view: <http://cran.r-project.org/web/views/Genetics.html>
+
+<http://statweb.stanford.edu/~tibs/ElemStatLearn/>
+
+Data are in data.txt
+
+This is 6830 rows by 64 columns.  Each column is one of the cell lines.
+
+Numbers are log(red/green) intensities, ranging from -6 to 6
+
+```{r}
+NCI60 <- scan("data.txt")
+m1 <- matrix(NCI60, nrow=6830)
+```
+
+<pre>
+NCI microarray data (chap 14)
+
+Source and reference:
+
+http://genome-www.stanford.edu/nci60/
+
+
+NCI microarray data
+ 
+6830 genes
+missing values have been imputed via SVD
+60 cell lines, labels are below
+
+
+CNS          
+CNS        
+CNS        
+RENAL      
+BREAST    
+CNS       
+CNS       
+BREAST      
+NSCLC       
+NSCLC    
+RENAL         
+RENAL     
+RENAL       
+RENAL       
+RENAL       
+RENAL         
+RENAL        
+BREAST 
+NSCLC      
+RENAL       
+UNKNOWN    
+OVARIAN    
+MELANOMA
+PROSTATE   
+OVARIAN    
+OVARIAN  
+OVARIAN     
+OVARIAN    
+OVARIAN    
+PROSTATE   
+NSCLC        
+NSCLC        
+NSCLC     
+LEUKEMIA
+K562B-repro               
+K562A-repro               
+LEUKEMIA   
+LEUKEMIA  
+LEUKEMIA    
+LEUKEMIA  
+LEUKEMIA       
+COLON      
+COLON       
+COLON      
+COLON        
+COLON     
+COLON      
+COLON     
+MCF7A-repro               
+BREAST       
+MCF7D-repro               
+BREAST     
+NSCLC     
+NSCLC     
+NSCLC    
+MELANOMA 
+BREAST 
+BREAST      
+MELANOMA     
+MELANOMA
+MELANOMA  
+MELANOMA 
+MELANOMA  
+MELANOMA 
+</pre>
