@@ -1,0 +1,13 @@
+---
+title: "Dynamite Plots"
+author: "Daniel Kaplan"
+date: "May 28, 2014"
+output: html_document
+---
+
+* Example the the HELP data: <http://sas-and-r.blogspot.com/2011/11/example-915-bar-chart-with-error-bars.html>
+
+
+* [Vanderbilt critique](http://biostat.mc.vanderbilt.edu/wiki/pub/Main/TatsukiKoyama/Poster3.pdf)
+
+* [J Physio article](http://onlinelibrary.wiley.com/store/10.1113/jphysiol.2011.205062/asset/jphysiol.2011.205062.pdf?v=1&t=hvr1hr92&s=21bc84caefbdc8977cd03dd5f9ce08463f066bbe)

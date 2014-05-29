@@ -1,0 +1,141 @@
+---
+title: "Scraping Zip Codes"
+author: "Mengdie Wang"
+date: "May 29, 2014"
+output: html_document
+---
+
+```{r include=FALSE}
+require(XML)
+```
+
+## The Problem
+
+Create a database of zip codes by scraping the data at <www.brainyzip.com>
+```{r}
+zipstem <- "http://www.brainyzip.com/zipcodes/"
+```
+After the stem comes the first two digits, followed by the whole 5-digit zip code.  e.g. `zipcodes/10/10021`.  There is also demographic and economic data at URL's like `demographic/10/demographic_10021`.
+
+Given a zip code, e.g., `'55106'`
+
+Remember, some zip codes start with zero.  Here's a program to add the leading zeros.
+```{r}
+fixZipZeros <- function(zipChar) {
+  ndigits <- nchar(zipChar)
+  zips <- ifelse( ndigits==5, 
+                  zipChar,
+                  ifelse( ndigits==4, 
+                          paste('0',zipChar,sep=''),
+                          paste('00',zipChar,sep=''))
+                  )
+  return(zips)
+  }
+```
+
+Turn the 5 character zip code into a brainyzip URL:
+```{r}
+makeZipURL <- function(zipChar) {
+  URLs <- paste( "http://www.brainyzip.com/zipcodes/",
+                 substr(zipChar,1,2),
+                 "/",zipChar,".html", sep="")
+  return(URLs)
+}
+```
+ 
+Helper function.  Turn a two column dataframe into a list.
+```{r} 
+twoCol2List <- function(df){
+  L <- as.list(as.character(df[[2]]))
+  names(L) <- df[[1]]
+  return(L)
+  }
+```
+
+```
+Test cases:
+```{r}
+fixZipZeros('532')
+fixZipZeros('4321')
+fixZipZeros('55106')
+testURL <- makeZipURL(fixZipZeros('10001'))
+```
+
+Read data from the site.  Get a list of tables from the site.
+```{r}
+info <- readHTMLTable(testURL,stringsAsFactors=FALSE)
+```
+
+Tables of interest are 3 and 5:
+```{r}
+three <- twoCol2List(info[[3]])
+five <- twoCol2List(info[[5]])
+both <- c(three, five)
+```
+
+After conversion to a data frame, some of the zip codes have variables with blank names, others don't.  So kill the blanks, which have names like `X..1`.
+
+```{r}
+killBlanks <- function(zipList) {
+  inds <- grep('^X\\.',names(zipList))
+  return(zipList[-inds])
+}
+```
+
+
+```{r}
+readOneZip <- function(zip){
+  if (!is.character(zip)) stop("Give me a character string, not a number!")
+  URL <- makeZipURL(fixZipZeros(zip))
+  info <- try(readHTMLTable(URL, stringsAsFactors=FALSE), silent=TRUE)
+  if( class(info)=='try-error' || length(info) < 5 ) return(NULL)
+  three <- twoCol2List(info[[3]])
+  if (length(info) >= 5 ) {
+    five <- twoCol2List(info[[5]])
+    tmp <- c(three,five)
+  } else {
+    tmp=three
+  }
+  tmp$ZIP <- zip
+  return(tmp)
+  }
+```
+
+```{r}
+convertCommaToNumber <- function(v){
+  v <- as.numeric(sub(',','',as.character(v)))
+}
+
+// THIS IS NOT GENERAL.. FIX IT FIX IT FIX IT
+convertAreaToNumber <- function(v) {
+  v <- as.character(v)
+  str_match(v,'(\\d+)(\\D*)(\\d+)(\\D*)(\\d+)')[[6]]
+}
+```
+
+```{r}
+readManyZips <- function(zipVector) {
+  if (length(zipVector) < 1) stop("Give me some zips!")
+  res <- killBlanks(data.frame(readOneZip( zipVector[1] )))
+  for (k in 2:length(zipVector) ) {
+    thisZip <- killBlanks(data.frame(readOneZip( zipVector[k] )))
+    if (!is.null(thisZip))  res <- rbind(res,thisZip)
+  }
+  # Fix up columns
+  factorToCharacter <- c(61,6)
+  factorToNumber    <- c(2)
+  areaToNumber <- c(4,5)
+  commaToNumber <- c(15,16,17,20)
+  
+  return(res)
+  }
+```
+
+
+Test on several zip codes:
+```{r}
+n <- 500
+myzips <- read.csv("/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/ZipCodes/zip_codes_states.csv")
+z <- sample(myzips$zip_code, size=n, replace=FALSE )
+tmp <- readManyZips( as.character(z))
+```
