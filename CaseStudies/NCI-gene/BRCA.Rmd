@@ -1,0 +1,96 @@
+---
+title: "BRCA"
+author: "Daniel Kaplan"
+date: "May 29, 2014"
+output: html_document
+---
+
+```{r include=FALSE}
+require(dplyr)
+require(ggplot2)
+require(reshape2)
+require(ggthemes)
+```
+
+## Resources
+
+* [Volcano plot](http://www.r-bloggers.com/using-volcano-plots-in-r-to-visualize-microarray-and-rna-seq-results/?utm_source=feedburner&utm_medium=email&utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29)
+
+## BRCA
+
+But keep in mind that it's a mutation in BRCA that's associated with an increased risk of cancer.  These data are **not** comparing normal and mutation.
+
+Looking for the relationship between the BRCA gene and cancer.
+
+Paul Overvoorde provided a file from the NCI site.  [NEED MORE DETAILS].  It gives gene expression levels in 60 subjects.  
+
+```{r}
+fileName <- "/Users/kaplan/Downloads/filesandlinks/nci60_RNA__Agilent_mRNA_log2.txt/nci60_RNA__Agilent_mRNA_log2.txt"
+geneExpress <- read.table( fileName, head=TRUE )
+```
+
+```{r}
+geneNames <- as.character(geneExpress$Probe)
+```
+
+Find the ones with a name indicating BRC
+```{r}
+keepers <- filter(geneExpress, grepl("BRC", as.character(Probe)))
+nrow(keepers)
+```
+There are `r nrow(keepers)` such genes.
+
+Transform from a wide format (where each column is a patient) to a narrow format (where columns are cell-line, probe, measurement).
+```{r}
+express <- melt(keepers,variable='Cell.Line.Name',value.name='expression')
+allgenes <- melt(geneExpress,variable='Cell.Line.Name',value.name='expression' )
+```
+
+The information about the cell lines:
+
+* Note, the punctuation is different in cellLineData than in express, so merging  doesn't work.  Fix that by changing the punctuation.
+```{r}
+cellLineFile <- "/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/NCI-gene/nci60_cellline_metadata.csv"
+cellLineData <- read.csv( cellLineFile, head=TRUE)
+# There are different punctuations in the Cell.Line.Names for express and cellLineData.
+cellLineData <- mutate(cellLineData, Cell.Line.Name=sub(":",'.',Cell.Line.Name))
+both <- inner_join(express , cellLineData)
+bothall <- inner_join(allgenes, cellLineData)
+```
+
+Construct the table for BRCA1
+
+```{r}
+probeSet <- c('BRCA1','DTX3L',"BID","CALU","BFAR", "NONO")
+res <- list()
+for (probe in probeSet) {
+  filter(bothall, Probe==probe) %>% 
+  group_by(tissue.of.origin) %>% 
+  summarize(ave=mean(expression),stderr=sd(expression)/sqrt(n())) -> tmp
+  tmp$tissue.of.origin <- with(tmp,reorder(tissue.of.origin,-ave))
+  res[[probe]] <- tmp
+}
+```
+
+```{r}
+Fres <- data.frame( probe=character(length(probeSet)), F=NA, p=NA,
+                    stringsAsFactors=FALSE)
+for (probe in probeSet) {
+  P1 <- ggplot(data=res[[probe]], aes(x=tissue.of.origin,y=ave,color=tissue.of.origin)) 
+  P2 <- P1 + 
+    geom_bar(stat='identity',position='dodge',alpha=0.2,color='gray') +
+    geom_errorbar(aes(ymax=ave+2*stderr,ymin=ave-2*stderr),
+                  width=0.2,position=position_dodge(width=0.8))
+  raw <- filter(bothall, Probe==probe)
+  P3 <- P2 + geom_point(data=raw,
+                        position=position_jitter(width=0.15),
+                        aes(y=expression),alpha=.5)
+  print(P3 + ggtitle(probe) + xlab('Tissue type') +
+          ylab('Expression level (log2)') +
+          theme_tufte() + coord_flip())
+  tmp <- anova(lm(expression ~ tissue.of.origin, data=raw))
+  print(tmp)
+  Fres[which(probe == probeSet),] <- list(probe=probe, F=tmp[1,4], p=tmp[1,5] )
+  }
+Fres
+```
