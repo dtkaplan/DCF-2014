@@ -1,0 +1,118 @@
+Fetching and Reshaping the Data
+========================================================
+
+
+We can explore wind data using a [large database created by the US government](http://www.esrl.noaa.gov/psd/data/gridded/data.ncep.reanalysis.html).  Like most web sites for government data, it's unclear how you would go about finding the exact data you want from the web site.
+
+In this case, we want the wind direction and speeds for May 30, 2014. We want to look at a region including the continental US, Mexico, and Central America, and the ocean areas nearby.  This corresponds to latitudes 8° to 49° and longitudes –140° to –163°.
+
+Fortunately, the `R` package `RNCEP` provides a convenient interface for querying this large database.
+
+```{r results='hide', message=FALSE}
+require(RNCEP)
+```
+
+The function for gathering data is the rather generically named `NCEP.gather` function. This function is fairly complex and the only way to figure out how to use it is to peruse its help page:
+
+```{r eval=FALSE}
+?NCEP.gather
+```
+
+From this page we discover that to get surface-level wind data, the variables we want are `uwnd.sig995` and `vwnd.sig995`.  We also can specify the month and year, which appears to go from 1948 to just a couple days ago. The `u` gives the longitudinal component of the wind in meters per second, while the `v` gives the latitudinal component.
+
+To get the data we need to issue two separate queries to get each variable, and we need to download the data for an entire month since `NCEP.gather` does not allow you to specify whatday of the month.
+
+```{r uv_get, eval=FALSE}
+u <- NCEP.gather(variable = 'uwnd.sig995', level = 'surface',
+                   months.minmax = c(5, 5), years.minmax = c(2014, 2014),
+                   lat.southnorth = c(8, 49), lon.westeast = c(-140, -63))
+  
+v <- NCEP.gather(variable = 'vwnd.sig995', level = 'surface',
+                   months.minmax = c(5, 5), years.minmax = c(2014, 2014),
+                   lat.southnorth = c(8, 49), lon.westeast = c(-140, -63))
+```
+
+```{r uv_load, echo=FALSE}
+## Load u and v from saved file to allow quick knitting.
+## File was generated from uv-data-example-fetch.R
+
+load("data/uv-2014-5-30.Rda")
+```
+
+# Exploring and reshaping the data
+
+What format does the data come back in?
+
+```{r}
+str(u)
+head(u)
+```
+
+The first line tells us that `u` is a 3-dimensional matrix, with 18 rows, 32 columns, and 124 of the third dimension.  From the *Value* section of `?NCEP.gather`, we know that the row names are the latitudes, the column names are the longitudes, and the 3rd-dimension names are the date. How the heck are we going to get this in a format we can plot?  Fortunately, simply calling `melt` function from the `reshape2` function breaks this down into a rectangular format quite nicely:
+
+```{r u_to_long_raw}
+require(reshape2)
+
+umelt.raw <- melt(u)
+str(umelt.raw)
+head(umelt.raw)
+```
+
+Now, each row is one unique combination of latitude, longitude, and date, and the value at that combination. We can provide slightly nicer output by telling `melt` what we want to name our columns.  We now do this for both `u` and `v`.
+
+```{r uv_to_long}
+umelt <- melt(u, varnames = c("lat", "long", "datestring"), value.name = "u")
+str(umelt)
+head(umelt)
+
+vmelt <- melt(v, varnames = c("lat", "long", "datestring"), value.name = "v")
+str(vmelt)
+head(vmelt)
+```
+
+# Merging the data
+
+But, we're going to want to combine information about u and v in order to make our plot.  So, we want these values side by side.
+
+We expect that we have one in both datasets for each unique combination of latitude, longitude, date/time. But, we could be wrong, there may be some missing values.  If we for some reason only have "u", "v" is useless because we don't have enough information to draw the direction based on just one component alone.
+
+Therefore, we want to line up all values in both datasets where latitude, longitude, and date/time are equal, discarding any values where a combination exists in one data set but not another.  This is called an *inner join*, and we can simply use the function `inner_join` from the `dplyr` package to accomplish this. All we need to do is specify the variables that we are using to join using the `by =` argument:
+
+```{r inner_join}
+require(dplyr)
+
+uv <- inner_join(umelt, vmelt, by = c("lat", "long", "datestring"))
+str(uv)
+head(uv)
+```
+
+# Filtering the data
+
+We now have too many dates!  You can see all the unique values for a variable using the `unique` function:
+
+```{r unique}
+unique(uv$datestring)
+```
+
+Amongst these results, we can see the date and time we actually want: May 30 at noon is `"2014_05_30_12"`. We can trim this down to just this date and time using the `filter` command from `dplyr`. The first argument is the original data frame, and the second is the criteria we want to filter on; we want the only the values of the data where the variable `datestring` equals `"2014_05_30_12"`.
+
+```{r filter}
+uvtrim <- filter(uv, datestring %in% "2014_05_30_12")
+
+unique(uvtrim$datestring)
+```
+
+Now that is the only unique value in our dataset.  Success!
+
+# Correcting the longitude format
+
+This data is almost `ggplot2`-ready, but notice the format of the longitudes.  `ggplot2` wants the longitudes to go between –180° and 180°, whereas this data gives the negative longitudes in a positive format.  So, we need to convert all the longitudes that are above 180° to the negative format by subtracting 360°.
+
+All the longitudes are negative in the Western hemisphere, so in this case we can just subtract from the lot:
+
+```{r sub_360}
+uvtrim$long <- uvtrim$long - 360
+```
+
+(If we had positive longitudes, we would need to alter this command to only subtract 180 from the longitudes that are over 180.)
+
