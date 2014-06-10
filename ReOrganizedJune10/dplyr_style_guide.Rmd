@@ -1,0 +1,84 @@
+---
+title: "DCF Style Guide"
+output: html_document
+---
+
+
+```{r include=FALSE}
+require(dplyr)
+require(mosaic)
+```
+
+
+## Narrative
+
+* Call it a **datatable**: one word to give it a technical meaning, restricted to a rigid format.
+
+* "Shaping" or "wrangling" or "processing" data????
+
+* "Graph" (as in graph theory) or "Network"?????
+
+
+## Printing out data
+
+### Storage
+
+Store data in individual `.Rda` files.
+
+### Class
+
+Create datatables that are class `dplyr::tbl`. ????
+
+Example: data from a package:
+```{r}
+foo <- src_df("mosaic")
+f <- tbl(foo,"Galton")
+f
+```
+
+Style for doing some basic things with `dplyr`
+
+## Watch Out!
+
+`plyr` also has a `summarize()` function.  
+
+`plyr` has `join()`. For the `dplyr` versions, it must be `inner_join()`, `left_join()`, `semi_join()`, `anti_join()`.
+
+`mosaic` and `dplyr` both have `tally()`.
+
+## Counting
+
+**DECIDE** whether to use `tally()`
+
+```{r}
+group_by(Galton, sex) %.% dplyr::tally( )
+```
+
+Or `summarize()` and `n()` so that names can be used and other quantities calculated at the same time?
+```{r}
+group_by(Galton, sex) %.% 
+  dplyr::summarize( count=n(),hgt=mean(height)/median(height) )
+```
+
+
+## Rename Variables
+
+### A Single variable
+
+Use `select()` with `new=old`
+```{r}
+Galton <- select(Galton, child=height)
+head(Galton)
+```
+
+### Change prefixes on a bunch of variables
+
+```{r}
+head(select(iris, pl = starts_with("Petal")))
+```
+
+## Joining
+
+When joining, use only the needed columns: specify them with `select()`.  That way, you can rename them as needed for matching variables in the join.
+
+
