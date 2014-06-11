@@ -5,7 +5,81 @@ date: "May 5, 2014"
 output: html_document
 ---
 
-## Parsing Graphics
+## Student Work
+
+As a start, let's divide student work into three categories:
+
+1. Drill
+    Questions whose answer can be found by simple examination or a trivial computation: one to three lines.  Fixed choice falls under this category.  Should **not** require an Rmd template.
+2. Exercises
+    Problems whose solution requires several lines of programming or an narrative explanation that is several paragraphs.  Should **not** require an Rmd template.
+3. Activities
+    Problems of an extended nature requiring an Rmd template.
+    
+## Mechanics of writing questions and problems
+
+Each exercise or activity should be placed in its own Rmd file.  There might be several related drill problems in an Rmd file.
+
+For silly reasons, the file **must be named** in this format: `2014-06-10-[unique descriptive name]`.  The unique descriptive name need only be unique for the attached date.  The date can be anything you want, e.g. `1918-11-11-`, so long as its in the right format.
+
+There will be `yaml` front matter at the top of the Rmd file.  It looks like this:
+
+    ---
+    layout: exercise  [or drill or activity]
+    categories:
+    - join
+    - inner_join
+    - caseMedicare
+    - interpretation
+    - graphics
+    tags: 
+    - Erik Anderson [the author]
+    - data [filenames]
+    - and so on
+    excerpt: A short descriptive sentence (not necessarily a title)
+    title: Joining Medicare 
+    ---
+
+We need to construct a library of categories that reflect the content and structure of the course.  For now, just try what comes to mind.  We'll sort it out after we have a couple of dozen files.
+
+Put answers inside `<aside> </aside>` tags.  
+
+## Drill Examples
+
+* [Show a graph.] What sort of geom is ...?
+* [Show a graph.] What are the variables involved in the frame?
+* [Show a graph.] How many guides are there?
+* How many cases are there in the inner_join of [give package name of table A] and [give package name of table B]?
+* How many variables are plotted.
+
+## Exercise Examples
+
+* Find the number of `French` cases in [data table A]?
+* Find the number of cases that are both `English` and `antique` in [data table B]?
+* Cluster the data in [data table C] and make a graph showing the clusters.
+* Using `mutate()`, construct [some new variable] and [give some report of it, e.g. mean, graph, ... ]
+
+## Activity Examples
+
+Early in the course, these might be straightforward, with an Rmd template showing how to access data, make various sorts of plots, etc.
+
+Later in the course, the activities should involve some or all of 
+
+* data transformations (e.g. group, summarize, filter, join, melt)
+* making graphics
+* choosing graphics
+
+Imagine an activity to take 15 minutes to 1 hour.
+
+They should be drawn from case studies.  
+
+
+
+## Miscellaneous Examples
+
+This is not complete.
+
+### Parsing Graphics
 
 <http://www.nytimes.com/interactive/2007/12/15/us/politics/DEBATE.html?_r=0>
 
@@ -21,7 +95,7 @@ Trajectory infographic: explain what the glyphs are and what data they encode.
 * <http://www.flickr.com/photos/shanair/4288246965/in/set-72157622648454054/>
 * <http://richworks.in/wp-content/uploads/2010/04/431.jpg>
 
-## Making Graphics
+### Making Graphics
 
 Create a scatter plot showing the location of the world's largest cities.  Code the population glyph with a radius that's the square-root of the population.  Use colors to indicate countries or deciles of the population, or regions.
 
@@ -33,7 +107,7 @@ Find the mean of the latitude and longitude for each country.  Plot these out wi
 
 `CaseStudies/Cities/ListOfCities.RData`
 
-## Join
+### Join
 
 Find the population of each country.  Join this with the population in cities $> 1,000,000$.  Make a map showing the "large urban population fraction" in each country.
 

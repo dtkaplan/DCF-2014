@@ -1,0 +1,13 @@
+---
+title: "Excel Data"
+author: "Daniel Kaplan"
+date: "May 28, 2014"
+output: html_document
+---
+
+* 96-well template, one plate over another: <http://bergelson.uchicago.edu/resources-1/protocols-1/96wellsheet.xls/view>
+
+* images of some spreadsheets <http://pcrdataanalysis.sabiosciences.com/pathwayactivity/arrayanalysis.php>
+
+* actual filled in spreadsheet, but I don't know what it is: <https://www.caymanchem.com/app/template/analysis,FPIA96.vm;jsessionid=8FCE9DB272F17F46C10BB93E1559EB61> [spreadsheet here](https://www.caymanchem.com/app/screen/Static/restrict/public/path/analysis%2CFPIA96Triple.xls/filename/FPIA96Triple.xls;jsessionid=BD1B58A41D576CE0C75291B94095DE74)
+

@@ -11,3 +11,63 @@ output: html_document
 * [Vanderbilt critique](http://biostat.mc.vanderbilt.edu/wiki/pub/Main/TatsukiKoyama/Poster3.pdf)
 
 * [J Physio article](http://onlinelibrary.wiley.com/store/10.1113/jphysiol.2011.205062/asset/jphysiol.2011.205062.pdf?v=1&t=hvr1hr92&s=21bc84caefbdc8977cd03dd5f9ce08463f066bbe)
+
+## Some possibilities
+
+```{r include=FALSE}
+require(ggplot2)
+require(dplyr)
+```
+
+### Raw data
+
+```{r}
+raw <- mosaic::CPS85
+```
+
+Translate into groupwise means and standard deviations
+
+```{r}
+group_by(raw,sector) %>% summarize(mn=mean(wage),sderr=sd(wage)/sqrt(n())) -> means
+```
+
+```{r}
+plt <- ggplot(data=means, aes(x=sector,y=mn))
+plt + geom_blank()
+plt2 <- plt + geom_bar(data=means,stat="identity",fill="gray")
+plt2 + geom_errorbar(aes(x=sector,ymax=mn+2*sderr,ymin=mn-2*sderr))
+```
+
+That's kind of rough.  Make the error bars narrower
+```{r}
+plt3 <- plt2 + geom_errorbar(aes(x=sector,ymax=mn+2*sderr,ymin=mn-2*sderr,width=0.2),size=2)
+plt3 + geom_jitter(data=raw,
+                   position=position_jitter(width=0.15),
+                   aes(y=wage),color="blue",alpha=.5)+ylim(0,30)
+```
+
+Maybe include another variable:
+```{r}
+plt3 + geom_jitter(data=raw,
+                   position=position_jitter(width=0.15),
+                   aes(y=wage,color=sex),alpha=.5)+ylim(0,30)
+```
+
+Do the sexes differ within sectors?
+```{r}
+group_by(raw,sector,sex) %>% summarize(mn=mean(wage),sderr=sd(wage)/sqrt(n())) -> means2
+P1 <- ggplot(data=means2, aes(x=sector,y=mn,fill=sex)) 
+P1 + geom_blank()
+P2 <- P1 + geom_bar(stat='identity',position='dodge',alpha=0.2)
+P2
+P2 + geom_errorbar(aes(ymax=mn+2*sderr,ymin=mn-2*sderr),width=0.2,position='dodge')
+```
+
+The error bars aren't far enough apart.
+```{r}
+P3 <- P2 + geom_errorbar(aes(ymax=mn+2*sderr,ymin=mn-2*sderr),width=0.2,position=position_dodge(width=0.8))
+P3
+P3 + geom_point(data=raw,
+                   position=position_jitterdodge(jitter.width=0.15,dodge.width=.9),
+                   aes(y=wage,color=sex),alpha=.5)+ylim(0,30)
+```

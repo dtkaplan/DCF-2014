@@ -1,0 +1,140 @@
+---
+title: "Deconstructing Data Graphics"
+author: "Daniel Kaplan"
+date: "June 2, 2014"
+output: html_document
+---
+
+In creating a data graphic, one of the most important decisions is the choice of graphical form. To state the obvious: a given choice is better or worst depending on the extent to which it accomplishes your purpose in presenting the data.  In considering and exploring the merits of various choices, it helps to have a way to describe the possibilities.
+
+You may have made graphics using a spreadsheet program such as Google Drive or Excel.  If so, you are familiar with the menus that those programs provide.  If not, you'll find the menus straightforward --- they were designed to be used without much training.
+
+Screen shot of named choices from Excel.
+
+Detail of Bar chart and line chart
+
+stacked, grouped, and 100% choices.
+rectangles, bars, cones, pyramids, ...
+
+Let's describe things in terms of those choices.  Glyph: shape, location, position relative to related glyphs.  Many other possible features of glyphs: color, orientation, length, width, ... and then there are the glyphs that are quite complicated: box and whisker, map, ...
+
+Frame, scale, and guide.
+
+### Deconstructing Graphics
+
+Rather than give a name (e.g., "stacked bar plot") to a complete graphic, consider taking a graphic apart: what the parts are, how different kinds of parts relate to one another, how the attributes of individual parts correspond to the data you are presenting ... summary?  model?  stat?
+
+
+TOO META ...
+Because the menus are familiar and require little training, they are a good starting point for discussing the choices in data graphics.  But they are only a starting point.  To move further, to construct graphics that are more precisely tuned to you data and your purposes, you'll need to develop some additional concepts.   On the other hand, you often need to do more than just starting. Just as you would not  As your graphics become more sophisticated --- not neces the premise of these notes is that training helps.  Training can help you make more complicated choices and identify the choices that are most precisely suited to your purposes.  
+
+
+
+
+
+None of these are explicitly about the purpose of the graphic.
+
+
+
+
+#. Deconstructing Graphics
+#. Constructing Graphics
+    * Glyphs and their properties
+    * Aesthetic: data to glyph property
+    * Layers and Annotations
+    * Stats
+    * Facets
+    
+
+
+Aesthetic
+
+
+Data graphics versus info graphics
+
+## Data Exploration
+
+To look for patterns in data
+To present patterns or describe the evidence for them
+To decorate
+
+Graphics correspond to our highest-bandwidth sense.  People are really good at interpreting images.
+
+Need to be careful about distracting:
+
+* eye tracking in geology
+* eye tracking in physics (Eric Mazur) <http://blog.sciencegeekgirl.com/2008/07/26/the-make-believe-world-of-real-world-physics-eric-mazur/> page 89 of 155 from MazurTalk_1396.pdf
+
+
+
+Will deconstruct in order to construct
+
+## Taxonomy
+
+Excel Graphics choices
+
+
+Graphics are often presented as a whole
+
+* scatterplot
+* histogram
+* time series
+* bar plot and the dynamite plot
+* map 
+* network (NYC subway map)
+
+## Problems with this Approach
+
+* Many cases: ink density is a problem
+* Many variables: but only two dimensions on paper
+* Models beyond means and lines: principle components, machine learning, 
+
+## Components of Graphics
+
+DF suggestions
+
+Interleaf deconstruction and construction.
+
+Start with
+Glyph Frame, 
+Construction:
+* program for making scatter plots.
+
+Stat: collective property
+    * error bars
+    * regression line and confidence band
+
+* Line plot
+* Volume plot: stack or proportion.  Not so different than a line, but "position" enters into things.
+
+
+Scale Guide
+
+Facet
+
+Much later: Transform
+
+
+* Data
+* Frame
+* Scale
+* Glyph or Geom, in layers
+* Stat (reflecting collective properties)
+    * main tendency
+    * uncertainty
+* Guide
+    * axes
+    * legends
+    * map boundaries: Snow's map of London, NYC subway map
+* Facet
+
+* Transforms
+    * logs
+    * map projections
+    * obscure: cartesian to polar
+     
+Aesthetic --- mapping from data to graphical features.
+
+GUEST LECTURE FROM Brooke Lea: What his eye-tracking studies show.
+
+

@@ -1,0 +1,473 @@
+---
+title: "Components of Graphics"
+author: "Daniel Kaplan"
+date: "May 14, 2014"
+output: html_document
+---
+
+```{r include=FALSE}
+require(DCFdevel)
+require(dplyr)
+require(ggplot2)
+require(knitr)
+opts_chunk$set( tidy=FALSE,out.width='30%',align='center',
+                warning=FALSE)
+```
+
+```{r echo=FALSE}
+votes <- read.csv("/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/MinneapolisMayor2013/MinneapolisMayor-2013.csv")
+```
+
+## Taking Graphics apart
+
+Before you start constructing graphics from data, it's helpful to take some apart.  Giving names to common components of graphics --- frame, scale, glyph, guide, etc. --- let's you read graphics with a better understanding and construct graphics in ways that are better suited to your data and your purposes.
+
+OUTLINE:  Figures with several different types of graphics identifying the visible parts: glyph, guide, facet.  Schematically show the parts behind the scenes: frame, scale.
+
+Have different types of frames: quantitative crossed with quantitative, quant. crossed with categorical, categorical crossed with categorical.
+
+Scales takes things from the data's categories or numbers to aspects of the graph: position, color, size, orientation, etc.
+
+Diagram quantitites on a few different glyphs: scatterplot symbols, bars, lines, paths (path versus line is a technical distinction).
+
+Show a plot with several layers, e.g. the NYTimes weather forecast, a weather map with wind velocities and fronts.
+
+Distinction between a glyph and a "stat" --- the glyph is about individual cases, the stat is about cases collectively.  You could think of a stat as a very complicated glyph whose features are related to the data's collective properties.
+
+Show some stats: error bars, regression lines and smoothers, distributions.
+
+
+
+
+
+
+## REDO THIS:
+
+Plotting single cases.  Introduce frame and glyph.  
+
+* bar plots on simple data
+* scatter plots: do stacking, dodging, ...
+
+Bring in the grammar after the example.
+
+Then move into summaries calculations which would let you plot summaries, e.g. the mean of all the points in a group.
+
+## The Grammar of Graphics
+
+When you hear the word "grammar," you likely think of the rules you studied when learning English or another natural language.  It may be surprising (and maybe disappointing) that there are grammars of graphics.  These graphics impose a  provide a way to think about how meaningful new graphics can be created, just as natural language grammars help in forming new meaningful sentences.
+
+Since everyone reading this knows something about English grammar, it's sensible to explain how there could be a grammar of graphics by using English to introduce the concepts.  
+
+As you know, in English there are different parts of speech: nouns, verbs, adjectives, adverbs, noun phrases, etc.  Part of English grammar explains how parts of speech
+can be put together in a meaningful way. For instance, here is a grammatically correct sentence:
+
+> "Four horses pulled the king's carriage."
+
+And here is an incorrect sentence with the same words:
+
+> "Carriage's king horses for the pulled."
+
+Each of the individual words is correct, but they way they are put together is not.
+
+Some of the rules of grammar displayed in "Four horses pulled the king's carriage":
+
+* Sentence structure: a subject and a verb.  Some verbs --- the transitive verbs --- also require an object.  Here: subject ... transitive verb ... object
+* Subject: a noun or noun phrase. Here: "Four horses": adjective ... noun
+* Object: a noun or noun phrase. Here: "the king's carriage"
+
+Dividing the sentence up by the parts of speech makes it easy to think about new sentences, which might have more or less detail:
+
+> "Horses pulled the carriage."
+
+> "Four weary old horses reluctantly dragged the worn-out carriage."
+
+The presence or absence of modifiers like "weary" changes the meaning and expressiveness of the sentence.  You can even think about alternative stories altogether:
+
+> "An engine pushes the boat."
+
+Subject | Verb | Object
+--------|------|---------
+Four horses | pulled | the king's carriage
+Horses | pulled | the carriage
+The wind | pushed | the boat
+
+Pick one subject, one verb, and one object and you will have a meaningful sentence although it may not be factually correct or tell the story that you want to tell.  
+
+A grammar of graphics has been proposed [Wilkinson, L. (2005),The Grammar of Graphics(2nd ed.). Statistics and Computing, New York: Springer] and extended by Wickham [Wickham, [A layered grammar of graphics](http://mimno.infosci.cornell.edu/info3300/readings/layered-grammar.pdf)] that enables graphics to be described in layers so they can be built incrementally.  The software you will be using to construct graphics is called `ggplot2`, but before showing how to use that software, you should learn some of the "parts of speech" of graphics.  Here are five of them.
+
+1. Data : cases and variables
+#. Frame : a set of data variables defining a space
+#. Layer: glyphs drawn to represent data cases
+#. Scales: how each variable appears visually 
+#. Guides: presentation of scales and other orienting information to the user 
+
+### Data
+
+You already know what you need to know about this: what's a variable and what's a case.  That there are quantitative and categorical variables, etc.
+
+### Frame
+
+Graphics are drawn on paper or a computer screen.  The graphical frame is the pair of variables that define the space and how they are arranged.
+
+You are familiar with Cartesian coordinates.  Think of a frame as an (x,y) coordinate system where the two axes stand for different variables.  Making a frame is a matter of specifying the variables you want to define the frame.  The `ggplot()` and `aes()` functions do this.
+
+It's easy to misinterpret the name `ggplot()`.  The use of "plot" suggests that some sort of data is being plotted.  In fact, `ggplot()` doesn't plot anything.  It just defines the frame in which other graphical layers will be displayed.
+
+The name of the `aes()` function can also be confusing. It stands for "aesthetic."  A contemporary dictionary definition of aesthetic (which can also be spelled "esthetic") is 
+> aesthetic: concerned with beauty or the appreciation of beauty. --- *New Oxford American Dictionary*
+
+However, the use of "aesthetic" in the grammar of graphics refers to an earlier meaning, not widely used today in English:
+> aesthetic: to perceive by the senses or by the mind --- [Online Etymology Dictionary](http://www.etymonline.com/index.php?term=aesthetic)
+
+In making a data graphic, you present variables in a form that can be perceived by the eyes and interpreted by the mind.  The `aes()` function is used to set the specific variables which correspond to graphical features --- position, color, shape, etc.  One common use of `aes()` is to set the variables that will correspond to the horizontal and vertical axes.  Here are two examples, from two very different datasets:
+
+
+
+```{r}
+frame1 <- ggplot( data=smallNHANES, aes(x=weight,y=height) )
+frame2 <- ggplot( data=WorldCities, aes(y=Latitude,x=Longitude) )
+```
+These frames are not themselves graphics, but set the stage for adding graphics later on. Creating the frame organizes the space.  The blank frames --- frames with no data --- appear in Figure 1.  There's usually no point in drawing a frame with no graphics. By itself, `ggplot()` does not draw anything.
+
+```{r results='hold',fig.cap='Figure 2',echo=FALSE}
+frame1 + geom_blank()  # to draw the empty frame
+frame2 + geom_blank()
+```
+##### Frames with no graphical content
+
+### Scales and Guides
+
+Two other grammatical features appear in the frames drawn above, although they are so familiar that you may not have noticed them.
+
+A **scale** describes how a value will be displayed graphically.  A **guide** is an indication to a human reader of how to interpret the scale.  Thus, the axis tick marks are guides.  The scale translates from the data value to the position in the frame, or, as you'll see, to other graphical properties.
+
+### Layers
+
+The data graphics themselves are in one or more **layers** added to the frame. In the `ggplot()` system, layers are often called "geoms," reflecting the way they translate data to geometry.  
+
+To add a layer to a plot, use the appropriate geom for the type of graphical depiction you want.  For example, the familiar scatterplot is `geom_point()`: each case will be represented by a point.
+
+```{r fig.show='hold'}
+frame1 + geom_point()
+frame2 + geom_point()
+```
+
+Frame plus layer gives graphic.
+
+It looks like `geom_point()` does not need any inputs.  In fact, the value of the data points and the definition of how to translate data values into graphical attributes has been defined in the frame.  That information is transmitted to `geom_point()` by the '+' symbol.
+
+For categorical variables, there is similarly a scale that relates how the category is translated into a graphical attribution.  For instance:
+
+
+The frame was set so that the value of the height variable determines vertical position, while sex determines horizontal position.
+
+
+
+
+
+### Geoms and Glyphs
+
+A glyph is a graphical depiction of information.  Egyptian hieroglyphs are famous; they are small drawings that correspond to words or phrases such as this: <img src='http://bits.wikimedia.org/static-1.24wmf5/extensions/wikihiero/img/hiero_G27.png' width='3%'> 
+
+ 
+The dot is a very simple glyph. You can often add more features to a glyph to encode more variables.  Some of the glyph features often used in scatterplots, in addition to (x,y) position, are shape, size, and color.  Assigning a variable to an attribute causes that variable to indicate the value of the variable.  Here, the shape of the glyphs is set to `sex`.  This creates a scale (females are dots, males are triangles) and displays a guide for the scale.
+
+```{r}
+frame1 + geom_point(aes(shape=sex))
+```
+
+Any or all of the glyph attributes can be set.  For instance
+
+```{r fig.cap="Figure 5"}
+frame1 + geom_point(aes(shape=sex,size=age,color=smoker)) 
+```
+##### Figure 5. Setting many glyph attributes
+
+Figure 5 is a poor graph.  It is grammatical, but doesn't convey information in a useful way.  See [Link to Visual Perception Section](visualperception) for some suggestions about making effective graphs.
+
+A point is one type of glyph.  There are many others. (Here is a [list](http://docs.ggplot2.org/current/).  One widely used glyp is a set of points connected by lines: `geom_line()`.
+
+FAs an example, take the `babyNamesYearly` dataset. This gives the number of births of each sex in each year in the US, along with the number of unique names assigned to those babies.
+```{r}
+head(babyNamesYearly)
+```
+
+Suppose you want to track the number of births over time. Clearly, the spatial frame should be number of births versus year.  You can use color to distinguish between births of girls and births of boys. 
+```{r}
+babyFrame <- ggplot( data=babyNamesYearly, 
+                     aes(x=year,y=nbirths,color=sex))
+```
+Plotting a point for each sex for each year makes a very busy plot.  (Try it by adding a `geom_point()` layer!) 
+
+It's much less busy to draw in a line connecting the values for adjacent years.
+```{r}
+babyFrame + geom_line()
+```
+There are other attributes that the line can have: color, linetype, size.  For instance, the line thickness (`size`) can be set to indicate the number of unique names each year.
+
+```{r}
+babyFrame + geom_line(aes(size=nnames))
+```
+
+
+
+### Layers
+
+```{r fig.show='hold'}
+frame3 <- ggplot( data=Galton, aes(x=sex, y=height) )
+frame3 + geom_jitter()
+frame3 + geom_boxplot()
+```
+The `jitter` geom spreads out the points to avoid overlaps.  The `boxplot` geom draws the classical box-and-whiskers plot.
+
+Layers made in the same frame can be put on top of one another:
+```{r}
+frame3 + geom_boxplot() + geom_jitter()
+```
+
+
+#### Exercises:
+
+* Graph the `babyNamesYearly` with number of unique names on the x-axis and using color and line thickness to indicate the number of births.
+
+* Draw this plot from the `babyNamesYearly` data.  Hints: Look at the four guides in the plot to determine what variables are being used and how.  Use jittering.
+```{r echo=FALSE}
+baby2 <- ggplot( data=babyNamesYearly, aes(x=year,y=sex) )
+baby2 + geom_jitter(aes(size=nnames,color=nbirths))
+```
+
+* Graph the WorldCities data, using the population to set the size.  Now do it with the size as the square-root of population.  Now size as color.  Now size as log(color).
+
+* Describe the difference between the categorical axis defined by `interact(gender, party)` and `interact(party, gender)` in the `registeredVoters` dataset.
+
+
+## Frames with Categorical Variables
+
+The previous examples have used categorical variables to set color, size, etc.  Categorical variables can also be used in the frame, defining the space in which glyphs are drawn.
+
+The classical situation (NEED SOME DATA WITH MEANS OF DIFFERENT GROUPS).  Do a bar plot, an error bar plot, ...
+
+The `registeredVoters` dataset has information about 10,000 voters in Wake county, North Carolina, USA.  
+```{r}
+voteFrame <- ggplot( registeredVoters, aes(x=gender, y=Age) )
+```
+
+The x-coordinate is marked not as a number, but as the different categories for gender.  Here's a plot with a dot for each voter.  The geom "jitter" is much like "point", but jitter randomly displaces each point so that the points overlap less.
+
+```{r}
+voteFrame + geom_jitter()
+```
+
+Of course, you could use color or size or shape to display another variable, like this:
+```{r}
+voteFrame + geom_jitter( aes(color=party) )
+```
+
+Another possibility is to define the frame so that both gender and party are shown on the x-axis:
+```{r}
+voteFrame2 <- ggplot( registeredVoters, 
+                      aes(x=interaction(gender,party),y=Age))
+```
+Now, instead of the three gender categories, there are twelve: gender F, M, and U for each of the party levels DEM, LIB (libertarian), REP, and UNA (unaffiliated).  Well ... actually eleven groups --- there are no female libertarians!
+```{r }
+voteFrame2 + geom_jitter()
+```
+
+Can even make a frame where both the axes are categorical:
+```{r}
+g <- ggplot(registeredVoters, aes(x=gender,y=race))
+g + geom_jitter()
+```
+
+## SECTION ON SUMMARIZING.  Make new cases
+
+Make new cases so that we can use other geoms.
+
+
+
+## IN THE SECTION ON COUNTING
+
+```{r }
+voteFrame2 + geom_jitter()
+```
+
+
+Other geoms might be more informative about the distribution of ages in each group, e.g.
+```{r results='hold'}
+voteFrame2 + geom_boxplot()
+voteFrame2 + geom_violin()
+```
+
+NEED A SMALL DATASET WITH heights and standard errors for bars.
+
+
+### NEXT: Counting
+
+and the bar
+
+### Filtering
+
+Take out the U from the registeredVoters dataset
+
+The next line counts the number of voters by sex.
+```{r}
+counts <- group_by(registeredVoters, gender, party) %.% tally()
+```
+Although the computer command might look like gibberish at this point, the resulting count is itself pretty straightforward:
+```{r}
+party
+```
+
+Need something with quantitative versus categorical, e.g. age vs sex
+
+
+Suppose we want to display the numbers graphically.  Here's a frame:
+```{r}
+showVoters <- ggplot( data=party, aes(x=gender))
+```
+
+
+Frames can use categorical variables to define the space.  For instance:
+```{r echo=1}
+frame3 <- ggplot( data=smallNHANES, aes(x=sex,y=height) )
+frame3 + geom_blank()
+```
+
+```{r}
+frame3 + geom_point()
+```
+
+
+## What you should know
+
+* What is a *frame* and how variables are used to define it.
+* Some important geoms: `geom_point()`, `geom_jitter()`, `geom_line()`, ...
+* The most common aesthetics: x-position, y-position, size, color, shape
+* How to construct a layer and add it to a plot.
+
+* The axes with tick marks and labels for the horizontal and vertical variable.
+* The "legend" showing which shape corresponds to which sex.
+
+The most commonly used attributes in a `geom_point` are these four:
+
+1. x position
+2. y position
+3. shape
+4. color
+
+
+
+
+
+
+
+
+Cartesian spaces.
+
+Ordinal spaces.
+
+BAR PLOT in cartesian and radial coordinates.  A dot plot in spiral coordinates.  
+
+Illustration of how we can be oblivious to elements of a graphic depending on how they are presented.  [Cross-written letter from Charles Darwin](http://blog.paperblanks.com/2013/03/cross-writing/)
+
+![Darwin cross-written letter](../Images/Darwin-Cross-writing.jpg)
+
+Once you know that "Amy" is a noun, you can think about what other noun phrases might be more appropriate.  The grammar allows you to avoid limiting yourself.  For instance, a noun doesn't have to be a person: "The dispenser gave Bill a pen."
+
+Usually when describing data-driven graphics [[is that a good name, **data-driven**]], people resort to naming the objects --- scatter plot, histogram, bar plot, pie chart, maps, etc. --- and describing the quantities or categories to be rendered: make a scatter plot of weight versus age.
+
+As you'll see, it can help to have more general categories.  The categories and components to be used here may seem at first to be abstract and counter-intuitive.  For instance, scatterplots, bar plots, pie charts and maps are all different forms of the same kind of entity, even though they look very different.
+
+### Frames and Glyphs
+
+Maybe it's old fashioned, but start with a piece of paper.  You're going to draw a data-driven graphic, and you have the data at hand in the form of a data table, for instance:
+
+Age | Height | Sex | Sport 
+----|--------|-----|-----
+34  | 180    |  M  | Basketball
+
+and so on.
+
+You might have any of several motivations for making the graph.  Suppose the goal of the graph is to demonstrate the relationship between height, weight, and sport played.
+
+Before you do any drawing, you have to decide what position on the paper means.  This is called the **frame** of the graphic.  It's likely that you've seen a particular kind of frame, the *cartesian coordinate system*.  In this frame, horizontal position means one thing, vertical position another.  In mathematics a Cartesian frame is often drawn like this:
+
+![Cartesian Grid](http://etc.usf.edu/clipart/49300/49307/49307_graph_1010i_md.gif) 
+
+or, without the grid, like this:
+
+![No grid](http://etc.usf.edu/clipart/48600/48655/48655_graph_1010_md.gif)
+
+An example of a frame for data-driven graphics:
+
+<img src='http://cms.pewresearch.org/pewinternet/files/2013/12/PI_14.02.06_BroadbandUse-copy.png' width='40%' >
+
+Each axis has a meaning in terms of the data.  In the above graph, position along the horizontal axis represents year, while position along the vertical axis represents the fraction of households.
+
+Such Cartesian coordinates are very common in graphics, but there are others.  In the following graphic, position on the vertical axis represents the concentration of enzyme: a quantity.  Position along the horizontal axis represents a quality or category: a particular gene.
+
+<img src='../Images/AndyZ-4.png' width='250px' >
+
+Of course, a gene is itself not a position on a paper.  Position is being used metaphorically to stand for gene. The frame establishes how position corresponds to gene.
+
+Sometimes, the frame is based on physical position. For instance, in this graphic the position on the paper corresponds to a position on the surface of the Earth.
+
+<img src='http://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/WOA09_sea-surf_SAL_AYool.png/800px-WOA09_sea-surf_SAL_AYool.png' width='250px' >
+
+Data tables themselves provide a frame.  The vertical position tells which variable, the horizontal position tells which case.  We don't usually think of tables as graphics, but the distinction is one of type-setting, not content.
+
+#### Exercises
+
+* Describe the frame for each of these graphics ...
+
+* One of these graphics has a value of a categorical variable represented by *vertical* position.  Which one?
+
+* 
+
+#### Callout
+
+Radial coordinates.  Still two values give position.  The pie chart.
+
+Map projections.
+
+#### CALLOUT
+
+Three-dimensional frames.  How three variables can be represented on a piece of paper.
+
+
+### Glyphs
+
+
+
+### Three basic kinds of graphics
+
+Data-driven graphics relate data to graphical elements.  That's obvious.  A useful basic categorization of "kinds of graphics," will consider the structure of data and how that structure relates to the structure of the graphics, in particular to glyphs and frames.
+
+Remember that data, as the word is used here, consists of cases and variables.  The characterization of graphics in terms of data must identify the roles played by cases and variables.  It might not be what you are expecting.
+
+
+
+#### One case per glyph
+
+#### Two (or more) cases per glyphs
+
+#### Fields and the collective features of data 
+
+[[[It's not called a glyph here]]] but a field.
+
+
+* A histogram is a kind of field.  There are others.
+
+
+### Other elements of graphics
+
+* Guide
+* Scale
+* Axis
+
+### Layered graphics
+
+
+Take apart the circular cladistics graph.
+
+

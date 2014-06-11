@@ -15,6 +15,12 @@ Also `Narrative/Ideas.Rmd`.
 
 Also `Sections/Introduction/Overview.Rmd`
 
+## Background
+
+[PCAST Big Data report](http://www.whitehouse.gov/sites/default/files/microsites/ostp/PCAST/pcast_big_data_and_privacy_-_may_2014.pdf) about privacy, mainly.  [Another PCAST report](http://www.whitehouse.gov/sites/default/files/docs/big_data_privacy_report_5.1.14_final_print.pdf) about opportunities with big data.
+
+A radio show about [data science, "still sexy?"](http://www.information-management.com/pdfs/DMRadio-04-03-14_DataScience.mp3)
+
 ## Data Organization
 
 1) Cases and variables
@@ -154,6 +160,20 @@ What are the basic features we want to display? Comparison, extent, individual c
 #) hexbin
 
 
+### Order of display of a variable
+
+Why choosing a good ordering for categorical variables is important.
+
+* A complicated case: <../Examples/JobGrowth/jobGrowth.Rmd>
+
+
+Hadley's [layered grammar of graphics](http://mimno.infosci.cornell.edu/info3300/readings/layered-grammar.pdf)
+
+An essay about [presenting data with graphics](http://schoolofdata.org/handbook/courses/data-to-diagrams/)
+
+[Applied Data Science from Columbia](http://columbia-applied-data-science.github.io/appdatasci.pdf)
+
+[Manyeyes graphics examples](http://www.manyeyes.com/software/analytics/manyeyes/)
 
 ### Time Series
 
@@ -205,4 +225,13 @@ Define a function for each of the really important things.  Make this into a `cl
 
 * Break text into individual words.
 
+[School of Data](http://schoolofdata.org/handbook/courses/data-cleaning/)
+
+## Scraping Data, data sources
+
+[Quandl](http://www.quandl.com/)
+
+Genetics?
+
+[Web technologies task view](http://cran.r-project.org/web/views/WebTechnologies.html)
 

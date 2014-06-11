@@ -61,7 +61,9 @@ bothall <- inner_join(allgenes, cellLineData)
 Construct the table for BRCA1
 
 ```{r}
-probeSet <- c('BRCA1','DTX3L',"BID","CALU","BFAR", "NONO")
+origs <- c('BRCA1','DTX3L',"BID","CALU","BFAR", "NONO")
+top100 <- c('ACTG2' , 'SULF1' , 'COL3A1' , 'IGFBP5' , 'SLC24A3' , 'COL1A2' , 'LUM' , 'SPARC' , 'POSTN' , 'CXCL1' , 'A_23_P37685' , 'MGC16121' , 'UCHL1' , 'A_23_P203120' , 'ALDH2' , 'DCN' , 'DPYSL3' , 'CPXM2' , 'WISP1' , 'CDKN2A' , 'FEZ1' , 'CBS' , 'A_24_P372189' , 'CDCP1' , 'C10orf58' , 'CNN1' , 'A_32_P74409' , 'SYNPO2' , 'CDCP1' , 'WNT5A' , 'A_23_P305292' , 'KIAA0746' , 'COL1A1' , 'CDH11' , 'A_24_P299474' , 'GPR110' , 'A_23_P36226' , 'A_32_P214011' , 'A_23_P217901' , 'SPOCK1' , 'ACTA2' , 'KRT19' , 'A_24_P563966' , 'KRT17' , 'CXCL12' , 'KCNG1' , 'HSPB2' , 'VCX2' , 'FAP' , 'MRVI1' , 'TSHZ3' , 'ADAMTS4' , 'COL3A1' , 'OLFML3' , 'IFITM1' , 'RIMS2' , 'C19orf33' , 'BST2' , 'DPYSL3' , 'C11orf41' , 'VCX' , 'C5orf23' , 'CSTA' , 'ROBO1' , 'FOXD1' , 'IGFBP5' , 'CD248' , 'MX1' , 'ZNF469' , 'PLAC8' , 'ADFP' , 'APCDD1L' , 'CDH13' , 'CTHRC1' , 'SAA1' , 'A_32_P55241' , 'TMEM98' , 'COX7A1' , 'CST6' , 'A_23_P206741' , 'FAM101B' , 'A_32_P96752' , 'FKBP10' , 'BDKRB1' , 'A_24_P691826' , 'A_24_P887857' , 'VCX3A' , 'PCSK9' , 'ADAMTS5' , 'CTAG1A' , 'SIPA1L2' , 'A_24_P828496' , 'ROBO3' , 'G0S2' , 'KCNMA1' , 'ITGA8' , 'PLAC8' , 'PRAME' , 'PTGIS' , 'MAGEA2B' )
+probeSet <- c(origs, top100)
 res <- list()
 for (probe in probeSet) {
   filter(bothall, Probe==probe) %>% 
