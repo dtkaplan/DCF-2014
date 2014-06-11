@@ -27,7 +27,7 @@ An essay about [presenting data with graphics](http://schoolofdata.org/handbook/
 
 [Manyeyes graphics examples](http://www.manyeyes.com/software/analytics/manyeyes/)
 
-=============== Day 1 ========================
+#### =============== Day 1 ========================
 
 ### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Introduction
 
@@ -46,6 +46,7 @@ An essay about [presenting data with graphics](http://schoolofdata.org/handbook/
         i. Examples: 
             a. Runners as individuals and as groups, e.g. by sex, by age group, by sex and age group.
             a. Flight data involving two airports compared to airport data (e.g. latitude and longitude) on its own.  Taxi time versus airport.  Airplane model data: mass and engines
+    a. Various common formats: CSV, XLSX
     a. Database:
         i. **Database** is a collection of datatables.  Often, the datatables have different cases.
         i. Examples:
@@ -64,10 +65,7 @@ An essay about [presenting data with graphics](http://schoolofdata.org/handbook/
 1. Other forms 
     just a mention: "There are other forms of data, e.g. photographs, movies, text.  The datatable is arguably the most important.  Many other forms of data eventually get reduced to datatables for the purposes of display and analysis."
 1. Reading and Storing Data
-    a. Various common formats: CSV, XLSX
-    a. Informal formats (e.g. the Cherry Blossom race) for human consumption. 
-    a. Different ways data are distributed: interactive, static files, via URL 
-1. Data Scraping: just a very brief mention of what it is.
+
 
 ### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Basics of Markdown and Course Logistics
 
@@ -79,6 +77,9 @@ An essay about [presenting data with graphics](http://schoolofdata.org/handbook/
     * FTP shell script on server
     
 Idea: Start them out with the knitr side-by-side display function, so that things are re-run as they get changed. ????
+
+
+#### =============== Day 2 ========================
 
     
 ### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Basics of R
@@ -138,6 +139,8 @@ To have some gratification relatively early in the course.
     a. Immigration flows
 1. Putting such graphics in an Rmd file
 
+#### =============== Day 3 ========================
+
 ### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Constructing and Deconstructing Graphics
 
 This will switch back and forth between deconstruction and construction, within each topic
@@ -156,6 +159,8 @@ a. Frames and glyphs (basics)
 1. Facets and Layers
 1. Annotations (later on)
 1. Coordinate transformations (later on --- remember logs!)
+
+#### =============== Day 4 ========================
 
 ### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Classic charts and their interpretation
 
@@ -181,6 +186,8 @@ A first pass at aesthetics.
     a) Directed
     a. Undirected
 1. Trees and why not all networks are a tree
+
+#### =============== Day 5 ========================
 
 
 ### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. The Data backstory and wrangling
@@ -214,6 +221,8 @@ The process of creating a presentation varies from one situation to another.  Of
     a. anti
 1. pivot and fold (melt and cast)
 
+#### =============== Day 6 ========================
+
 ### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Stats 
 
 Introduce the concept and then show how to compute and plot it.
@@ -241,6 +250,9 @@ Introduce the concept and then show how to compute and plot it.
 1. Strip charts
 1. Dynamite plots, their shortcomings and alternatives
 
+#### =============== Day 7 ========================
+
+
 ### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Techniques with many variables 
 
 1. Parallel Axes
@@ -249,6 +261,10 @@ Introduce the concept and then show how to compute and plot it.
 1. Dimension reduction
     a. Multivariable clustering -> categorical
     a. Principal components
+
+#### =============== For Faculty/Self-study ========================
+
+LOW PRIORITY
 
 ### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Cleaning Data
 
@@ -270,7 +286,12 @@ Genetics?
 
 [Web technologies task view](http://cran.r-project.org/web/views/WebTechnologies.html)
 
+#### =============== Optional/Self-Study ========================
+
+
 ### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Enrichments
+
+LOWEST PRIORITY
 
 These are topics that don't need to be handled as part of the sequence, but where we might want to have an essay or video, etc. to cover the topic briefly.
 
@@ -286,11 +307,20 @@ These are topics that don't need to be handled as part of the sequence, but wher
 1. Word Counts 
     Look at different genres --- show the leading non-common words.
 1. Word Cloud
-    Counts don't always do it.
+    Counts don't always do it.  
+1. Data Scraping: just a very brief mention of what it is.
+    a. Informal formats (e.g. the Cherry Blossom race) for human consumption. 
+    a. Different ways data are distributed: interactive, static files, via URL 
+1. Meta graphics.  What are the basic features we want to display? Comparison, extent, individual cases in context, relationships, connections. Why is a picture worth a thousand words and when is it not? 
+1. Color and perceptions
+1. Which graphical features are suitable for precision, which not.
+1. Shapefiles and map coordinates
+1. The case studies (one essay/video for each)
+
 
 [Graphics Zoo](GraphicsZoo/GraphicsZoo.html)
 
 
-Why is a picture worth a thousand words? 
 
-What are the basic features we want to display? Comparison, extent, individual cases in context, relationships, connections, ...
+
+What are the basic features we want to display? Comparison, extent, individual cases in context, relationships, connections

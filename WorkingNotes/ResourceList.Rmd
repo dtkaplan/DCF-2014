@@ -102,3 +102,25 @@ http://learning.blogs.nytimes.com/2010/08/23/teaching-with-infographics-places-t
 [In ggplot2](http://is-r.tumblr.com/post/38459242505/beautiful-network-diagrams-with-ggplot2)
 
 [and this one](http://sumtxt.wordpress.com/2011/07/02/visualizing-networks-with-ggplot2-in-r/)
+
+* Color <http://wilkinsondarren.wordpress.com/2013/05/24/colour-guide-for-scientific-graphs-and-illustrations/> move this to DCF
+
+* World Bank data <http://cran.r-project.org/web/views/WebTechnologies.html>
+
+## GGPLOT Resources
+
+* Heat maps: <http://www.showmeshiny.com/heatmaps/>
+
+* Interactive ggplot <http://www.showmeshiny.com/ggplot-live/>
+
+
+
+## Shiny and data
+
+* Weather in different cities: <http://www.showmeshiny.com/weather-compare/>
+
+## Background: reports, media
+
+[PCAST Big Data report](http://www.whitehouse.gov/sites/default/files/microsites/ostp/PCAST/pcast_big_data_and_privacy_-_may_2014.pdf) about privacy, mainly.  [Another PCAST report](http://www.whitehouse.gov/sites/default/files/docs/big_data_privacy_report_5.1.14_final_print.pdf) about opportunities with big data.
+
+A radio show about [data science, "still sexy?"](http://www.information-management.com/pdfs/DMRadio-04-03-14_DataScience.mp3)
