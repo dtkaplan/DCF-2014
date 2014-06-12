@@ -3,4 +3,27 @@ title: "Draft Narrative"
 output: html_document
 ---
 
-In this document, place draft narrative for this section of the notes. 
+**Information** versus **data**.  They are often used synonomously.  But in these notes we will give them distinct names:
+
+* Data is something you collect from the environment or an experiment.
+* Information is the conclusion that you draw based on a study or examination or **analysis** of the data.
+
+Analysis is an odd choice of word for "study or examination," a sort of investigation of what the data have to say about a question of interest. Analysis refers to taking something apart.  A dictionary definition is "the separating of any material or abstract entity into its constituent elements." [Source](http://dictionary.reference.com/browse/analysis) But just as often you will be putting something together for the purposes of drawing conclusions. That's **synthesis**, which is the opposite of analysis. When applied to data, "analysis" has come to mean the "method of studying the nature of something or determining its essential features and their relations," and also "a presentation ... of the results of this process." [Source](http://dictionary.reference.com/browse/analysis)
+
+Maybe use NHANES (from `DCF-devel`) here to introduce the idea of **purpose**.  
+
+For the purpose of exploration, we might want a scatter plot.
+Show a scatter plot of BMI vs age with diabetes setting color.
+
+If trying to assess the ability of a set criterion to distinguish between diabetes and not, a cross-tab of counts might be the appropriate thing.  (Show cross-tab of counts of diabetic versus non-diabetic for different BMI classes, then proportions, then risk ratios.  Use risk ratio of diabetes for sex or smoking vs BMI categories.)
+
+Move to many variables ... show CIs from a logistic regression with several variables.  Error bar plot, explaining that variables with error bars crossing zero have at undecisively weak evidence supporting a claim that the variable is important.
+
+Some people call this "data reduction."  But it's also important to be able to combine data, correct data, transform, etc.  
+
+### Two phases
+
+There are at least two phases to getting information from data
+
+**Data wrangling** is the transformation of data (as in raw to cross tab, ).  **Data analysis** is the depiction of data in a form that can guide human decision-making.
+

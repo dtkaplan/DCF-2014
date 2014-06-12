@@ -1,6 +1,46 @@
 ---
-title: "Ideas and Resources"
+title: "Ideas and Resources: Structure of data"
 output: html_document
 ---
 
 In this document, place ideas and resources for this section of the notes. 
+
+
+
+
+## For exercises
+
+happy {GGally}  R Documentation
+Data related to happiness from the General Social Survey, 1972-2006.
+
+Description
+
+This data extract is taken from Hadley Wickham's productplots package. The original description follows, with minor edits.
+
+Usage
+
+data(happy)
+Format
+
+A data frame with 51020 rows and 10 variables
+
+Details
+
+The data is a small sample of variables related to happiness from the General Social Survey (GSS). The GSS is a yearly cross-sectional survey of Americans, run from 1972. We combine data for 25 years to yield 51,020 observations, and of the over 5,000 variables, we select nine related to happiness:
+
+age. age in years: 18–89.
+
+degree. highest education: lt high school, high school, junior college, bachelor, graduate.
+
+finrela. relative financial status: far above, above average, average, below average, far below.
+
+happy. happiness: very happy, pretty happy, not too happy.
+
+health. health: excellent, good, fair, poor.
+
+marital. marital status: married, never married, divorced, widowed, separated.
+
+sex. sex: female, male.
+
+wtsall. probability weight. 0.43–6.43.
+

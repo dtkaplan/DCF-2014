@@ -4,3 +4,15 @@ output: html_document
 ---
 
 In this document, place draft narrative for this section of the notes. 
+
+* NCI genes
+    1. A small segment of the data
+    2. A heat map for 100 genes x 60 cell lines
+    3. A rectangle within a rectangle showing where the data from 1 and 2 fit in the entire dataset.
+* mosaic::NHANES.  As you've seen in <The Introduction>, you can mix quantitative and categorical data. Show a table of a subset of the data,  with colors to show which vars are being used and different symbols to show which rows were in the example.  Point is: Data can be large.  This should be an advantage rather than a dis-advantage.  But looking at large tables does not convey this information to the human.
+* Rank Choice or NC-Voter?  You can have mostly categorical data.
+
+## Wide vs long
+
+Show the NCI data as long by cell line.
+

@@ -1,6 +1,21 @@
 ---
-title: "Draft Narrative"
+title: "Draft Narrative: Many Variables"
 output: html_document
 ---
 
-In this document, place draft narrative for this section of the notes. 
+ 
+## Dimension Reduction
+
+Data can be a picture of Mindo.  It's the numbers that constitute the datatable.  But the information (for us humans or dogs) is the overall shape.  This amount of data is overkill: you can see the pattern even if we take every second or third row --- so only one-half or one-third of the variables convey the information.  The other ones are redundant.  
+
+How far can we push it?  [Make a very coarse representation of the picture, showing it both in pixelated and smoothed form.]  That we can get a lot of the information from a much smaller set of data means that there is a "low-dimensional" approximation to the information in the photo (for the purpose of seeing what Mindo looks like).
+
+How to do this when there's not a person doing the interpretation.  SVD of NCI data, showing cumulative of the square eigenvalues to figure out how much the first few vectors capture.  Then show the SVD of a submatrix, but with the eigenvalues used to sort the vectors, so that the image becomes smooth.
+
+### Model based dimension reduction
+
+Fit linear models to, say, cardiac death versus BMI and sex and other variables.  Which ones are important.  We can capture a lot of the information using just a few main effects and perhaps some interactions.
+
+
+
+

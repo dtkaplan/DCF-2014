@@ -1,0 +1,8 @@
+---
+title: "NHANES"
+author: "Daniel Kaplan"
+date: "June 12, 2014"
+output: html_document
+---
+
+The data are in the `DCF-devel` package.  Documentation in help(NHANES) or help(smallNHANES.)
