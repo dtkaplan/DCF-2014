@@ -1,0 +1,52 @@
+---
+title: 'Basic Lab Skills: Graphing Data and Uncertainty'
+author: "Macalester Bio Department (and DTK)"
+date: "June 3, 2014"
+output: html_document
+---
+
+> We're going to provide the student with a template document that contains the information that we want to give the student and space for the responses that will be submitted.  But we don't need to have everything in one document.  We can have a set of general instructions outside the template.  That's what this document is.
+
+### Learning Objectives
+
+* Handling data sets and graphing (using Excel)
+    *	Design an effective Excel spreadsheet 
+    * Calculate descriptive statistics (mean, Standard Deviation, Standard Error of the Mean)
+    *	Create a publication quality graph and figure legend
+* Statistics—Differences/relationships between groups (using JMP)
+    * Understand the basics of how and when you use a 
+        * t-test (paired and unpaired)
+        * ANOVA and post hoc tests
+        * regression analysis
+    * Understand levels of significance and p-values
+
+### Preparation for Lab
+
+BEFORE CLASS, please read the following:
+
+1. this handout
+1. handouts in your Lab Manual Supplement (LMS) on:
+    a. Graphing with Excel (J-1). Read up to “Data Analysis”.
+    #) Statistics (K-1).
+    #) JMP Statistical Package (S-1). Focus on how you choose a particular statistical test for ANOVA, unpaired T, Paired T and Regression. We will go over specifics on how to use JMP computer program in lab.
+    #) Scientific Investigation (M-1). Skim this to start to comprehend experimental design. You will refer to this handout multiple times in the future!
+    
+
+
+
+## Introduction
+
+Scientific experimentation requires that you not only ask good and testable questions, but that you have the ability to determine whether your findings are significant.  This will require that you have appropriate controls and that you are able to replicate your findings.  Depending on your questions and the techniques that are utilized, it may be enough to present qualitative data.  However, if you have measureable data, whether it be of a nonparametric or parametric nature, you should utilize appropriate statistical tests that allow you to report with a high level of confidence that your experimental and control groups differ from each other.  
+
+Once you have obtained data from an experiment and completed its analysis, you need to be able to present your findings in a clear and organized manner.  Generally, this means that you will present a summary of your data, often in the form of a graph; raw data is rarely presented.  The summary data can be represented in a number of ways, but is often reported as the mean ± the standard deviation of each of the experimental and control groups.  Graphs should be as simple and clear as possible and with the aid of a detailed figure legend, a reader should not only be able to easily understand the finding, but should also be able to understand how the data was obtained and analyzed.   
+
+The purpose of this lab is to provide you with a bit of background in statistical analysis and some hands on experience organizing, summarizing, analyzing and graphing a data set.   The knowledge and skills obtained in this lab are ones you will utilize in most of your upper level biology courses and will also help you become more proficient at interpreting and understanding scientific findings.
+
+## Assignment
+
+The complete and polished assignment is due at the beginning of lab the following week.
+
+For this assignment, you should hand in work you have completed on your own.  You can, however, ask others (classmates, instructors of this course & teaching assistants) for assistance with Excel & JMP and/or consult others regarding graph choices.  In general, working together is fine and beneficial, however, you should keep in mind that on the exam for this class you would need to be able to do all of this on your own.  
+[Template for your Write-Up](MacBioTemplate.Rmd)
+
+*Before you leave lab today, start to fill in the template. Ask if you need help. There may be (additional experimental?) information you need to complete the assignment.*

@@ -1,0 +1,12 @@
+---
+title: "Ideas for drill, exercises, etc."
+output: html_document
+---
+
+This document stores sources for potential exercises, etc.
+
+When you write the exercise, delete the link.
+
+### Facets
+
+* <http://www.nytimes.com/2014/06/04/business/international/europe-struggles-to-avoid-deflations-grip.html>

@@ -1,0 +1,26 @@
+---
+title: "How to use this site"
+output: html_document
+---
+
+## Main documents
+
+These are documents for organization.
+
+* `TopicList.Rmd` 
+
+## Course Notes
+
+There is a `CourseNotes` directory that contains subdirectories for each section in the `TopicList.Rmd`.  
+
+In each of those directories are:
+
+* `DraftNarrative.Rmd` for fragments intended for the final `Narrative.Rmd`
+* `IdeasAndResources.Rmd` for section specific ideas and links to sources of data, etc.
+
+## Exercises
+
+Not quite sure.  Perhaps:
+
+* Directory `FinishedExercises`
+* Directory `DraftExercises` ????

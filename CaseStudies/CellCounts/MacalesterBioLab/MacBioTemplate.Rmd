@@ -1,0 +1,172 @@
+---
+title: 'Graphing and Uncertainty: Report to Hand In'
+author: "Your name goes here"
+date: "Put the date here."
+output: html_document
+---
+
+```{r include=FALSE}
+# YOU DON'T NEED TO CHANGE THIS
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+require(mosaic) # For approach 1
+options(width=150) # allow wide printouts
+```
+
+> You might want to make your template look like the sort of report to hand in.
+
+* The following data is based on real studies; however, the details and numbers have been altered.*
+
+## The Study
+
+Some recent studies suggest that the lysophosphatidic acid (LPA) receptors, LPA1, LPA2, or LPA3, are over expressed in a number of different types of cancers.  The following study was designed to elucidate whether LPA promotes cancer cell proliferation in colon and breast cancer cells.
+
+## Methods
+
+*Cell Culture & Cell Proliferation Assay*:  Breast and colon cancer cell lines were cultured separately in a 96-well plate at a known and constant density. Cells were then incubated in the presence of either vehicle or varying concentrations of LPA. (Note: What is meant by a vehicle in molecular biology?) Reagents were replenished daily.  After three days, CellTiter 96 AQ_ueous (MTS) One Solution reagent (Promega) was added to each well, and absorbance was recorded at 490 nm by using a SpectraMax Plus plate reader (softmaxpro 401, Molecular Devices).  Cell numbers were then calculated by using a standard curve correlating the absorbance to the cell number counted under a microscope. Multiple trials (A-H) were done with each cell line.
+
+> You may want to have the students enter an answer to a question ...
+
+### Question for student: 
+
+What is meant by a vehicle in molecular biology?
+
+ANSWER THE ABOVE QUESTION IN THIS subsection.
+
+## Data
+
+> This is where things start to get funky.  The data has been presented as an image of a numerical table.  Put this into a spreadsheet, the student would have to enter the numbers by hand.
+
+> I'll suggest that entering data in a spreadsheet is misleading here.  The SpectraMax Plus plate reader would return a spreadsheet.
+
+> Another problem is that the numerical table is not in correct canonical tabular format.  
+    * The column names are not unique.
+    * There are labels for groups of columns.
+    * Column labels include units
+    
+> I'll take the liberty of providing the data as a CSV in canonical format.
+
+The data are provided by the SpectraMax Plus plate reader in the form of a CSV file. They are available to you as a dataframe named `cellCounts`.  
+```{r echo=FALSE}
+# You don't need to change this
+cellCounts <- read.csv('plate_data.csv')
+```
+
+```{r}
+cellCounts
+```
+
+Since you know the experimental protocol, and where samples were placed in the 96-well plate, you know what the rows mean and what the columns mean.
+
+
+Looking in your lab notebook, create another table that tells the cell line and LPA concentration  about each column of the table.  Enter this information into a spreadsheet file named `Lab1Columns.csv` that looks like this:
+
+column | cellLine | LPA
+-------|----------|-----
+X1     | Colon Cancer | Vehicle
+X2     | Colon Cancer | 0.05
+X3     | Colon Cancer | 0.10
+...    | ...          | ...
+X7     | Breast Cancer | Vehicle
+X8     | Breast Cancer | 0.05
+...    | ...           | ...
+
+Of course, your table should be complete, no ...'s.  It should have the LPA concentrations which are Vehicle, 0.05,0.10, 0.50, 1.00, 2.00 for each cell line. Enter this protocol-level data into a three column spreadsheet, making sure to get the spellings exactly right.
+
+> Two ways to go here, depending on what your students know.  The first emphasizes the basic calculations and the format of the results.  The second emphasizes high-level tools for organizing data, and the ability to apply powerful statistical and graphical functions to properly formatted data.
+
+## Approach 1: Intuitive Operations
+
+> I won't complete this section, just outline it.
+
+The idea will be to find the mean and standard deviation of each column, e.g.
+```{r}
+mean(X1, data=cellCounts)
+sd(X1, data=cellCounts)
+```
+Or, maybe the standard error:
+```{r}
+sd(X1, data=cellCounts)/sqrt(nrow(cellCounts))
+```
+
+Do this for each column of `cellCounts`.  Put the results into a table named `columnSummary.csv` where the variables are column name (e.g. `X1`), the calculated mean, and the calculated standard deviation.  Then translate each of the column names into the corresponding cell line and LPA concentration.  
+
+> Want to give more of a hint?
+
+The spreadsheet should look like this:
+
+cellLine | LPA | mn | sd 
+---------|-----|----|----
+Colon Cancer | 0.05 | 10215 | 1012
+Colon Cancer | 0.10 | 14932 | 1299
+... | ... | ... | ...
+
+But your table will have the real numbers!
+
+## Graphics
+
+IN THIS SECTION, you will draw TWO different graphs that indicate whether LPA concentration makes a difference for each of the cell lines.
+
+> and so on.  We'd have to give some code for the dynamite plot in lattice graphics.  It's always possible to make it look like `stuff.to.do( Yvariable ~ Xvariable, Uncertainty)...` and ask the students to figure out which column of the spreadsheet should be which variable.  Substituting 'sd' for 'Uncertainty' is not an intricate programming task.
+
+## Another Approach: Reformatting Data
+
+*This section contains the complete commands needed.  You need only make sure that your `cellCount` and your `Lab1Columns` tables have the format given above, and that the corresponding variable is named `column` in both tables.
+
+The data are formatted by the SpectraMax Plus plate reader in a way similar to the layout of a 96-well plate: 8 rows and 12 columns.
+
+For data analysis, we want the data in another format, like this
+
+replication | column | count
+------------|--------|------
+A           | X1     | 12156
+B           | X1     | 12359
+...         | ...    |  ...
+
+The table will have 3 columns and 96 rows.
+
+
+This transformation from a "wide" to a "long" format can be done automatically with the function `melt()`.
+
+```{r}
+long <- melt( cellCounts )
+names(long)[2] <- 'column' # fixes up the name
+```
+Always make sure to check some of the data to make sure the function has done the right thing.
+```{r}
+head(long)
+```
+
+Next, for each row in the `long` table, you want to add in the relevant row from your Lab1Columns table.  This can be done easily with `inner_join()` (so long as the variable name for the columns in both long and Lab1Columns are the same.)
+
+```{r eval=FALSE}
+finalForm <- inner_join( long, Lab1Columns )
+```
+
+### QUESTION
+
+How many columns and how many rows are there in `finalForm`?  Explain the statement, "each row of `finalForm`" has all the information about one well in the 96-well plate."  What is this information?
+
+ANSWER THE ABOVE QUESTION IN THIS SECTION
+
+
+> Now that the data are in a canonical format, it's easy to apply graphics, statistics, like
+
+```{r eval=FALSE}
+mean( count ~ cellLine, data=finalForm)
+summary( lm( count ~ cellLine*LPA, data=finalForm))
+```
+and similarly with graphics, which are oriented around data frames of individual points.
+
+> It's good practice to plot the individual data points along with the means and standard deviations.  It's not too much effort to work this in.
+
+## Quantitative Analysis
+
+> Have the students fit a model to the data.  This can be something like
+
+```{r eval=FALSE}
+summary( lm( mn ~ LPA*cellLine, data=columnSummary))
+```
+
+

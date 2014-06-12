@@ -1,0 +1,5 @@
+A way to read in the raw data is given in
+
+<https://github.com/hadley/fec-dplyr/blob/master/1-download.R>
+
+or just <https://github.com/hadley/fec-dplyr> for the head of the github repository.

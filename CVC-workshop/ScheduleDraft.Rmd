@@ -1,6 +1,6 @@
 ---
 title: "CVC Schedule DRAFT"
-output: html_document
+output: word_document
 ---
 
 ## Monday
@@ -19,7 +19,7 @@ output: html_document
     #. Why Common excel formats violate this
     #. Brief examination of table operations:
         i. mosaic table-making operators and the formula notation
-        #. `mutate()`, `summarize()`, and `group_by()1
+        #. `mutate()`, `summarize()`, and `group_by()`
 #. Parts of graphics
     a. Frame, Scale, Glyph, Guide, Facet
         i. Use "named" graphics at first: scatterplot, barplot 
@@ -53,6 +53,7 @@ output: html_document
 1. Sources of data, and how to get it in to R
     #. Files, URLs, CSV, Workspaces, 
     #. From Excel
+    #. Databases.  Example from Randy about FAA Flights: <http://www.calvin.edu/~rpruim/talks/LessVolume/2014-05-29-GreatPlainsRUsers/dplyrLessVolume.html>
 #. Identifying sources of data from your mini-case study
     #. Work in groups?  
 #. Join operation
@@ -88,3 +89,7 @@ The second 2.5 days includes:
 * data cleaning
 * data web-scraping basics 
 * programming in R (as needed)
+
+## Readings
+
+*[Rules for using color](http://www.perceptualedge.com/articles/visual_business_intelligence/rules_for_using_color.pdf)

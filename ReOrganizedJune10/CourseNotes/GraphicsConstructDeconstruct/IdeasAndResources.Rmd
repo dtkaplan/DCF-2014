@@ -1,0 +1,6 @@
+---
+title: "Ideas and Resources"
+output: html_document
+---
+
+In this document, place ideas and resources for this section of the notes. 

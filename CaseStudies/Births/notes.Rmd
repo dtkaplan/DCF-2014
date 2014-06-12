@@ -1,0 +1,18 @@
+---
+title: "Number of Births over Time"
+output: html_document
+---
+
+
+Use the `mosaic::Births78' data or more extensive data.
+
+Join with a list converting Ordinal date to day of week.  (You can construct such a list in Excel with DATE() and WEEKDAY().  )
+
+Scrape the holidays from [this site](http://www.smart.net/mmontes-cgi-bin/ushols.cgi)
+List them all, with a column for the bold ones.
+
+Plot showing holidays versus others of the same day of the week.
+
+
+
+
