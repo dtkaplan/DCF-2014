@@ -323,7 +323,7 @@ Introduce the concept and then show how to compute and plot it.
 1. Parallel Axes
 1. Clustering
 1. Classification Tree (CART or machine learning)
-1. Dimension reduction
+1. Dimension reduction `r category('dimension reduction')`
     a. Multivariable clustering -> categorical
     a. Principal components
 

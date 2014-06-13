@@ -1,12 +1,14 @@
 ---
-title: "Draft Narrative"
+title: "Draft Narrative: Introduction"
 output: html_document
 ---
+
+These notes are an introduction to turning **data** into **information**.
 
 **Information** versus **data**.  They are often used synonomously.  But in these notes we will give them distinct names:
 
 * Data is something you collect from the environment or an experiment.
-* Information is the conclusion that you draw based on a study or examination or **analysis** of the data.
+* Information is the presentation --- based on a study or examination or **analysis** of the data --- to support a conclusion that you draw 
 
 Analysis is an odd choice of word for "study or examination," a sort of investigation of what the data have to say about a question of interest. Analysis refers to taking something apart.  A dictionary definition is "the separating of any material or abstract entity into its constituent elements." [Source](http://dictionary.reference.com/browse/analysis) But just as often you will be putting something together for the purposes of drawing conclusions. That's **synthesis**, which is the opposite of analysis. When applied to data, "analysis" has come to mean the "method of studying the nature of something or determining its essential features and their relations," and also "a presentation ... of the results of this process." [Source](http://dictionary.reference.com/browse/analysis)
 

@@ -1,0 +1,48 @@
+---
+title: "Calculate Variance for NCI data"
+author: "Mengdie Wang"
+date: "Friday, May 30, 2014"
+output: html_document
+---
+
+```{r}
+
+#read data as dataframe
+
+library(dplyr)
+geneFile<-"D:\\Research with Kaplan\\DCF-2014\\CaseStudies\\NCI-gene\\nci60_RNA__Agilent_mRNA_log2.txt"
+gene<-read.table(geneFile,head=TRUE )  
+
+gene_df<-tbl_df(gene)
+
+subgene<-select(gene_df,gene_df[,6:65])
+
+
+#Use function apply to calculate variance of columns [6:65] by row
+
+rowVar<-apply(subgene,1,var)  #rowVar is numeric
+
+
+#Use function mutate in dplyr to add a "rowVar"" Column
+newgene<-mutate(gene_df,rowVar)
+
+#Use select in dplyr to select only "Probe" and "rowVar" column
+
+newgene<-select(newgene,Probe,rowVar)
+newgene<-arrange(newgene,desc(rowVar))
+
+newsub<-head(newgene,10)
+
+#gnames<-newsub[,1]
+
+#Use arrange in dplyr to order by "rowVar"
+
+
+#write.csv(df,file=)
+```
+
+
+
+
+
+

@@ -1,0 +1,370 @@
+---
+title: "NCI-Tutorial"
+author: "Daniel Kaplan, Mengdie Wang"
+date: "Tuesday, June 03, 2014"
+output: html_document
+---
+
+### Require Libraries: 
+Make sure to use `include=FALSE` so that we don't get long print-outs loading packages.
+
+```{r include=FALSE}
+require(dplyr)
+require(ggplot2)
+require(reshape2)
+require(ggthemes)
+require(stats)
+require(knitr)
+require(GGally)
+require(reshape)
+require(mclust)
+opts_chunk$set(cache=TRUE)
+```
+
+If later on you want to show the package being loaded, you can do it in the regular way, and no comments will be printed, because the package is already loaded. For example:
+
+```{r}
+require(dplyr)
+```
+
+### Talk About Data
+
+## Data Formatting
+1. First of all, we need to read in the two files as tables and assign them new names. 
+The command in Rstudio is:
+
+```{r}
+geneFile<-"D:\\Research with Kaplan\\DCF-2014\\CaseStudies\\NCI-gene\\nci60_RNA__Agilent_mRNA_log2.txt"
+geneExpress<-read.table(geneFile,head=TRUE )  
+
+cellFile<-"D:\\Research with Kaplan\\DCF-2014\\CaseStudies\\NCI-gene\\nci60_cellline_metadata.csv"
+cellLineData <- read.csv(cellFile,head=TRUE)
+```
+
+Remember to include `head=TRUE` in order to display columns' names. You can also replace the file path with `file.choose()` function. 
+
+We now have two datasets: geneExpress and cellLineData. The first one contains `r nrow(geneExpress)` rows and `r ncol(geneExpress)` columns; the second one contains `r nrow(cellLineData)` rows and `r ncol(cellLineData)` columns. It's obvious that they both are too long to print out here.  (???Shall we give student a sense of how original data looks like???)
+
+Therefore,we created two subsets for these two datasets. `geneSubset` contains information on 3 genes ('ACTG2','SULF1','COL3A1') and their expressions in the first two cell lines in Melanoma and Colon group; and `cellSubset` which only contains cell lines from 2 tissues of origin: Melanoma and Colon.  
+The two subsets look like these. Remember, the real data are much longer ...          
+`geneSubset`
+```{r echo=FALSE}
+
+geneSubset<-filter(geneExpress,Probe %in% c('ACTG2','SULF1','COL3A1'))
+geneSub1<-geneSubset[,1:5]  #geneSub1 is data.frame
+geneCol1<-names(geneExpress)[grepl('^ME.', names(geneExpress))][1:2]  #geneCol is a "character"
+geneCol2<-names(geneExpress)[grepl('^CO.', names(geneExpress))][1:2]
+geneCol<-c(geneCol1,geneCol2)
+geneSub2<-subset(geneSubset,select=geneCol)  #is data.frame
+geneSubset<-cbind(geneSub1,geneSub2)
+geneSubset
+```
+
+`cellSubset`
+```{r echo=FALSE}
+cellLineData<-select(cellLineData, Cell.Line.Name:Epithelial)
+cellSubset<-filter(cellLineData, tissue.of.origin=="Melanoma"|tissue.of.origin=="Colon")
+cellSubset
+```
+
+
+2. Next, we want to do some data operations on the two datasets. In particular, we would like to do an `inner_join` on these two datasets. However, in order to do that we need to have at least one common column in two datasets, and we don't. So what should we do??
+
+Notice that the first column `Cell.Line.Name` in the second dataset `cellLineData`, is exactly the same as columns' names in `geneExpress` from column 6 to column 65.
+This leads us to think of a way of transferring the 60 column names into a new column called `Cell.Line.Name`, and create another column `Expression` to contain corresponding numeric values. Therefore, for every gene, there are 60 rows and 2 columns.
+
+To perform such data operation in Rstudio, we use `melt` fuction. Let's perform it on `geneSubset` we created earlier and display the result below.
+
+The command is:
+```{r }
+geneSubset<-melt(geneSubset,variable='Cell.Line.Name',value.name='Expression')
+```
+The result is:
+```{r echo=FALSE}
+geneSubset
+```
+
+`geneSubset` now contains `r nrow(geneSubset)` rows and `r ncol(geneSubset)` columns. 
+
+```{r include=FALSE, echo=FALSE}
+allgenes<-melt(geneExpress,variable='Cell.Line.Name',value.name='Expression')
+```
+Remember that's just a subset of the entire dataset. After `melt` function `geneExpress` is now a new dataset of `r nrow(allgenes)` rows and `r ncol(allgenes)` columns.
+
+3.You probably think it is the time to do an `inner_join`. Actually not yet! You should have noticed the different formats in `Cell.Line.Name` column in the two datasets.
+
+```{r echo=FALSE}
+geneSubset$Cell.Line.Name
+cellSubset$Cell.Line.Name
+```
+We need to replace the colon in `cellSubset` with a dot, and the command for that is `mutate`.
+```{r }
+cellSubset<-mutate(cellSubset,Cell.Line.Name=sub(":",".",Cell.Line.Name))
+```
+
+New cellSubset looks like this:
+```{r echo=FALSE}
+cellSubset
+```
+
+
+4. Now we can finally `inner_join` the two datasets!
+The command is:
+```{r}
+bothSub<-inner_join(geneSubset, cellSubset)
+```
+The new table will look like this:
+```{r echo=FALSE}
+bothSub
+```
+
+
+```{r echo=FALSE}
+#Inner Join on entire data for later use
+allgenes <- melt(geneExpress,variable='Cell.Line.Name',value.name='expression' )
+cellLineData <- mutate(cellLineData, Cell.Line.Name=sub(":",'.',Cell.Line.Name))
+bothall <- inner_join(allgenes, cellLineData)
+```
+
+
+## Data Manipulation
+
+Now that we finished the `inner_join` we can do some interesting things with the new table `bothSub`.
+Using functions provided by the 'dyplyr' package we can `select` the columns we want; `filter` the rows we need; `arrange` the table in certain order; `mutate` the table by adding a new column;    perform groupwise operations on table using `group_by` . The syntax of these functions is really simple and consistent: the first argument is always the name of the table, and the second argument is what you want to do with the table.
+
+1) What if instead of the entire `bothSub` table, we are interested in only which tissue do cell          lines belong to?
+`select` function will do that for  us:
+```{r eval=FALSE,echo=FALSE}
+select(bothSub,Cell.Line.Name,tissue.of.origin)
+```
+
+2) What if we want to extract only cell lines in Melanoma tissue from `bothSub`?
+we use `filter`!
+```{r eval=FALSE,echo=FALSE}
+filter(bothSub,tissue.of.origin=='Melanoma')
+```
+Remeber to use single quote for `Melanoma`.
+
+3) How can we reorder `bothSub` so that `age` column shows in an ascending order? 
+We use `arrange`funtcion. 
+```{r eval=FALSE,echo=FALSE}
+arrange(bothSub,-desc(age))
+```
+Notice that the dplyr package only has `desc(x)` function by default. To get an ascending order we simply put a `-` before `desc()`.
+
+4) What if we want to add a new column to `bothSub`, say a column that states the orignal country of people who provide the cells?
+Here comes `mutate`:
+```{r eval=FALSE,echo=FALSE}
+mutate(bothSub,'Country'='U.S')
+```
+5) Now lets do something a little more complicated. Let's calculate the mean of `Expressions` of all cell lines by two group (Melanoma and Colon).
+We use `group_by`to rearrange the table by tissue of origin and then use `summarize` to calculate mean of two groups that:
+```{r eval=FALSE,echo=FALSE}
+bothSub<-group_by(bothSub,tissue.of.origin)
+summarize(bothSub,mean=(mean(Expression)))
+
+```
+
+## Data Visualization:
+Since we now have data in form that is ready for constructing graphics, (which we refer as *glyph-ready* data), we visualize them in a way that best suits our purpose. In this section, we will visualize our NCI data in Anova table(including False Discovery Rate),Parallel Coordinate Plot,Clustering,Dendrogram and Heatmap.
+
+#1)Anova table 
+```{r echo=FALSE,eval=FALSE}
+probeSet <- c('BRCA1','DTX3L',"BID","CALU","BFAR", "NONO")
+
+res <- list()
+for (probe in probeSet) {
+  filter(bothall, Probe==probe) %>% 
+  group_by(tissue.of.origin) %>% 
+  summarize(ave=mean(expression),stderr=sd(expression)/sqrt(n())) -> tmp
+  tmp$tissue.of.origin <- with(tmp,reorder(tissue.of.origin,-ave))
+  res[[probe]] <- tmp
+}
+```
+
+```{r echo=FALSE,eval=FALSE}
+Fres <- data.frame( probe=character(length(probeSet)),F=NA, p=NA,stringsAsFactors=FALSE)
+for (probe in probeSet) {
+  P1 <- ggplot(data=res[[probe]], aes(x=tissue.of.origin,y=ave,color=tissue.of.origin)) 
+  P2 <- P1 + 
+    geom_bar(stat='identity',position='dodge',alpha=0.2,color='gray') +
+    geom_errorbar(aes(ymax=ave+2*stderr,ymin=ave-2*stderr),
+                  width=0.2,position=position_dodge(width=0.8))
+  raw <- filter(bothall, Probe==probe)
+  P3 <- P2 + geom_point(data=raw,
+                        position=position_jitter(width=0.15),
+                        aes(y=expression),alpha=.5)
+  print(P3 + ggtitle(probe) + xlab('Tissue type') +
+          ylab('Expression level (log2)') +
+          theme_tufte() + coord_flip())
+  tmp <- anova(lm(expression ~ tissue.of.origin, data=raw))  
+  print(tmp)
+  Fres[which(probe == probeSet),] <- list(probe=probe, F=tmp[1,4], p=tmp[1,5])
+  }
+Fres <- mutate(Fres,FDR=p.adjust(p,"fdr"))
+
+Fres
+```
+
+2)Anova for genes with Top100 variances
+```{r echo=FALSE}
+probeSet2 <- c('ACTG2' , 'SULF1' , 'COL3A1' , 'IGFBP5' , 'SLC24A3' , 'COL1A2' , 'LUM' , 'SPARC' , 'POSTN' , 'CXCL1' , 'A_23_P37685' , 'MGC16121' , 'UCHL1' , 'A_23_P203120' , 'ALDH2' , 'DCN' , 'DPYSL3' , 'CPXM2' , 'WISP1' , 'CDKN2A' , 'FEZ1' , 'CBS' , 'A_24_P372189' , 'CDCP1' , 'C10orf58' , 'CNN1' , 'A_32_P74409' , 'SYNPO2' , 'CDCP1' , 'WNT5A' , 'A_23_P305292' , 'KIAA0746' , 'COL1A1' , 'CDH11' , 'A_24_P299474' , 'GPR110' , 'A_23_P36226' , 'A_32_P214011' , 'A_23_P217901' , 'SPOCK1' , 'ACTA2' , 'KRT19' , 'A_24_P563966' , 'KRT17' , 'CXCL12' , 'KCNG1' , 'HSPB2' , 'VCX2' , 'FAP' , 'MRVI1' , 'TSHZ3' , 'ADAMTS4' , 'COL3A1' , 'OLFML3' , 'IFITM1' , 'RIMS2' , 'C19orf33' , 'BST2' , 'DPYSL3' , 'C11orf41' , 'VCX' , 'C5orf23' , 'CSTA' , 'ROBO1' , 'FOXD1' , 'IGFBP5' , 'CD248' , 'MX1' , 'ZNF469' , 'PLAC8' , 'ADFP' , 'APCDD1L' , 'CDH13' , 'CTHRC1' , 'SAA1' , 'A_32_P55241' , 'TMEM98' , 'COX7A1' , 'CST6' , 'A_23_P206741' , 'FAM101B' , 'A_32_P96752' , 'FKBP10' , 'BDKRB1' , 'A_24_P691826' , 'A_24_P887857' , 'VCX3A' , 'PCSK9' , 'ADAMTS5' , 'CTAG1A' , 'SIPA1L2' , 'A_24_P828496' , 'ROBO3' , 'G0S2' , 'KCNMA1' , 'ITGA8' , 'PLAC8' , 'PRAME' , 'PTGIS' , 'MAGEA2B')
+res <- list()
+for (probe in probeSet2) {
+  filter(bothall, Probe==probe) %>% 
+  group_by(tissue.of.origin) %>% 
+  summarize(ave=mean(expression),stderr=sd(expression)/sqrt(n())) -> tmp
+  tmp$tissue.of.origin <- with(tmp,reorder(tissue.of.origin,-ave))
+  res[[probe]] <- tmp
+}
+```
+
+Create a table that shows F value, p value, and FDR value for Top100 genes
+```{r echo=FALSE}
+Fres <- data.frame( probe=character(length(probeSet2)), F=NA, p=NA,stringsAsFactors=FALSE)
+for (probe in probeSet2) {
+  raw<-filter(bothall,Probe==probe)
+  tmp <- anova(lm(expression ~ tissue.of.origin, data=raw))  
+  Fres[which(probe == probeSet2),] <- list(probe=probe, F=tmp[1,4], p=tmp[1,5])
+  }
+Fres <- mutate(Fres,FDR=p.adjust(p,"fdr"))
+
+head(Fres)
+```
+
+Making a plot of p value and FDR for Top100 genes
+```{r echo=FALSE}
+#Make "Fres" into a new table with only "Measurements"(p and FDR) and "Values"
+Fres<-select(Fres,-F) 
+Fres<-arrange(Fres,desc(p),desc(FDR))
+Fres<-melt(Fres,variable='Measurements',value.name='Values')
+Fres$probe<-with(Fres,reorder(probe,Values))
+head(Fres)
+#Make the plot
+p<-ggplot(data=Fres)+geom_point(aes(y=probe,x=Values,color=Measurements))+scale_x_log10()
+print(p + xlab('Genes') + ylab('P value and FDR value'))
+```
+
+How to improve the plot?
+Can you think of a good way to differentiate genes with significant p values and FDR values? 
+----- A vertical cut off line
+```{r echo=FALSE,fig.width=5,out.width='40%',fig.height=12}
+p<-p+geom_vline(xintercept=0.05)
+print(p + xlab('Genes') + ylab('P value and FDR value'))
+```
+
+#2)Parallel Coordinate
+Parallel Coordinate Plot for 5 genes with biggest p-values
+```{r echo=FALSE}
+#probe in Fres, Probe in geneExpress
+pmax<-Fres$probe[1:5]  
+d1<-filter(bothall,Probe %in% pmax) 
+transd1<-cast(d1,Cell.Line.Name+tissue.of.origin~Probe,value='expression')
+pcp1<-ggparcoord(data=transd1,columns=3:7,groupColumn=2,alphaLines = 0.5,mapping=aes(size=0.8)) 
+head(transd1)
+print(pcp1+ggtitle('Parallel Coordinate Plot of 5 genes with biggest p-value')
+      +xlab('Probes')+ylab('Cell Lines'))
+
+#Calculate the mean of each gene expression in 9 tissues and make a plot
+meanExpress<-group_by(transd1,tissue.of.origin)
+meanExpress<-summarize(meanExpress,m1=mean(A_23_P37685),m2=mean(A_32_P96752),m3=mean(ITGA8),m4=mean(MX1),m5=mean(SIPA1L2))
+#table adding mean
+trans<-inner_join(transd1,meanExpress)
+head(trans)
+mean1<-ggparcoord(data=trans,columns=8:12,groupColumn=2,alphaLines=0.8)
+print(mean1+xlab('Probes')+ylab('Tissues')+ggtitle('Parallel Coordinate Plot of 5 genes with biggest p-value'))
+```
+
+Parallel Coordinate Plot for 5 genes with smallest p-values
+```{r echo=FALSE,eval=FALSE}  
+pmin<-Fres$probe[96:100]    not working properly
+d2<-filter(bothall,Probe %in% pmin) 
+transd2<-cast(d2,Cell.Line.Name+tissue.of.origin+Name.1~Probe,value='expression')
+pcp2<-ggparcoord(data=transd2,columns=3:7,groupColumn=2,alphaLines = 0.5,mapping=aes(size=0.8)) 
+head(transd2)
+print(pcp2+ggtitle('Parallel Coordinate Plot of 5 genes with biggest p-value')
+      +xlab('Probes')+ylab('Cell Lines'))
+#Calculate the mean of each gen expression in 9 tissues and make a plot
+meanExpress<-group_by(transd2,tissue.of.origin)
+meanExpress<-summarize(meanExpress,m1=mean(),m2=mean(),m3=mean(),m4=mean(),m5=mean())
+#table adding mean
+trans2<-inner_join(transd2,meanExpress)
+head(trans2)
+mean2<-ggparcoord(data=trans2,columns=8:12,groupColumn=2,alphaLines=0.8)
+print(mean2+xlab('Probes')+ylab('Tissues')+ggtitle('Parallel Coordinate Plot of 5 genes with biggest p-value'))
+```
+
+#3)Clustering 
+```{r echo=FALSE}
+#cluster of 2 genes
+#Method1
+m=geneExpress[1:2,c(4,6:65)]
+cl<-Mclust(t(m[,2:61]))
+plot(cl,what='classification')
+
+#Method2:ggplot
+t1<-as.data.frame(t(m[,2:61]))
+names(t1)<-c('Probe1','Probe2') #how to keep rownames as a column??BR.MCF is not a column
+t1<-mutate(t1,Cell.Line.Name=row.names(t1))
+t2<-as.data.frame(cl$classification)
+names(t2)<-'clusterID'
+t2<-mutate(t2,Cell.Line.Name=row.names(t2))
+T<-inner_join(t1,t2)
+T<-mutate(T,tissue.of.origin=cellLineData$tissue.of.origin)
+head(T)
+
+cluster<-ggplot(data=T)+geom_point(aes(y=Probe2,x=Probe1,color=clusterID))
+cluster<-cluster+facet_grid(tissue.of.origin~.)
+print(cluster+ggtitle('Cluster plot of Probe 1 and 2')+xlab('Probe1')+ylab('Probe2'))
+
+#cluster of 4 genes
+#Method1
+m2=geneExpress[1:4,c(4,6:65)]
+cl2<-Mclust(t(m2[,2:61]))
+plot(cl2,what='classification')
+
+#clustering genes with Top100 variances
+```
+
+```{r echo=FALSE,eval=FALSE}
+#clustering 4 genes with ggplot(in progress)
+s1<-as.data.frame(t(m2[,2:61]))
+names(s1)=c('Probe1','Probe2','Probe3','Probe4')
+s1<-mutate(s1,Cell.Line.Name=row.names(s1))
+s2<-as.data.frame(cl2$classification)
+names(s2)<-'ClusterID'
+s2<-mutate(s2,Cell.Line.Name=row.names(s2))
+S<-inner_join(s1,s2)
+S<-mutate(S,tissue.of.origin=cellLineData$tissue.of.origin)
+head(S)
+cluster2<-ggplot(data=S)+geom_point(data=S,aes(color=ClusterID))+facet_grid(Probe1+Probe2+Probe3+Probe4~Probe1+Probe2+Probe3+Probe4)
+#cluster2
+#print(cluster2+ggtitle('Cluster plot of 4 probes'))
+```
+
+#4)Dendrogram
+Dendrogram for first 50 genes in dataset
+```{r echo=FALSE}
+l<-as.character(geneExpress$Probe[1:50])
+dendro=hclust(dist(geneExpress[1:50,c(6:65)]))
+plot(dendro,hang=-1,main='Dendrogram for the first 50 genes in dataset',labels=l,xlab='Probes')
+```
+
+Dendrogram for Top 100 variances:
+```{r echo=FALSE}
+topVar=filter(geneExpress,Probe %in% probeSet2)
+topDendro=hclust(dist(topVar[,6:65]))
+plot(topDendro,hang=-1,main='Dendrogram for genes with Top100 variances',labels=as.character(topVar$Probe),xlab='Probes')
+
+```
+
+#5)HeatMap
+Heat Map for genes with Top100 variances
+```{r echo=FALSE}
+G <- filter(allgenes,Probe %in% probeSet2)
+#table(G$Cell.Line.Name)
+heatmap<-ggplot(data=G,aes(x=Cell.Line.Name,y=Probe,fill=value+100))+geom_tile()
+print(heatmap+ggtitle('Heat Map for genes with Top100 variances'))
+```
+
+
