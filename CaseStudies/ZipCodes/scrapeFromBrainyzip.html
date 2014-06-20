@@ -43,7 +43,14 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 <body>
 
-<div class="container">
+<style type="text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+<div class="container-fluid main-container">
 
 
 <div id="header">
@@ -106,24 +113,66 @@ both &lt;- c(three, five)</code></pre>
   if (!is.character(zip)) stop(&quot;Give me a character string, not a number!&quot;)
   URL &lt;- makeZipURL(fixZipZeros(zip))
   info &lt;- try(readHTMLTable(URL, stringsAsFactors=FALSE), silent=TRUE)
-  if( class(info)=='try-error') return(NULL)
-  three &lt;- twoCol2List(info[[3]])
-  five &lt;- twoCol2List(info[[5]])
-  tmp &lt;- c(three,five)
-  browser()
-  return(c(list(ZIP=zip),three,five))
+  if( class(info)=='try-error' || length(info) &lt; 5 ) return(NULL)
+  res &lt;- list(three=NA,five=NA)
+  res$three &lt;- twoCol2List(info[[3]])
+  if (length(info) &gt;= 5 ) {
+    res$five &lt;- twoCol2List(info[[5]])
+  }
+  # tmp$ZIP &lt;- zip
+  return(res)
   }</code></pre>
+<pre class="r"><code>convertCommaToNumber &lt;- function(v){
+  v &lt;- as.numeric(sub(',','',as.character(v)))
+}
+
+# THIS IS NOT GENERAL.. FIX IT FIX IT FIX IT
+convertAreaToNumber &lt;- function(v) {
+  v &lt;- as.character(v)
+  str_match(v,'(\\d+)(\\D*)(\\d+)(\\D*)(\\d+)')[[6]]
+}</code></pre>
 <pre class="r"><code>readManyZips &lt;- function(zipVector) {
   if (length(zipVector) &lt; 1) stop(&quot;Give me some zips!&quot;)
-  res &lt;- killBlanks(data.frame(readOneZip( zipVector[1] )))
+  zipInfo &lt;- data.frame( zipVector[1] )
+  res3 &lt;- killBlanks(data.frame(zipInfo$three ))
+  # res5 &lt;- killBlanks(data.frame(zipInfo$five)) 
+  browser()
   for (k in 2:length(zipVector) ) {
-    thisZip &lt;- killBlanks(data.frame(readOneZip( zipVector[k] )))
-    if (!is.null(thisZip))  res &lt;- rbind(res,thisZip)
-  }
-
-  res
+    zipInfo &lt;- killBlanks(data.frame(readOneZip( zipVector[k] )))
+    res3 &lt;- cbind(res3, killBlanks(data.frame(zipInfo$three)))
+#     if (!is.null(thisZip))  res &lt;- rbind(res,thisZip)
+   }
+  # Fix up columns --- just identifying them here
+  factorToCharacter &lt;- c(61,6)
+  factorToNumber    &lt;- c(2)
+  areaToNumber &lt;- c(4,5)
+  commaToNumber &lt;- c(15,16,17,20)
+  
+  return(res3)
   }</code></pre>
-<p>}</p>
+<p>Test on several zip codes:</p>
+<pre class="r"><code>n &lt;- 5
+myzips &lt;- read.csv(&quot;/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/ZipCodes/zip_codes_states.csv&quot;)
+z &lt;- sample(myzips$zip_code, size=n, replace=FALSE )
+tmp &lt;- readManyZips( as.character(z))</code></pre>
+<pre><code>## Called from: readManyZips(as.character(z))
+## debug at &lt;text&gt;#7: for (k in 2:length(zipVector)) {
+##     zipInfo &lt;- killBlanks(data.frame(readOneZip(zipVector[k])))
+##     res3 &lt;- cbind(res3, killBlanks(data.frame(zipInfo$three)))
+## }
+## debug at &lt;text&gt;#8: zipInfo &lt;- killBlanks(data.frame(readOneZip(zipVector[k])))
+## debug at &lt;text&gt;#9: res3 &lt;- cbind(res3, killBlanks(data.frame(zipInfo$three)))
+## debug at &lt;text&gt;#8: zipInfo &lt;- killBlanks(data.frame(readOneZip(zipVector[k])))
+## debug at &lt;text&gt;#9: res3 &lt;- cbind(res3, killBlanks(data.frame(zipInfo$three)))
+## debug at &lt;text&gt;#8: zipInfo &lt;- killBlanks(data.frame(readOneZip(zipVector[k])))
+## debug at &lt;text&gt;#9: res3 &lt;- cbind(res3, killBlanks(data.frame(zipInfo$three)))
+## debug at &lt;text&gt;#8: zipInfo &lt;- killBlanks(data.frame(readOneZip(zipVector[k])))
+## debug at &lt;text&gt;#9: res3 &lt;- cbind(res3, killBlanks(data.frame(zipInfo$three)))
+## debug at &lt;text&gt;#13: factorToCharacter &lt;- c(61, 6)
+## debug at &lt;text&gt;#14: factorToNumber &lt;- c(2)
+## debug at &lt;text&gt;#15: areaToNumber &lt;- c(4, 5)
+## debug at &lt;text&gt;#16: commaToNumber &lt;- c(15, 16, 17, 20)
+## debug at &lt;text&gt;#18: return(res3)</code></pre>
 </div>
 
 

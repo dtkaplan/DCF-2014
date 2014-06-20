@@ -89,15 +89,13 @@ readOneZip <- function(zip){
   URL <- makeZipURL(fixZipZeros(zip))
   info <- try(readHTMLTable(URL, stringsAsFactors=FALSE), silent=TRUE)
   if( class(info)=='try-error' || length(info) < 5 ) return(NULL)
-  three <- twoCol2List(info[[3]])
+  res <- list(three=NA,five=NA)
+  res$three <- twoCol2List(info[[3]])
   if (length(info) >= 5 ) {
-    five <- twoCol2List(info[[5]])
-    tmp <- c(three,five)
-  } else {
-    tmp=three
+    res$five <- twoCol2List(info[[5]])
   }
-  tmp$ZIP <- zip
-  return(tmp)
+  # tmp$ZIP <- zip
+  return(res)
   }
 ```
 
@@ -106,7 +104,7 @@ convertCommaToNumber <- function(v){
   v <- as.numeric(sub(',','',as.character(v)))
 }
 
-// THIS IS NOT GENERAL.. FIX IT FIX IT FIX IT
+# THIS IS NOT GENERAL.. FIX IT FIX IT FIX IT
 convertAreaToNumber <- function(v) {
   v <- as.character(v)
   str_match(v,'(\\d+)(\\D*)(\\d+)(\\D*)(\\d+)')[[6]]
@@ -116,25 +114,54 @@ convertAreaToNumber <- function(v) {
 ```{r}
 readManyZips <- function(zipVector) {
   if (length(zipVector) < 1) stop("Give me some zips!")
-  res <- killBlanks(data.frame(readOneZip( zipVector[1] )))
-  for (k in 2:length(zipVector) ) {
-    thisZip <- killBlanks(data.frame(readOneZip( zipVector[k] )))
-    if (!is.null(thisZip))  res <- rbind(res,thisZip)
+
+  # Use fixed names for both, so that you know the order!
+  # Then you can process things, column by column.
+  
+  zipInfo <- readOneZip(zipVector[1]) 
+  nms3 <- names(zipInfo$three)
+  res3 <- matrix(NA,nrow=length(zipVector),ncol=length(nms3) )
+  colnames(res3) <- nms3
+  res3[1,] <- unlist(lapply(zipInfo$three,as.character))
+  nms5 <- names(zipInfo$five)
+  res5 <- matrix(NA,nrow=length(zipVector),ncol=length(nms5) )
+  colnames(res5) <- nms5
+  res5[1,] <- unlist(lapply(zipInfo$five,as.character))
+  for (k in 2:length(zipVector)) {
+    zipInfo <- readOneZip(zipVector[k]) 
+    three <- zipInfo$three[nms3]
+    if (!is.null(three)) res3[k,] <- unlist(lapply(three, as.character))
+    five <- zipInfo$five
+    if( !is.null(five)) res5[k,] <- unlist(lapply(five, as.character))
+    }
+
+  return(list(A=res3,B=res5))
   }
-  # Fix up columns
+```
+garbage <- function(hoo){
+  res3 <- do.call(data.frame, as.list(rep(NA,length(nms)))) # set up empty data frame
+  
+  res3 <- killBlanks(data.frame(zipInfo$three ))
+  # res5 <- killBlanks(data.frame(zipInfo$five)) 
+  for (k in 2:length(zipVector) ) {
+    zipInfo <- killBlanks(data.frame(readOneZip( zipVector[k] )))
+    res3 <- cbind(res3, killBlanks(data.frame(zipInfo$three)))
+   }
+  # Fix up columns --- just identifying them here
   factorToCharacter <- c(61,6)
   factorToNumber    <- c(2)
   areaToNumber <- c(4,5)
   commaToNumber <- c(15,16,17,20)
   
-  return(res)
+  return(res3)
   }
 ```
 
 
 Test on several zip codes:
 ```{r}
-n <- 500
+set.seed(3)
+n <- 50
 myzips <- read.csv("/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/ZipCodes/zip_codes_states.csv")
 z <- sample(myzips$zip_code, size=n, replace=FALSE )
 tmp <- readManyZips( as.character(z))
