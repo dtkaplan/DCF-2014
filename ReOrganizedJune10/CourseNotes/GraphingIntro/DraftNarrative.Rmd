@@ -4,3 +4,5 @@ output: html_document
 ---
 
 In this document, place draft narrative for this section of the notes. 
+
+* Time Series: `DCF::babyNamesYearly`

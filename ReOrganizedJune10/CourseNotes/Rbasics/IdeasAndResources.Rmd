@@ -3,4 +3,18 @@ title: "Ideas and Resources"
 output: html_document
 ---
 
-In this document, place ideas and resources for this section of the notes. 
+
+## Exercise Ideas
+
+
+### One
+
+The `babyNames` dataframe (in the DCF package) gives the number of babies given each name in each year.  See \code{help(babyNames)}.
+
+What will be returned by each of these commands?  If an error message is displayed, explain what is wrong with the command.
+
+1. `names(babyNames)`
+1. `name(babyNames)`
+1. `with(babyNames, names)`
+1. `with(babyNames, name)`
+
