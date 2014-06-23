@@ -2,14 +2,17 @@ library(ggplot2)
 library(grid)
 library(proto)
 
-GeomField <- proto(ggplot2:::Geom, {
+GeomArrow <- proto(ggplot2:::Geom, {
+    ## Based on GeomSegment
+    ## Influenced by defunct `geom_field`: https://github.com/hadley/ggplot2/wiki/Creating-a-new-geom
+    ## Alpha channel does not work, because `alpha()` function raises an error
 
     draw <- function(., data, scales, coordinates, arrow = NULL,
                      lineend = "butt", na.rm = FALSE, ...) {
 
         data <- ggplot2:::remove_missing(data, na.rm = na.rm,
                                          c("x", "y", "angle", "length", "linetype", "size", "shape"),
-                                         name = "geom_field")
+                                         name = "geom_arrow")
 
         ## Calculate and add on "xend" and "yend"
         data$xend <- data$x + data$length*cos(data$angle)
@@ -33,7 +36,7 @@ GeomField <- proto(ggplot2:::Geom, {
 
     }
 
-    objname <- "field" # name of the geom in lowercase. Must correspond to GeomField.
+    objname <- "arrow" # name of the geom in lowercase. Must correspond to GeomArrow.
     desc <- "Single line segments"
 
     default_stat <- function(.) ggplot2:::StatIdentity
@@ -43,10 +46,10 @@ GeomField <- proto(ggplot2:::Geom, {
 
 })
 
-geom_field <- function (mapping = NULL, data = NULL, stat = "identity",
+geom_arrow <- function (mapping = NULL, data = NULL, stat = "identity",
                         position = "identity", arrow = NULL, lineend = "butt", na.rm = FALSE, ...) {
 
-    GeomField$new(mapping = mapping, data = data, stat = stat,
+    GeomArrow$new(mapping = mapping, data = data, stat = stat,
                   position = position, arrow = arrow, lineend = lineend, na.rm = na.rm, ...)
 }
 
