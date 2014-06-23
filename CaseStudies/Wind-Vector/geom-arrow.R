@@ -11,19 +11,13 @@ GeomField <- proto(ggplot2:::Geom, {
                                          c("x", "y", "angle", "length", "linetype", "size", "shape"),
                                          name = "geom_field")
 
-        out.data <<- data
-        out.scales <<- scales
-        out.coord <<- coordinates
-
+        ## Calculate and add on "xend" and "yend"
         data$xend <- data$x + data$length*cos(data$angle)
         data$yend <- data$y + data$length*sin(data$angle) 
-        print("made it here!\n")
-                                        #        if (empty(data)) return(zeroGrob())
 
         if (is.linear(coordinates)) {
             return(with(coord_transform(coordinates, data, scales), {
-                print("here one?")
-                foo <<- segmentsGrob(x, y, xend, yend, default.units="native",
+                segmentsGrob(x, y, xend, yend, default.units="native",
                                      ## gp = gpar(col=alpha(colour, alpha), fill = alpha(colour, alpha),
                                      ##     lwd=size * .pt, lty=linetype, lineend = lineend),
                                      arrow = arrow)
