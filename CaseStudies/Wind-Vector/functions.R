@@ -27,7 +27,7 @@ getWindDay <- function(year, month, day, hour = c(0, 6, 12, 18),
   uv$long <- ifelse(uv$long > 180, uv$long - 360, uv$long) # Convert to negative notation
   
   ## Calculate speed and direction from u and v
-  uv <- mutate(may2014, speed = sqrt((u+v)^2),
+  uv <- mutate(uv, speed = sqrt((u+v)^2),
          angle = atan2(v, u))
 
   uv_filt <- filter(uv, datestring %in% chosenDay )  

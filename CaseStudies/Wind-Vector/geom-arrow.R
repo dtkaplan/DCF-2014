@@ -38,7 +38,7 @@ GeomArrow <- proto(ggplot2:::Geom, {
 
     default_stat <- function(.) ggplot2:::StatIdentity
     required_aes <- c("x", "y") 
-    default_aes <- function(.) aes(colour="black", angle=pi/4, length=1, size=0.5, linetype=1, arrowsize = 1)
+    default_aes <- function(.) aes(colour="black", angle=pi/4, length=1, size=0.5, linetype=1, arrowsize = 1.5)
     guide_geom <- function(.) "path"
 
 })
