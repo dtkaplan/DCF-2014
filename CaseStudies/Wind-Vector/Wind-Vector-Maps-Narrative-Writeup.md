@@ -6,8 +6,15 @@ Viewing Wind Vectors of US, Mexico, and Central America
 require(ggplot2)
 require(grid)
 
+setwd("CaseStudies/Wind-Vector/")
+```
+
+```
+## Error: cannot change working directory
+```
+
+```r
 load("data/wind-2014-1949-comparisons.Rda")
-source("functions.R")
 source("geom-arrow.R")
 ```
 
@@ -19,7 +26,7 @@ Using this technique, we can visualize the region of US, Mexico, and Central Ame
 
 
 ```r
-scalef <- 0.15 # determines scale of arrows
+scaling <- 2.5/max(may2014$speed) # determines scale of arrows
 
 ## These cover continental US down to the top tip of South America
 lats <- c(5, 55)
@@ -27,11 +34,9 @@ longs <- c(-145, -55)
 
 map.may2014 <- ggplot(may2014, aes(x = long, y = lat)) +
   borders(database = "world") + 
+  geom_arrow(aes(length = speed*scaling, angle = angle)) +
   coord_equal(xlim = longs, ylim = lats) +
-  geom_segment(aes(xend = long + scalef*u ,
-                                   yend = lat + scalef*v),
-               arrow = arrow(length = unit(scalef,"cm"))) +
-  ylim(lats) + xlim(longs) + ggtitle("Wind Patterns at Noon: May 30, 2014")
+  ggtitle("Wind Patterns at Noon: May 30, 2014")
 map.may2014
 ```
 
@@ -61,12 +66,11 @@ Do you see any differences? It may be easier to view them superimposed on top of
 ```r
 map.may2014_nov2013 <- ggplot(may2014_nov2013, aes(x = long, y = lat, color = datestring)) +
   borders(database = "world") +
+  geom_arrow(aes(length = speed*scaling, angle = angle)) +
+  ggtitle("Wind Patterns at Noon") +
   coord_equal(xlim = longs, ylim = lats) +
-  geom_segment(aes(xend = long + scalef*u ,
-                                   yend = lat + scalef*v),
-               arrow = arrow(length = unit(scalef,"cm"))) +
-  ylim(lats) + xlim(longs) + ggtitle("Wind Patterns at Noon") +
-  scale_color_manual(values = c("red", "blue")) + theme(legend.position = "bottom")
+  scale_color_manual(values = c("red", "blue")) + 
+  theme(legend.position = "bottom")
 
 map.may2014_nov2013
 ```
