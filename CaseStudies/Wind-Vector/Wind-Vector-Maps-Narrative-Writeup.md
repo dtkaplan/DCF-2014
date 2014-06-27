@@ -7,33 +7,32 @@ require(ggplot2)
 require(grid)
 
 load("data/wind-2014-1949-comparisons.Rda")
+source("functions.R")
+source("geom-arrow.R")
 ```
 
 Wind consists of both *speed* and *direction*.  How can we visualize both of these elements on a map to get a sense of wind patterns?
 
 One way of doing this is a *vector field*.  For each wind measurement, we plot an arrow that points in the direction that the wind is going, and with the length of the arrow corresponding to the speed.
 
-Using this technique, we can visualize region of US, Mexico, and Central America in May 31, 2014 at 12:00 noon:
+Using this technique, we can visualize the region of US, Mexico, and Central America in May 31, 2014 at 12:00 noon:
 
 
 ```r
 scalef <- 0.15 # determines scale of arrows
 
 ## These cover continental US down to the top tip of South America
-lats <- c(8, 49)
-longs <- c(-140, -63)
+lats <- c(5, 55)
+longs <- c(-145, -55)
 
 map.may2014 <- ggplot(may2014, aes(x = long, y = lat)) +
-  borders(database = "world") + coord_equal() +
+  borders(database = "world") + 
+  coord_equal(xlim = longs, ylim = lats) +
   geom_segment(aes(xend = long + scalef*u ,
                                    yend = lat + scalef*v),
                arrow = arrow(length = unit(scalef,"cm"))) +
   ylim(lats) + xlim(longs) + ggtitle("Wind Patterns at Noon: May 30, 2014")
 map.may2014
-```
-
-```
-## Warning: Removed 92 rows containing missing values (geom_segment).
 ```
 
 ![plot of chunk may2014](figure/may2014.png) 
@@ -54,10 +53,6 @@ map.nov2013 <- map.may2014 %+% nov2013 +
 map.nov2013
 ```
 
-```
-## Warning: Removed 92 rows containing missing values (geom_segment).
-```
-
 ![plot of chunk nov2013](figure/nov2013.png) 
 
 Do you see any differences? It may be easier to view them superimposed on top of each other:
@@ -65,7 +60,8 @@ Do you see any differences? It may be easier to view them superimposed on top of
 
 ```r
 map.may2014_nov2013 <- ggplot(may2014_nov2013, aes(x = long, y = lat, color = datestring)) +
-  borders(database = "world") + coord_equal() +
+  borders(database = "world") +
+  coord_equal(xlim = longs, ylim = lats) +
   geom_segment(aes(xend = long + scalef*u ,
                                    yend = lat + scalef*v),
                arrow = arrow(length = unit(scalef,"cm"))) +
@@ -73,11 +69,6 @@ map.may2014_nov2013 <- ggplot(may2014_nov2013, aes(x = long, y = lat, color = da
   scale_color_manual(values = c("red", "blue")) + theme(legend.position = "bottom")
 
 map.may2014_nov2013
-```
-
-```
-## Warning: Removed 92 rows containing missing values (geom_segment).
-## Warning: Removed 92 rows containing missing values (geom_segment).
 ```
 
 ![plot of chunk may2014_nov2013](figure/may2014_nov2013.png) 
@@ -95,10 +86,6 @@ map.may1949 <- map.may2014 %+% may1949 +
 map.may1949
 ```
 
-```
-## Warning: Removed 92 rows containing missing values (geom_segment).
-```
-
 ![plot of chunk may1949](figure/may1949.png) 
 
 Again, we can look at the two superimposed on top of each other:
@@ -108,11 +95,6 @@ Again, we can look at the two superimposed on top of each other:
 map.may2014_1949 <- map.may2014_nov2013 %+% may2014_1949
 
 map.may2014_1949
-```
-
-```
-## Warning: Removed 92 rows containing missing values (geom_segment).
-## Warning: Removed 92 rows containing missing values (geom_segment).
 ```
 
 ![plot of chunk may2014_1949](figure/may2014_1949.png) 
