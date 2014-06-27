@@ -11,7 +11,7 @@ GeomArrow <- proto(ggplot2:::Geom, {
                      lineend = "butt", na.rm = FALSE, ...) {
 
         data <- ggplot2:::remove_missing(data, na.rm = na.rm,
-                                         c("x", "y", "angle", "length", "linetype", "size", "shape"),
+                                         c("x", "y", "angle", "length", "linetype", "arrowsize", "size", "shape"),
                                          name = "geom_arrow")
 
         ## Calculate and add on "xend" and "yend"
@@ -21,13 +21,10 @@ GeomArrow <- proto(ggplot2:::Geom, {
 
         if (is.linear(coordinates)) {
             return(with(coord_transform(coordinates, data, scales), {
-                
-                arrowsize <- with(data.frame(x, xend, y, yend)[minsize],
-                                  sqrt((x-xend)^2 + (y-yend)^2))
                 segmentsGrob(x, y, xend, yend, default.units="native",
                              gp = gpar(col= colour, fill = colour,
                                  lwd=size * ggplot2:::.pt, lty=linetype, lineend = lineend),
-                             arrow = arrow(length = unit(arrowsize, "npc")))
+                             arrow = arrow(length = unit(arrowsize/100, "npc")))
 
             }
                         ))
@@ -41,7 +38,7 @@ GeomArrow <- proto(ggplot2:::Geom, {
 
     default_stat <- function(.) ggplot2:::StatIdentity
     required_aes <- c("x", "y") 
-    default_aes <- function(.) aes(colour="black", angle=pi/4, length=1, size=0.5, linetype=1)
+    default_aes <- function(.) aes(colour="black", angle=pi/4, length=1, size=0.5, linetype=1, arrowsize = 1)
     guide_geom <- function(.) "path"
 
 })
