@@ -1,6 +1,3 @@
-library(ggplot2)
-
-
 ## These cover continental US down to the top tip of South America
 lats <- c(8, 49)
 longs <- c(-140, -63)
