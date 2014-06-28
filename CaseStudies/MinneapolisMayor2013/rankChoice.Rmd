@@ -5,9 +5,15 @@ date: "April 24, 2014"
 output: html_document
 ---
 
+* [Original vote file](http://vote.minneapolismn.gov/www/groups/public/@clerk/documents/webcontent/2013-mayor-cvr.xlsx)
+
+* Minneapolis voting site [description of ranked-choice voting] ](http://vote.minneapolismn.gov/rcv/index.htm)
+
+* [MPR Story](http://minnesota.publicradio.org/display/web/2013/11/22/politics/ranked-choice-vote-count-programmers)
+
+* [Election Statistics](http://vote.minneapolismn.gov/www/groups/public/@clerk/documents/webcontent/wcms1p-126724.xlsx) saved in `electionStatistics.csv` in case-study directory
 
 
-[MPR Story](http://minnesota.publicradio.org/display/web/2013/11/22/politics/ranked-choice-vote-count-programmers)
 
 ```{r include=FALSE}
 library(dplyr)
@@ -16,6 +22,23 @@ library(ggplot2)
 require(igraph)
 ```
 
+## Data Cleaning for the `Minneapolis2013.rda` file
+
+```{r}
+require(stringr)
+fileName <- "/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/MinneapolisMayor2013/MinneapolisMayor-2013.csv"
+Minneapolis2013 <- read.csv(file.name)
+Minneapolis2013 <- Minneapolis2013[,-5]
+names(Minneapolis2013) <- c("Precinct","First","Second","Third")
+# separate precinct into both precinct and ward
+precinct <- Minneapolis2013$Precinct
+tmp <- gsub("MINNEAPOLIS ",'',precinct)
+tmp2 <- stringr::str_match(tmp, "^(W-[0-9]+.*) (P-[0-9]+.*)$")
+Minneapolis2013$Precinct <- factor(tmp2[,3])
+Minneapolis2013$Ward <- factor(tmp2[,2])
+```
+
+* [Maps of Precincts](http://vote.minneapolismn.gov/results/election-maps)
 ## The Votes
 
 ```{r}
