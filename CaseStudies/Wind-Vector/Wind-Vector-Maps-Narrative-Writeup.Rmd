@@ -5,7 +5,6 @@ Viewing Wind Vectors of US, Mexico, and Central America
 require(ggplot2)
 require(grid)
 
-setwd("CaseStudies/Wind-Vector/")
 load("data/wind-2014-1949-comparisons.Rda")
 source("geom-arrow.R")
 ```
@@ -52,7 +51,7 @@ map.nov2013
 Do you see any differences? It may be easier to view them superimposed on top of each other:
 
 ```{r may2014_nov2013,fig.height=10,fig.width=15}
-map.may2014_nov2013 <- ggplot(may2014_nov2013, aes(x = long, y = lat, color = datestring)) +
+map.may2014_nov2013 <- ggplot(may2014_nov2013, aes(x = long, y = lat, color = factor(date))) +
   borders(database = "world") +
   geom_arrow(aes(length = speed*scaling, angle = angle)) +
   ggtitle("Wind Patterns at Noon") +
@@ -85,6 +84,10 @@ map.may2014_1949
 ```
 
 Where is the wind blowing a different direction in 2014, compared to 1949?  Where is it blowing with a different strength?
+
+# Looking at the same location over time
+
+This gives us a rough sense of what could happen over time, but to get a better sense of this we can look at the *same* location over time.  We'll start with Warren, Wisconson (45°N, 92.5°W).
 
 
 
