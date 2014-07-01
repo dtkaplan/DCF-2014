@@ -6,8 +6,8 @@ require(ggplot2)
 require(grid)
 require(openair)
 
-load("data/wind-2014-1949-comparisons.Rda")
-source("geom-arrow.R")
+load("../data/wind-2014-1949-comparisons.Rda")
+source("../geom-arrow.R")
 ```
 
 Wind consists of both *speed* and *direction*.  How can we visualize both of these elements on a map to get a sense of wind patterns?
