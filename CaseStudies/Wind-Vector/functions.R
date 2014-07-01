@@ -48,3 +48,8 @@ getWind <- function(years, months, lat.southnorth, lon.westeast) {
     
 }
 
+
+radians2degrees <- function(x){
+    ## Convert radians to degrees for windRose
+    ((x + pi/2) * 180 / pi) %% 360
+}
