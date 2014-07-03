@@ -7,6 +7,7 @@ output: html_document
 
 ```{r include=FALSE}
 require(XML)
+require(stringr)
 ```
 
 ## The Problem
@@ -88,7 +89,7 @@ readOneZip <- function(zip){
   if (!is.character(zip)) stop("Give me a character string, not a number!")
   URL <- makeZipURL(fixZipZeros(zip))
   info <- try(readHTMLTable(URL, stringsAsFactors=FALSE), silent=TRUE)
-  if( class(info)=='try-error' || length(info) < 5 ) return(NULL)
+  if( class(info)=='try-error' || length(info) < 3 ) return(NULL)
   res <- list(three=NA,five=NA)
   res$three <- twoCol2List(info[[3]])
   if (length(info) >= 5 ) {
@@ -104,10 +105,11 @@ convertCommaToNumber <- function(v){
   v <- as.numeric(sub(',','',as.character(v)))
 }
 
-# THIS IS NOT GENERAL.. FIX IT FIX IT FIX IT
+# Extract the square kilometers
 convertAreaToNumber <- function(v) {
   v <- as.character(v)
-  str_match(v,'(\\d+)(\\D*)(\\d+)(\\D*)(\\d+)')[[6]]
+  tmp <- stringr::str_match(v, "^[0-9.]+ square miles([0-9.]+) square kilometers$")
+  return(as.numeric( tmp[,2]))
 }
 ```
 
@@ -124,15 +126,21 @@ readManyZips <- function(zipVector) {
   colnames(res3) <- nms3
   res3[1,] <- unlist(lapply(zipInfo$three,as.character))
   nms5 <- names(zipInfo$five)
+  nms5 <- nms5[nms5!='']
   res5 <- matrix(NA,nrow=length(zipVector),ncol=length(nms5) )
   colnames(res5) <- nms5
-  res5[1,] <- unlist(lapply(zipInfo$five,as.character))
+  res5[1,] <- unlist(lapply(zipInfo$five[nms5],as.character))
   for (k in 2:length(zipVector)) {
+    cat(paste(k,zipVector[k],','))
     zipInfo <- readOneZip(zipVector[k]) 
+    if (is.null(zipInfo)) next
     three <- zipInfo$three[nms3]
-    if (!is.null(three)) res3[k,] <- unlist(lapply(three, as.character))
-    five <- zipInfo$five
-    if( !is.null(five)) res5[k,] <- unlist(lapply(five, as.character))
+    # fix any elements that are missing
+    three[which(lapply(three,length)==0)] <- " "
+    if (!is.null(three)) try(res3[k,] <- unlist(lapply(three, as.character)))
+    five <- zipInfo$five[nms5]
+    five[which(lapply(five,length)==0)] <- " "
+    if( !is.null(five)) try(res5[k,] <- unlist(lapply(five[nms5], as.character)))
     }
 
   return(list(A=res3,B=res5))
@@ -160,9 +168,83 @@ garbage <- function(hoo){
 
 Test on several zip codes:
 ```{r}
-set.seed(3)
-n <- 50
+set.seed(4)
+n <- 500
 myzips <- read.csv("/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/ZipCodes/zip_codes_states.csv")
 z <- sample(myzips$zip_code, size=n, replace=FALSE )
 tmp <- readManyZips( as.character(z))
 ```
+
+Fix the class of the columns
+```{r}
+fixZIPS <- function(tmp,zips=myzips$zip_code) {
+  A <- data.frame(tmp$A)
+  A$ZIP <- as.character(zips)
+  A$State.Zip.Codes. <- NULL
+  for (column in c(2,3,9,11,12)) {
+    A[[column]] <- convertCommaToNumber(A[[column]])
+  }
+  for (column in c(4,5)) {
+    A[[column]] <- convertAreaToNumber(A[[column]])
+  }
+  B <- data.frame(tmp$B)
+  B$ZIP <- as.character(zips)
+  for (column in c(1:40,42:46) ) {
+    B[[column]] <- convertCommaToNumber(B[[column]])
+  }
+  B <- B[,-c(24,33,41)] 
+  return(list(zipGeography = A, zipDemographics = B ) )
+}
+```
+
+Read them in bunches:
+
+```{r}
+readInBunches <- function(bunchSize) {
+  myzips <- read.csv("/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/ZipCodes/zip_codes_states.csv")
+  # Get the basic structure
+  zipInfo <- readOneZip('10001') 
+  nms3 <- names(zipInfo$three)
+  nms5 <- names(zipInfo$five)
+  nms5 <- nms5[nms5!='']
+
+  
+#  res5[1,] <- unlist(lapply(zipInfo$five[nms5],as.character))
+  
+  starts <- seq(1,nrow(myzips),by=bunchSize)
+  for (bunch in 1:length(starts)) {
+    inds <- seq(starts[bunch],starts[bunch]+bunchSize-1)
+    inds <- inds[inds<=nrow(myzips)]
+    zipVector <- as.character(myzips$zip_code[inds])
+    # pre-allocate the matrix storage
+    res3 <- matrix(NA,nrow=length(zipVector),ncol=length(nms3) )
+    colnames(res3) <- nms3
+    res5 <- matrix(NA,nrow=length(zipVector),ncol=length(nms5) )
+    cat(paste("\nBunch",bunch,"of",length(starts), ":\n"))
+    colnames(res5) <- nms5
+    for (k in 1:length(zipVector)) {
+     cat(paste(k,zipVector[k],','))
+     zipInfo <- readOneZip(zipVector[k]) 
+     if (is.null(zipInfo)) next
+     three <- zipInfo$three[nms3]
+     # fix any elements that are missing
+     three[which(lapply(three,length)==0)] <- " "
+     if (!is.null(three)) try(res3[k,] <- unlist(lapply(three, as.character)))
+     five <- zipInfo$five[nms5]
+     five[which(lapply(five,length)==0)] <- " "
+     if( !is.null(five)) try(res5[k,] <- unlist(lapply(five[nms5], as.character)))
+    }
+
+    tmp <- list(A=res3,B=res5)
+    
+    # convert columns and save files
+    
+    tmp <- fixZIPS(tmp,as.character(z[inds]))
+    zipGeography <- tmp$zipGeography
+    zipDemographics <- tmp$zipDemographics
+    save(zipGeography,file=paste('geo-',bunch,'.rda',sep=''))
+    save(zipDemographics,file=paste('demo-',bunch,'.rda',sep=''))
+  }  
+}
+```
+

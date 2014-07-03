@@ -113,6 +113,10 @@ Find the population of each country.  Join this with the population in cities $>
 
 Also need to join in the country names.
 
+## Layout of data
+
+The spreadsheet [here](http://vote.minneapolismn.gov/www/groups/public/@clerk/documents/webcontent/wcms1p-126724.xlsx) contains data on the Minneapolis 2013 election by ward and precinct.  Identify the elements of this spreadsheet that are not in standard form for a data table.  [Cached copy](wcms1p-126724.xlsx)
+
 
 
 

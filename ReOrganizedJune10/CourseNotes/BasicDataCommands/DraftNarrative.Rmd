@@ -3,7 +3,276 @@ title: "Draft Narrative: Basic Data operations"
 output: html_document
 ---
 
- 
+```{r include=FALSE}
+require(dplyr)
+load("/Users/kaplan/KaplanFiles/DCF-2014/DCF-devel/data/NHANES.rda")
+options(na.rm=TRUE)
+```
+
+Maybe in this section, mean BP for smokers and non-smokers.
+
+```{r}
+group_by(NHANES, sex, diabetic) %>% 
+  summarize(bp=mean(systolic-diastolic,na.rm=TRUE),n=n(),
+                                              se=sd(systolic-diastolic, na.rm=TRUE)/sqrt(n)) -> foo 
+ggplot(foo, aes(x=sex, group=diabetic, color=diabetic,y=bp,width=.5))  + geom_bar(alpha=.3,aes(fill=diabetic),position='dodge',stat='identity') + geom_errorbar(aes(ymax=bp+2*se,ymin=bp-2*se,),position='dodge')  + ylim(0,80)
+```
+
+For errorbars and such, you need to use `position=position_dodge(width=.5)` to separate the groups equally.
+
+```{r}
+ggplot(foo, aes(group=sex, x=diabetic, y=bp,width=.5))  + 
+#  geom_bar(alpha=.3,aes(fill=sex),position='dodge',stat='identity') + 
+  geom_errorbar(aes(ymax=bp+2*se,ymin=bp-2*se,color=sex),
+                position=position_dodge(width=0.3),weight=3,size=2,width=.2)  + 
+  ylim(0,80) + ylab("Pulse Pressure (mmHg)") + 
+  xlab("Diabetes status")
+```
+
+
+QUESTIONS TO ASK:
+* What variables are here?
+* What cases are here in the glyph-ready data?
+* Which variable is represented by color?
+* Which variable sets th position of the subgroup w.r.t. the overall group?
+* The length of the error bars reflects a quantity called the "standard error".  
+
+Make graphs to compare diabetics to non-diabetics in each group, and to compare males to females in each group.
+
+Perhaps jazz it up with age-group.
+
+## What fraction are diabetic in the various age groups
+
+```{r}
+mutate(NHANES, AgeGroup=ntils(age,n=10,format='left')) %>% 
+  group_by(sex,AgeGroup) %>%
+  summarize(dfrac=mean(diabetic=='diabetic',na.rm=TRUE),
+            se=sqrt(dfrac*(1-dfrac)/length(diabetic)) )-> hoo
+ggplot(hoo, aes(x=AgeGroup,y=dfrac,group=sex)) + geom_bar(alpha=.3,aes(fill=sex,color=sex),position='dodge',stat='identity',width=4) + geom_errorbar(aes(ymax=dfrac+se,ymin=dfrac-se,color=sex),position='dodge')
+```
+
+### Proportion with summarize:
+
+The point here is that once you've reduced the data to a tally of each group, you want to keep those cases, so you want a mutate().  But even in `mutate()`, aggregation operators work over the whole group.
+
+The last grouping variable gets eliminated each time you use `mutate()` or `summarize()`.
+
+```{r}
+group_by(NHANES, sex, smoker, diabetic) %>% tally() -> tmp
+# get rid of the NA here
+filter(tmp, diabetic != 'NA' & smoker != 'NA') %>%
+mutate( total=sum(n),frac=n/total) %>% filter( diabetic=='diabetic')
+```
+
+## Create a proportion function
+
+Do I want this?
+
+```{r}
+simple <- function(v) {
+  sum(v,na.rm=TRUE)/length(v)
+}
+proportion <- function(.data,...) {
+  do(.data,data.frame(prop.table(do.call(table,select(.,...)))))
+}
+# example
+# group_by(NHANES,sex,smoker) %>% proportion(diabetic)
+```
+
+## TO DO
+
+* Fix NHANES to turn `NaN` into `NA` in the numerical variables.
+* Set the option `"na.rm"` to `TRUE` when the DCF package is loaded.
+* Have earlier examples with `summary()` of a single variable:
+```
+with( NHANES, summary(height) )
+```
+That will let you show what the variables look like.  Or maybe show a boxplot.
+
+## Returned values, arguments, inputs and outputs
+
+Explain what these are.
+
+Also, assignment.  Use `<-` to distinquish between assignment and named arguments.   `<-` gives the output of a function to a name, or, in other words, "assigns a value to an object named ..."
+
+
+For each sex and smoker group, what fraction has diabetes?
+```{r}
+group_by(NHANES,sex,smoker) %>% mutate(count=n()) -> tmp
+summarize(tmp, sum(diabetic=='diabetic')/count )
+dcast(group_by(NHANES,sex,smoker) %>% proportion(diabetic),
+      ~diabetic,value.var='Freq')
+tmp <- group_by(NHANES,sex) %>% summarize( k=sum(diabetic=='diabetic') )
+ggplot(tmp, aes(x=sex,y=n,fill=smoker)) + 
+  geom_bar(stat='identity',position='fill')
+```
+
+
+## Transforms and Aggregations
+
+An important distinction to make in using data is between **transforming** and **aggregating**.  
+
+In aggregating data, you will be combining cases.  Think of aggregating as creating a new kind of case.
+
+In transforming data, you will be treating each and every case individually.
+
+Suppose you want to find the "pulse pressure" for each of the individual people in the NHANES data.  Pulse pressure is the difference between systolic and diastolic pressures. [Note 1] (Blood pressure is usually reported as two numbers, say, "105 over 70." Systolic is the top number and diastolic is the bottom number) You can calculate it this way:
+
+```{r}
+pulse <- with( NHANES, systolic-diastolic )
+```
+
+This subtraction is a transform.  It produces a result for each case in NHANES, all `r nrow(NHANES)` of them.
+```{r}
+summary( pulse )
+```
+
+In contrast, suppose you want to know the median diastolic pressure.  That's an aggregation.  It converts the whole set of cases into a single number.
+```{r}
+with( NHANES, median(diastolic))
+```
+
+There are many possible transforms and many different aggregations. Here are a few:
+
+* **Transforms**: arithmetic operations (`+`, `-`, `*`, `/`, `^`), `sqrt()`, `log()`, and so on.
+* **Aggregations**: `mean()`, `median()`, `sum()`, `range()`, `sd()`, `IQR()` and so on.
+
+Remember: a transformation keeps each case as it is, while an aggregation produces a new sort of case.  In `NHANES` or transformations of it, the case is an individual person.  In an aggregation of `NHANES` the case is "all the people together."
+
+## What you give should be what you get
+
+As you've seen, data are organized into data frames.  A useful style in computing is to arrange computations so that the input is a data frame and the output is also a data frame.  When things are set up this way, you can easily use the output of one computation as the input to another.  For instance, you may want to transform variables before plotting them.
+
+To support this style, you'll be using specific functions: `mutate()`, `summarize()`, `group_by()` and so on.  If you have used R before, these functions may be unfamiliar.  And, of course, if you have never used R, the functions are new to you.  
+
+### Transforms
+
+To perform a transform, use the `mutate()` function.  The first argument is a data frame.  Additional arguments specify the transform to be calculated.  Like this:
+```{r}
+output <- mutate( NHANES, pulse=systolic-diastolic )
+```
+In this operation, a new variable has been created called `pulse`.  The output copies over the input data frame as well, so `output` will have all the variables originally in `NHANES` along with `pulse`:
+```{r}
+names(output)
+```
+
+A very common style with a transform is to use the output of `mutate()` to redefine the input data frame, as with:
+```{r}
+NHANES <- mutate( NHANES, pulse=systolic-diastolic )
+```
+
+Sometimes, you will use a transform to modify an existing variable.  For instance, the `followup` variable in `NHANES` gives --- for those people who died soon after the study --- the number of months from the initial measurements until the subject died. Perhaps you want this in years rather than months.
+```{r}
+NHANES <- mutate( NHANES, followup=followup/12 )
+```
+
+### Aggregation
+
+To carry out an aggregation, use the `summarize()` function.  
+```{r}
+summarize( NHANES, typicalAge=median(age, na.rm=TRUE) )
+```
+
+The output of `summarize()` is a data frame, albeit a very short data frame in this situation.
+
+Sometimes, you will want to use an aggregate quantity as part of a transformation.  Suppose, for instance, that you want to know how much each person differs in height from the mean.
+```{r}
+NHANES <- mutate( NHANES, hgtDiff=height-mean(height) )
+```
+
+QUESTION:  Why are these two quantities so different?
+```{r}
+summarize( NHANES, mean(height), mean(hgtDiff))
+```
+
+## Grouping
+
+Often, you will be interested in studying **groups** of cases, for instance the males and females in `NHANES` or the smoking diabetics versus non-smoking diabetics. 
+
+In order to do the grouping, you need one or more variables that specify the groups, for instance, `sex`, `diabetic`, and `smoker` in NHANES.  Use the `group_by()` function to specify which variables you want to use.
+
+Grouping cases doesn't in itself do anything.  Instead, grouping sets things up so that `summarize()`, `mutate()`, and some other functions can do things on a group-by-group basis.  Example:
+
+```{r}
+NHANES <- group_by( NHANES, sex )
+summarize( NHANES, typicalAge=median(age, na.rm=TRUE) )
+```
+
+Doing a transform on a grouped variable allows you, if you want, to use aggregate quantities for that group.  For instance, the groups of males and females have different mean heights.  Here's how you would calculate the difference of an individual from his or her group's mean.
+
+```{r}
+NHANES <- group_by( NHANES, sex )
+NHANES <- mutate( NHANES, dheight=height-mean(height) )
+summarize( NHANES, sd(dheight) )
+```
+
+
+### NOTE: For proportion ...
+
+```{r}
+group_by(NHANES, sex,smoker) %>% summarize(pd=mean(diabetic=='diabetic',na.rm=TRUE),sz=n(),se=sqrt(pd*(1-pd)/sqrt(sz)))
+```
+
+
+## How Many?
+
+n() and groupwise n().  n() takes no arguments because it wouldn't matter which variable you used: they all have the same length
+
+
+
+## Style
+
+As mentioned before, re-using a name can make your commands easier to read.
+
+Reassignment of the output to the input data frame may make sense for a transform.  But it is generally a bad idea for an aggregation.  (Explain why.  Hint: What are the cases in the input and output.) [Show a reassignment in a summarize() and say DON'T DO THIS!]
+
+### Pipes
+
+
+## Example: Blood pressure and diabetes
+
+The NHANES data gives ... for 31000 people.  Suppose you are interested in the question, does pulse pressure differ for diabetics and non-diabetics.
+
+
+```{r}
+group_by(NHANES, sex, diabetic) %>% 
+  summarize(bp=mean(systolic-diastolic,na.rm=TRUE),n=n(),
+                                              se=sd(systolic-diastolic, na.rm=TRUE)/sqrt(n)) -> foo 
+ggplot(foo, aes(x=sex, group=diabetic, color=diabetic,y=bp,width=.5))  + geom_bar(alpha=.3,aes(fill=diabetic),position='dodge',stat='identity') + geom_errorbar(aes(ymax=bp+2*se,ymin=bp-2*se,),position='dodge',weight=3,size=2)  + ylim(0,80)
+```
+
+Perhaps a better plot would be:
+
+```{r}
+ggplot(NHANES, aes(x=sex, y=systolic-diastolic, fill=diabetic)) + geom_boxplot(notch=TRUE)
+```
+
+NB.  For some reason, geom_box() doesn't use group.  But color works.
+
+
+MAYBE ALWAYS DO A SELECT to highlight the variables being used.
+
+## Exercises
+
+What could you improve about this graphic if your point is to show that pulse pressure differs from diabetics and non-diabetics?  Hint: Missing data is shown in gray, even though it isn't in the legend.
+
+```{r}
+group_by(NHANES, sex, diabetic) %>% 
+  summarize(bp=mean(systolic-diastolic,na.rm=TRUE),n=n(),
+                                              se=sd(systolic-diastolic, na.rm=TRUE)/sqrt(n)) -> foo 
+ggplot(foo, aes(group=sex, x=diabetic, y=bp,width=.5))  + geom_bar(alpha=.3,aes(fill=sex),position='dodge',stat='identity') + geom_errorbar(aes(ymax=bp+2*se,ymin=bp-2*se,),position='dodge',weight=3,size=2)  + ylim(0,80) + ylab("Pulse Pressure (mmHg)") + 
+  xlab("Diabetes status")
+```
+
+
+
+ANS: Group by diabetes status rather than sex.  Kill the NAs.
+
+Add a new variable to `small` that gives the mean height for that person's group.
+
+See [this set of exercises](http://www.public.iastate.edu/~hofmann/stat480/homework/dplyr%20drills.html)
+
+## Still to do
 
 Do a tabulation of the rank-choice data.
 
@@ -11,3 +280,12 @@ Find the variances of the NCI data, by probe.
 
 Cross-tab of NHANES: perhaps cardiac death versus sex or BMI. 
 
+
+## MORE DATA POSSIBILITIES
+
+Move these to the resources file when you have a chance.
+
+
+Storm damage database: http://rpubs.com/deflath/20484
+
+US Housing database: http://www.asdfree.com/2014/06/analyze-american-housing-survey-ahs.html

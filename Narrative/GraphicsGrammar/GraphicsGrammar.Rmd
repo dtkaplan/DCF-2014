@@ -101,6 +101,8 @@ A grammar of graphics has been proposed [Wilkinson, L. (2005),The Grammar of Gra
 #. Scales: how each variable appears visually 
 #. Guides: presentation of scales and other orienting information to the user 
 
+
+
 ### Data
 
 You already know what you need to know about this: what's a variable and what's a case.  That there are quantitative and categorical variables, etc.
