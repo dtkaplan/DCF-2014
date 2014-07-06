@@ -10,6 +10,10 @@ require(DCFdevel)
 require(mosaic)
 require(reshape2)
 knitr::opts_chunk$set(tidy=FALSE,echo=FALSE)
+library(maps)
+#load us map data
+all_states <- map_data("state")
+#plot all states with ggplot
 ```
 
 ## Background
@@ -267,9 +271,15 @@ ggplot( DRG872, aes(x=Pop/LandArea, y=Charged)) +
   geom_point() + scale_y_log10() + scale_x_log10()
 ```
 
+```{r}
+DRG872 <- transform(DRG872, Rgroup=ntiles(Charged,4))
+ggplot(DRG872, aes(x=Longitude,y=Latitude,color=Rgroup)) + 
+  geom_point() + facet_wrap(~ Rgroup,nrow=2) + geom_polygon( data=all_states, aes(x=long, y=lat, group = group),colour="white", fill=NA )
+```
+
 ## Doing things for all the DRGs
 
-Fit log(Charge) to DRG and take the residual.
+Fit `log(Charge)` to `DRG` and take the residual.
 
 ```{r}
 mod <- lm(log10(Charged) ~ DRG, data = SmallMed)
@@ -285,14 +295,13 @@ ggplot( SmallMed, aes(x=Pop/LandArea, y=Resid)) +
 ```
 
 ```{r}
-library(maps)
-#load us map data
-all_states <- map_data("state")
-#plot all states with ggplot
+
 SmallMed <- transform(SmallMed, Rgroup=ntiles(Resid,9))
 ggplot(SmallMed, aes(x=Longitude,y=Latitude,color=Rgroup)) + 
   geom_point() + facet_wrap(~ Rgroup,nrow=3) + geom_polygon( data=all_states, aes(x=long, y=lat, group = group),colour="white", fill=NA )
 ```
+
+
 
 ## Models?
 
