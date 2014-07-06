@@ -118,5 +118,12 @@ Also need to join in the country names.
 The spreadsheet [here](http://vote.minneapolismn.gov/www/groups/public/@clerk/documents/webcontent/wcms1p-126724.xlsx) contains data on the Minneapolis 2013 election by ward and precinct.  Identify the elements of this spreadsheet that are not in standard form for a data table.  [Cached copy](wcms1p-126724.xlsx)
 
 
+## What Fraction
+
+What Fraction of each country's population lives in cities $> 500,000$.  Get country-wide population from `CIAdata(2199)` and use `data(WorldCities,package='DCFdevel')` to add up the country.  Need to locate the two-letter country codes.  They are listed [http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2]: Data scraping exercise.  And [here they are](https://raw.githubusercontent.com/pudo/lobbytransparency/master/etl/countrycodes.csv) in a CSV format. And [still another](http://www.nationsonline.org/oneworld/country_code_list.htm). And [another](http://www.unc.edu/~rowlett/units/codes/country.htm)
+
+
+
+Another exercise: verify these.
 
 

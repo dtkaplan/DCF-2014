@@ -10,7 +10,8 @@ output: html_document
 #read data as dataframe
 
 library(dplyr)
-geneFile<-"D:\\Research with Kaplan\\DCF-2014\\CaseStudies\\NCI-gene\\nci60_RNA__Agilent_mRNA_log2.txt"
+# geneFile<-"D:\\Research with Kaplan\\DCF-2014\\CaseStudies\\NCI-gene\\nci60_RNA__Agilent_mRNA_log2.txt"
+geneFile <- "/Users/kaplan/Downloads/filesandlinks/nci60_RNA__Agilent_mRNA_log2.txt/nci60_RNA__Agilent_mRNA_log2.txt"
 gene<-read.table(geneFile,head=TRUE )  
 
 gene_df<-tbl_df(gene)

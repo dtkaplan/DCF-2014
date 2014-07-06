@@ -11,9 +11,11 @@ output: html_document
 
 * [MPR Story](http://minnesota.publicradio.org/display/web/2013/11/22/politics/ranked-choice-vote-count-programmers)
 
-* [Election Statistics](http://vote.minneapolismn.gov/www/groups/public/@clerk/documents/webcontent/wcms1p-126724.xlsx) saved in `electionStatistics.csv` in case-study directory
+* [Election Statistics](http://vote.minneapolismn.gov/www/groups/public/@clerk/documents/webcontent/wcms1p-126724.xlsx) saved in `electionStatistics.csv` in case-study directory.  [Map of turn-out](http://vote.minneapolismn.gov/www/groups/public/@clerk/documents/webcontent/wcms1p-126706.pdf)
 
+* Some [census information](http://www.minneapolismn.gov/census/2010/index.htm) about the city and by [ward](http://www.minneapolismn.gov/www/groups/public/@cped/documents/webcontent/wcms1q-068925.pdf).
 
+* [Wikipedia description](http://en.wikipedia.org/wiki/Minneapolis_mayoral_election,_2013)
 
 ```{r include=FALSE}
 library(dplyr)

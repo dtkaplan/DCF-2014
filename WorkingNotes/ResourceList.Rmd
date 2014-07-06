@@ -1,4 +1,8 @@
 
+## Some genetics in R
+
+<http://martinsbioblogg.wordpress.com/2014/07/04/finding-the-distance-from-chip-signals-to-genes/>
+
 ## SNPS in R
 
 <https://github.com/rOpenSci/rsnps> ask Paul O about this.

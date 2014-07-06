@@ -95,7 +95,8 @@ readOneZip <- function(zip){
   if (length(info) >= 5 ) {
     res$five <- twoCol2List(info[[5]])
   }
-  # tmp$ZIP <- zip
+#  res$three$ZIP <- zip
+#  res$five$ZIP <- zip
   return(res)
   }
 ```
@@ -169,7 +170,7 @@ garbage <- function(hoo){
 Test on several zip codes:
 ```{r}
 set.seed(4)
-n <- 500
+n <- 5
 myzips <- read.csv("/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/ZipCodes/zip_codes_states.csv")
 z <- sample(myzips$zip_code, size=n, replace=FALSE )
 tmp <- readManyZips( as.character(z))
@@ -179,7 +180,7 @@ Fix the class of the columns
 ```{r}
 fixZIPS <- function(tmp,zips=myzips$zip_code) {
   A <- data.frame(tmp$A)
-  A$ZIP <- as.character(zips)
+  A$ZIP <- fixZipZeros(as.character(zips))
   A$State.Zip.Codes. <- NULL
   for (column in c(2,3,9,11,12)) {
     A[[column]] <- convertCommaToNumber(A[[column]])
@@ -215,7 +216,7 @@ readInBunches <- function(bunchSize) {
   for (bunch in 1:length(starts)) {
     inds <- seq(starts[bunch],starts[bunch]+bunchSize-1)
     inds <- inds[inds<=nrow(myzips)]
-    zipVector <- as.character(myzips$zip_code[inds])
+    zipVector <- fixZipZeros(as.character(myzips$zip_code[inds]))
     # pre-allocate the matrix storage
     res3 <- matrix(NA,nrow=length(zipVector),ncol=length(nms3) )
     colnames(res3) <- nms3
@@ -239,7 +240,7 @@ readInBunches <- function(bunchSize) {
     
     # convert columns and save files
     
-    tmp <- fixZIPS(tmp,as.character(z[inds]))
+    tmp <- fixZIPS(tmp,as.character(zipVector))
     zipGeography <- tmp$zipGeography
     zipDemographics <- tmp$zipDemographics
     save(zipGeography,file=paste('geo-',bunch,'.rda',sep=''))
@@ -248,3 +249,25 @@ readInBunches <- function(bunchSize) {
 }
 ```
 
+In a first scrape, the zip codes were left as NA.  Fix that and consolidate the files into one big file.
+
+```{r}
+consolidateZips <- function(bunchSize) {
+  myzips <- read.csv("/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/ZipCodes/zip_codes_states.csv")
+  geo <- NULL
+  demo <- NULL
+  starts <- seq(1,nrow(myzips),by=bunchSize)
+  for (bunch in 1:length(starts)) {
+    inds <- seq(starts[bunch],starts[bunch]+bunchSize-1)
+    inds <- inds[inds<=nrow(myzips)]
+    zipVector <- fixZipZeros(as.character(myzips$zip_code[inds]))
+    load(file=paste('geo-',bunch,'.rda',sep=''))
+    load(file=paste('demo-',bunch,'.rda',sep=''))
+    zipGeography$ZIP <- zipVector
+    zipDemographics$ZIP <- zipVector
+    geo <- rbind(geo, zipGeography)
+    demo <- rbind(demo, zipDemographics)
+  } 
+  return(list(geo=geo,demo=demo))
+}
+```

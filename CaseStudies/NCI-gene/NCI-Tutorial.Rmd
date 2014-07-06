@@ -35,9 +35,11 @@ The command in Rstudio is:
 
 ```{r}
 geneFile<-"D:\\Research with Kaplan\\DCF-2014\\CaseStudies\\NCI-gene\\nci60_RNA__Agilent_mRNA_log2.txt"
+geneFile <- "/Users/kaplan/Downloads/filesandlinks/nci60_RNA__Agilent_mRNA_log2.txt/nci60_RNA__Agilent_mRNA_log2.txt"
 geneExpress<-read.table(geneFile,head=TRUE )  
 
 cellFile<-"D:\\Research with Kaplan\\DCF-2014\\CaseStudies\\NCI-gene\\nci60_cellline_metadata.csv"
+cellFile <- "/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/NCI-gene/nci60_cellline_metadata.csv"
 cellLineData <- read.csv(cellFile,head=TRUE)
 ```
 
@@ -212,8 +214,8 @@ probeSet2 <- c('ACTG2' , 'SULF1' , 'COL3A1' , 'IGFBP5' , 'SLC24A3' , 'COL1A2' , 
 res <- list()
 for (probe in probeSet2) {
   filter(bothall, Probe==probe) %>% 
-  group_by(tissue.of.origin) %>% 
-  summarize(ave=mean(expression),stderr=sd(expression)/sqrt(n())) -> tmp
+  group_by(tissue.of.origin)  %>% 
+  summarize(ave=mean(value),stderr=sd(value)/sqrt(n())) -> tmp
   tmp$tissue.of.origin <- with(tmp,reorder(tissue.of.origin,-ave))
   res[[probe]] <- tmp
 }
@@ -224,7 +226,7 @@ Create a table that shows F value, p value, and FDR value for Top100 genes
 Fres <- data.frame( probe=character(length(probeSet2)), F=NA, p=NA,stringsAsFactors=FALSE)
 for (probe in probeSet2) {
   raw<-filter(bothall,Probe==probe)
-  tmp <- anova(lm(expression ~ tissue.of.origin, data=raw))  
+  tmp <- anova(lm(value ~ tissue.of.origin, data=raw))  
   Fres[which(probe == probeSet2),] <- list(probe=probe, F=tmp[1,4], p=tmp[1,5])
   }
 Fres <- mutate(Fres,FDR=p.adjust(p,"fdr"))
@@ -237,11 +239,11 @@ Making a plot of p value and FDR for Top100 genes
 #Make "Fres" into a new table with only "Measurements"(p and FDR) and "Values"
 Fres<-select(Fres,-F) 
 Fres<-arrange(Fres,desc(p),desc(FDR))
-Fres<-melt(Fres,variable='Measurements',value.name='Values')
-Fres$probe<-with(Fres,reorder(probe,Values))
+Fres<-melt(Fres,variable='Measurements',value.name='value')
+Fres$probe<-with(Fres,reorder(probe,value))
 head(Fres)
 #Make the plot
-p<-ggplot(data=Fres)+geom_point(aes(y=probe,x=Values,color=Measurements))+scale_x_log10()
+p<-ggplot(data=Fres)+geom_point(aes(y=probe,x=value,color=Measurements))+scale_x_log10()
 print(p + xlab('Genes') + ylab('P value and FDR value'))
 ```
 
@@ -277,9 +279,9 @@ print(mean1+xlab('Probes')+ylab('Tissues')+ggtitle('Parallel Coordinate Plot of 
 
 Parallel Coordinate Plot for 5 genes with smallest p-values
 ```{r echo=FALSE,eval=FALSE}  
-pmin<-Fres$probe[96:100]    not working properly
+pmin<-Fres$probe[96:100]    
 d2<-filter(bothall,Probe %in% pmin) 
-transd2<-cast(d2,Cell.Line.Name+tissue.of.origin+Name.1~Probe,value='expression')
+transd2<-cast(d2,Cell.Line.Name+tissue.of.origin+Name.1~Probe,value='value')
 pcp2<-ggparcoord(data=transd2,columns=3:7,groupColumn=2,alphaLines = 0.5,mapping=aes(size=0.8)) 
 head(transd2)
 print(pcp2+ggtitle('Parallel Coordinate Plot of 5 genes with biggest p-value')
