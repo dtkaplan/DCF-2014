@@ -1,0 +1,133 @@
+Fetching and Reshaping Hurricane Sandy Wind Data
+========================================================
+
+
+We can explore wind data using a [large database created by the US government](http://www.esrl.noaa.gov/psd/data/gridded/data.ncep.reanalysis.html).  Like most web sites for government data, it's unclear how you would go about finding the exact data you want from the web site.
+
+Fortunately, the `R` package `RNCEP` provides a convenient interface for querying this large database.
+
+```{r results='hide', message=FALSE}
+require(RNCEP)
+```
+
+The function for gathering data is the rather generically named `NCEP.gather` function. This function is fairly complex and the only way to figure out how to use it is to peruse its help page:
+
+```{r eval=FALSE}
+?NCEP.gather
+```
+
+From this page we discover that to get surface-level wind data, the variables we want are `uwnd.sig995` and `vwnd.sig995`.  We also can specify the month and year, which appears to go from 1948 to just a couple days ago. The `u` gives the longitudinal component of the wind in meters per second, while the `v` gives the latitudinal component.
+
+To get the data we need to issue two separate queries to get each variable, and we need to download the data for an entire month since `NCEP.gather` does not allow you to specify whatday of the month. We here focus on an area on the Mid-Atlantic coast in the US, which is one of the areas most affected by the hurricane.
+
+```{r uv_get, eval=FALSE}
+lats <- c(35, 40)
+longs <- c(-80, -75)
+
+u <- NCEP.gather(variable = 'uwnd.sig995', level = 'surface',
+                   months.minmax = c(10, 10), years.minmax = c(2011, 2011),
+                   lat.southnorth = lats, lon.westeast = longs)
+v <- NCEP.gather(variable = 'uwnd.sig995', level = 'surface',
+                   months.minmax = c(10, 10), years.minmax = c(2011, 2011),
+                   lat.southnorth = lats, lon.westeast = longs)
+```
+
+```{r uv_save, echo=FALSE, eval=FALSE}
+
+save(u, v, file = "uv-raw-Sandy.Rda")
+
+```
+
+```{r uv_load, echo=FALSE}
+## Load u and v from saved file to allow quick knitting.
+
+load("uv-raw-Sandy.Rda")
+```
+
+# Exploring and reshaping the data
+
+What format does the data come back in?
+
+```{r}
+str(u)
+head(u)
+```
+
+The first line tells us that `u` is a 3-dimensional matrix, with 18 rows, 32 columns, and 124 of the third dimension.  From the *Value* section of `?NCEP.gather`, we know that the row names are the latitudes, the column names are the longitudes, and the 3rd-dimension names are the date. How the heck are we going to get this in a format we can plot?  Fortunately, simply calling `melt` function from the `reshape2` function breaks this down into a rectangular format quite nicely:
+
+```{r u_to_long_raw}
+require(reshape2)
+
+umelt.raw <- melt(u)
+str(umelt.raw)
+head(umelt.raw)
+```
+
+Now, each row is one unique combination of latitude, longitude, and date, and the value at that combination. We can provide slightly nicer output by telling `melt` what we want to name our columns.  We now do this for both `u` and `v`.
+
+```{r uv_to_long}
+umelt <- melt(u, varnames = c("lat", "long", "date"), value.name = "u")
+str(umelt)
+head(umelt)
+
+vmelt <- melt(v, varnames = c("lat", "long", "date"), value.name = "v")
+str(vmelt)
+head(vmelt)
+```
+
+# Merging the data
+
+But, we're going to want to combine information about u and v in order to make our plot.  So, we want these values side by side.
+
+We expect that we have one in both datasets for each unique combination of latitude, longitude, date/time. But, we could be wrong, there may be some missing values.  If we for some reason only have "u", "v" is useless because we don't have enough information to draw the direction based on just one component alone.
+
+Therefore, we want to line up all values in both datasets where latitude, longitude, and date/time are equal, discarding any values where a combination exists in one data set but not another.  This is called an *inner join*, and we can simply use the function `inner_join` from the `dplyr` package to accomplish this. All we need to do is specify the variables that we are using to join using the `by =` argument:
+
+```{r inner_join}
+require(dplyr)
+
+uv <- inner_join(umelt, vmelt, by = c("lat", "long", "date"))
+str(uv)
+head(uv)
+```
+
+# Tweaks: correct formats, calculate speed & direction
+
+This data is almost `ggplot2`-ready, but notice the format of the longitudes.  `ggplot2` wants the longitudes to go between –180° and 180°, whereas this data gives the negative longitudes in a positive format.  So, we need to convert all the longitudes that are above 180° to the negative format by subtracting 360°. (In this case, all the longitudes are negative, so this is what we do below.)
+
+Also, we want to calculate the speed and direction, which we can do by way of trigonometry.
+
+Finally, we convert the string given by NCEP into an R date format using the `ymd_h()` function from the `lubridate` package.
+
+We do all of this in a single `mutate` command.
+
+```{r mutate}
+library(lubridate)
+  uv_2 <- mutate(uv, long = long - 360,
+               speed = sqrt((u+v)^2),
+               angle = atan2(v, u),
+               date = ymd_h(date))
+
+str(uv_2)
+
+```
+
+(If we had positive longitudes, we would need to alter this command to only subtract 180 from the longitudes that are over 180.)
+
+# Filtering the data
+
+We now have too many dates!  You can see all the unique values for a variable using the `unique` function:
+
+```{r unique}
+unique(uv_2$date)
+```
+
+This is all measurements from October, but we only want the final three days.  We can get just these three days using the `filter` command to specify that we want only the days that are after or equal to the 28th.
+
+```{r filter}
+uvtrim <- filter(uv_2, date >= ymd("2011-10-28"))
+
+unique(uvtrim$date)
+```
+
+Now, those are the values in our dataset.  Success!
