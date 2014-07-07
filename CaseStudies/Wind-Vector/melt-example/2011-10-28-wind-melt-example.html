@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="x-ua-compatible" content="IE=9" >
 
-<title>Fetching and Reshaping Hurricane Sandy Wind Data</title>
+<title>Fetching and Reshaping Hurricane Sandy Data</title>
 
 <style type="text/css">
 body, td {
@@ -179,9 +179,9 @@ hljs.initHighlightingOnLoad();
 </head>
 
 <body>
-<h1>Fetching and Reshaping Hurricane Sandy Wind Data</h1>
+<h1>Fetching and Reshaping Hurricane Sandy Data</h1>
 
-<p>We can explore wind data using a <a href="http://www.esrl.noaa.gov/psd/data/gridded/data.ncep.reanalysis.html">large database created by the US government</a>.  Like most web sites for government data, it&#39;s unclear how you would go about finding the exact data you want from the web site.</p>
+<p>We can explore various weather data related to Hurricane Sandy using a <a href="http://www.esrl.noaa.gov/psd/data/gridded/data.ncep.reanalysis.html">large database created by the US government</a>.  Like most web sites for government data, it&#39;s unclear how you would go about finding the exact data you want from the web site.</p>
 
 <p>Fortunately, the <code>R</code> package <code>RNCEP</code> provides a convenient interface for querying this large database.</p>
 
@@ -195,6 +195,8 @@ hljs.initHighlightingOnLoad();
 
 <p>From this page we discover that to get surface-level wind data, the variables we want are <code>uwnd.sig995</code> and <code>vwnd.sig995</code>.  We also can specify the month and year, which appears to go from 1948 to just a couple days ago. The <code>u</code> gives the longitudinal component of the wind in meters per second, while the <code>v</code> gives the latitudinal component.</p>
 
+<p>We also gather <code>air.sig995</code>, the air temperateure neare the surface (in °K); <code>pres.sfc</code>, the pressure at the surface (Pascals); and <code>rhum.sig995</code>, the relative humidity (%).</p>
+
 <p>To get the data we need to issue two separate queries to get each variable, and we need to download the data for an entire month since <code>NCEP.gather</code> does not allow you to specify whatday of the month. We here focus on an area on the Mid-Atlantic coast in the US, which is one of the areas most affected by the hurricane.</p>
 
 <pre><code class="r">lats &lt;- c(35, 40)
@@ -203,7 +205,16 @@ longs &lt;- c(-80, -75)
 u &lt;- NCEP.gather(variable = &#39;uwnd.sig995&#39;, level = &#39;surface&#39;,
                    months.minmax = c(10, 10), years.minmax = c(2011, 2011),
                    lat.southnorth = lats, lon.westeast = longs)
-v &lt;- NCEP.gather(variable = &#39;uwnd.sig995&#39;, level = &#39;surface&#39;,
+v &lt;- NCEP.gather(variable = &#39;vwnd.sig995&#39;, level = &#39;surface&#39;,
+                   months.minmax = c(10, 10), years.minmax = c(2011, 2011),
+                   lat.southnorth = lats, lon.westeast = longs)
+air &lt;- NCEP.gather(variable = &#39;air.sig995&#39;, level = &#39;surface&#39;,
+                   months.minmax = c(10, 10), years.minmax = c(2011, 2011),
+                   lat.southnorth = lats, lon.westeast = longs)
+pres &lt;- NCEP.gather(variable = &#39;pres.sfc&#39;, level = &#39;surface&#39;,
+                   months.minmax = c(10, 10), years.minmax = c(2011, 2011),
+                   lat.southnorth = lats, lon.westeast = longs)
+rhum &lt;- NCEP.gather(variable = &#39;rhum.sig995&#39;, level = &#39;surface&#39;,
                    months.minmax = c(10, 10), years.minmax = c(2011, 2011),
                    lat.southnorth = lats, lon.westeast = longs)
 </code></pre>
@@ -259,7 +270,7 @@ str(umelt.raw)
 ## 6 35.0 282.5 2011_10_01_00   3.5
 </code></pre>
 
-<p>Now, each row is one unique combination of latitude, longitude, and date, and the value at that combination. We can provide slightly nicer output by telling <code>melt</code> what we want to name our columns.  We now do this for both <code>u</code> and <code>v</code>.</p>
+<p>Now, each row is one unique combination of latitude, longitude, and date, and the value at that combination. We can provide slightly nicer output by telling <code>melt</code> what we want to name our columns.  We can do this for all our variables.</p>
 
 <pre><code class="r">umelt &lt;- melt(u, varnames = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;), value.name = &quot;u&quot;)
 str(umelt)
@@ -285,26 +296,9 @@ str(umelt)
 </code></pre>
 
 <pre><code class="r">vmelt &lt;- melt(v, varnames = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;), value.name = &quot;v&quot;)
-str(vmelt)
-</code></pre>
-
-<pre><code>## &#39;data.frame&#39;:    1116 obs. of  4 variables:
-##  $ lat : num  40 37.5 35 40 37.5 35 40 37.5 35 40 ...
-##  $ long: num  280 280 280 282 282 ...
-##  $ date: Factor w/ 124 levels &quot;2011_10_01_00&quot;,..: 1 1 1 1 1 1 1 1 1 2 ...
-##  $ v   : num  9.5 6.3 4.3 5.9 2.2 ...
-</code></pre>
-
-<pre><code class="r">head(vmelt)
-</code></pre>
-
-<pre><code>##    lat  long          date   v
-## 1 40.0 280.0 2011_10_01_00 9.5
-## 2 37.5 280.0 2011_10_01_00 6.3
-## 3 35.0 280.0 2011_10_01_00 4.3
-## 4 40.0 282.5 2011_10_01_00 5.9
-## 5 37.5 282.5 2011_10_01_00 2.2
-## 6 35.0 282.5 2011_10_01_00 3.5
+airmelt &lt;- melt(air, varnames = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;), value.name = &quot;air&quot;)
+rhummelt &lt;- melt(rhum, varnames = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;), value.name = &quot;rhum&quot;)
+presmelt &lt;- melt(pres, varnames = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;), value.name = &quot;pres&quot;)
 </code></pre>
 
 <h1>Merging the data</h1>
@@ -313,7 +307,7 @@ str(vmelt)
 
 <p>We expect that we have one in both datasets for each unique combination of latitude, longitude, date/time. But, we could be wrong, there may be some missing values.  If we for some reason only have &ldquo;u&rdquo;, &ldquo;v&rdquo; is useless because we don&#39;t have enough information to draw the direction based on just one component alone.</p>
 
-<p>Therefore, we want to line up all values in both datasets where latitude, longitude, and date/time are equal, discarding any values where a combination exists in one data set but not another.  This is called an <em>inner join</em>, and we can simply use the function <code>inner_join</code> from the <code>dplyr</code> package to accomplish this. All we need to do is specify the variables that we are using to join using the <code>by =</code> argument:</p>
+<p>Therefore, we want to line up all values in both datasets where latitude, longitude, and date/time are equal, discarding any values where a combination exists in one data set but not another.  This is called an <em>inner join</em>, and we can simply use the function <code>inner_join</code> from the <code>dplyr</code> package to accomplish this. All we need to do is specify the variables that we are using to join using the <code>by =</code> argument.</p>
 
 <pre><code class="r">require(dplyr)
 </code></pre>
@@ -331,8 +325,8 @@ str(vmelt)
 ##     intersect, setdiff, setequal, union
 </code></pre>
 
-<pre><code class="r">uv &lt;- inner_join(umelt, vmelt, by = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;))
-str(uv)
+<pre><code class="r">joins.example &lt;- inner_join(umelt, vmelt, by = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;))
+str(joins.example)
 </code></pre>
 
 <pre><code>## &#39;data.frame&#39;:    1116 obs. of  5 variables:
@@ -340,19 +334,27 @@ str(uv)
 ##  $ long: num  280 280 280 282 282 ...
 ##  $ date: Factor w/ 124 levels &quot;2011_10_01_00&quot;,..: 1 1 1 1 1 1 1 1 1 2 ...
 ##  $ u   : num  9.5 6.3 4.3 5.9 2.2 ...
-##  $ v   : num  9.5 6.3 4.3 5.9 2.2 ...
+##  $ v   : num  -2.7 -6.4 -2.5 -3.2 -5.3 ...
 </code></pre>
 
-<pre><code class="r">head(uv)
+<pre><code class="r">head(joins.example)
 </code></pre>
 
-<pre><code>##    lat  long          date   u   v
-## 1 40.0 280.0 2011_10_01_00 9.5 9.5
-## 2 37.5 280.0 2011_10_01_00 6.3 6.3
-## 3 35.0 280.0 2011_10_01_00 4.3 4.3
-## 4 40.0 282.5 2011_10_01_00 5.9 5.9
-## 5 37.5 282.5 2011_10_01_00 2.2 2.2
-## 6 35.0 282.5 2011_10_01_00 3.5 3.5
+<pre><code>##    lat  long          date   u    v
+## 1 40.0 280.0 2011_10_01_00 9.5 -2.7
+## 2 37.5 280.0 2011_10_01_00 6.3 -6.4
+## 3 35.0 280.0 2011_10_01_00 4.3 -2.5
+## 4 40.0 282.5 2011_10_01_00 5.9 -3.2
+## 5 37.5 282.5 2011_10_01_00 2.2 -5.3
+## 6 35.0 282.5 2011_10_01_00 3.5  3.9
+</code></pre>
+
+<p>To build the final join we simply daisy-chain these joins together, accumulating a bigger dataset like we are building a snowman, using the <code>%.%</code> operator.</p>
+
+<pre><code class="r">sandy_1 &lt;- inner_join(umelt, vmelt, by = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;)) %.% 
+  inner_join(airmelt, by = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;)) %.% 
+  inner_join(rhummelt, by = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;)) %.% 
+  inner_join(presmelt, by = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;))
 </code></pre>
 
 <h1>Tweaks: correct formats, calculate speed &amp; direction</h1>
@@ -366,22 +368,25 @@ str(uv)
 <p>We do all of this in a single <code>mutate</code> command.</p>
 
 <pre><code class="r">library(lubridate)
-  uv_2 &lt;- mutate(uv, long = long - 360,
+  sandy_2 &lt;- mutate(sandy_1, long = long - 360,
                speed = sqrt((u+v)^2),
                angle = atan2(v, u),
                date = ymd_h(date))
 
-str(uv_2)
+str(sandy_2)
 </code></pre>
 
-<pre><code>## &#39;data.frame&#39;:    1116 obs. of  7 variables:
+<pre><code>## &#39;data.frame&#39;:    1116 obs. of  10 variables:
 ##  $ lat  : num  40 37.5 35 40 37.5 35 40 37.5 35 40 ...
 ##  $ long : num  -80 -80 -80 -77.5 -77.5 -77.5 -75 -75 -75 -80 ...
 ##  $ date : POSIXct, format: &quot;2011-10-01 00:00:00&quot; &quot;2011-10-01 00:00:00&quot; ...
 ##  $ u    : num  9.5 6.3 4.3 5.9 2.2 ...
-##  $ v    : num  9.5 6.3 4.3 5.9 2.2 ...
-##  $ speed: num  19 12.6 8.6 11.8 4.4 ...
-##  $ angle: num  0.785 0.785 0.785 0.785 0.785 ...
+##  $ v    : num  -2.7 -6.4 -2.5 -3.2 -5.3 ...
+##  $ air  : num  284 287 293 288 292 ...
+##  $ rhum : num  78 65 75 82 75 74 81 78 76 81 ...
+##  $ pres : num  95650 95780 98530 97280 98930 ...
+##  $ speed: num  6.8 0.1 1.8 2.7 3.1 ...
+##  $ angle: num  -0.277 -0.793 -0.527 -0.497 -1.177 ...
 </code></pre>
 
 <p>(If we had positive longitudes, we would need to alter this command to only subtract 180 from the longitudes that are over 180.)</p>
@@ -390,7 +395,7 @@ str(uv_2)
 
 <p>We now have too many dates!  You can see all the unique values for a variable using the <code>unique</code> function:</p>
 
-<pre><code class="r">unique(uv_2$date)
+<pre><code class="r">unique(sandy_2$date)
 </code></pre>
 
 <pre><code>##   [1] &quot;2011-10-01 00:00:00 UTC&quot; &quot;2011-10-01 06:00:00 UTC&quot;
@@ -459,9 +464,9 @@ str(uv_2)
 
 <p>This is all measurements from October, but we only want the final three days.  We can get just these three days using the <code>filter</code> command to specify that we want only the days that are after or equal to the 28th.</p>
 
-<pre><code class="r">uvtrim &lt;- filter(uv_2, date &gt;= ymd(&quot;2011-10-28&quot;))
+<pre><code class="r">sandytrim &lt;- filter(sandy_2, date &gt;= ymd(&quot;2011-10-28&quot;))
 
-unique(uvtrim$date)
+unique(sandytrim$date)
 </code></pre>
 
 <pre><code>##  [1] &quot;2011-10-28 00:00:00 UTC&quot; &quot;2011-10-28 06:00:00 UTC&quot;

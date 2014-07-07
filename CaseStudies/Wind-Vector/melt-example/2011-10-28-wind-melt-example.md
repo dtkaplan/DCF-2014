@@ -1,8 +1,8 @@
-Fetching and Reshaping Hurricane Sandy Wind Data
+Fetching and Reshaping Hurricane Sandy Data
 ========================================================
 
 
-We can explore wind data using a [large database created by the US government](http://www.esrl.noaa.gov/psd/data/gridded/data.ncep.reanalysis.html).  Like most web sites for government data, it's unclear how you would go about finding the exact data you want from the web site.
+We can explore various weather data related to Hurricane Sandy using a [large database created by the US government](http://www.esrl.noaa.gov/psd/data/gridded/data.ncep.reanalysis.html).  Like most web sites for government data, it's unclear how you would go about finding the exact data you want from the web site.
 
 Fortunately, the `R` package `RNCEP` provides a convenient interface for querying this large database.
 
@@ -20,6 +20,8 @@ The function for gathering data is the rather generically named `NCEP.gather` fu
 
 From this page we discover that to get surface-level wind data, the variables we want are `uwnd.sig995` and `vwnd.sig995`.  We also can specify the month and year, which appears to go from 1948 to just a couple days ago. The `u` gives the longitudinal component of the wind in meters per second, while the `v` gives the latitudinal component.
 
+We also gather `air.sig995`, the air temperateure neare the surface (in °K); `pres.sfc`, the pressure at the surface (Pascals); and `rhum.sig995`, the relative humidity (%).
+
 To get the data we need to issue two separate queries to get each variable, and we need to download the data for an entire month since `NCEP.gather` does not allow you to specify whatday of the month. We here focus on an area on the Mid-Atlantic coast in the US, which is one of the areas most affected by the hurricane.
 
 
@@ -30,7 +32,16 @@ longs <- c(-80, -75)
 u <- NCEP.gather(variable = 'uwnd.sig995', level = 'surface',
                    months.minmax = c(10, 10), years.minmax = c(2011, 2011),
                    lat.southnorth = lats, lon.westeast = longs)
-v <- NCEP.gather(variable = 'uwnd.sig995', level = 'surface',
+v <- NCEP.gather(variable = 'vwnd.sig995', level = 'surface',
+                   months.minmax = c(10, 10), years.minmax = c(2011, 2011),
+                   lat.southnorth = lats, lon.westeast = longs)
+air <- NCEP.gather(variable = 'air.sig995', level = 'surface',
+                   months.minmax = c(10, 10), years.minmax = c(2011, 2011),
+                   lat.southnorth = lats, lon.westeast = longs)
+pres <- NCEP.gather(variable = 'pres.sfc', level = 'surface',
+                   months.minmax = c(10, 10), years.minmax = c(2011, 2011),
+                   lat.southnorth = lats, lon.westeast = longs)
+rhum <- NCEP.gather(variable = 'rhum.sig995', level = 'surface',
                    months.minmax = c(10, 10), years.minmax = c(2011, 2011),
                    lat.southnorth = lats, lon.westeast = longs)
 ```
@@ -102,7 +113,7 @@ head(umelt.raw)
 ## 6 35.0 282.5 2011_10_01_00   3.5
 ```
 
-Now, each row is one unique combination of latitude, longitude, and date, and the value at that combination. We can provide slightly nicer output by telling `melt` what we want to name our columns.  We now do this for both `u` and `v`.
+Now, each row is one unique combination of latitude, longitude, and date, and the value at that combination. We can provide slightly nicer output by telling `melt` what we want to name our columns.  We can do this for all our variables.
 
 
 ```r
@@ -134,29 +145,9 @@ head(umelt)
 
 ```r
 vmelt <- melt(v, varnames = c("lat", "long", "date"), value.name = "v")
-str(vmelt)
-```
-
-```
-## 'data.frame':	1116 obs. of  4 variables:
-##  $ lat : num  40 37.5 35 40 37.5 35 40 37.5 35 40 ...
-##  $ long: num  280 280 280 282 282 ...
-##  $ date: Factor w/ 124 levels "2011_10_01_00",..: 1 1 1 1 1 1 1 1 1 2 ...
-##  $ v   : num  9.5 6.3 4.3 5.9 2.2 ...
-```
-
-```r
-head(vmelt)
-```
-
-```
-##    lat  long          date   v
-## 1 40.0 280.0 2011_10_01_00 9.5
-## 2 37.5 280.0 2011_10_01_00 6.3
-## 3 35.0 280.0 2011_10_01_00 4.3
-## 4 40.0 282.5 2011_10_01_00 5.9
-## 5 37.5 282.5 2011_10_01_00 2.2
-## 6 35.0 282.5 2011_10_01_00 3.5
+airmelt <- melt(air, varnames = c("lat", "long", "date"), value.name = "air")
+rhummelt <- melt(rhum, varnames = c("lat", "long", "date"), value.name = "rhum")
+presmelt <- melt(pres, varnames = c("lat", "long", "date"), value.name = "pres")
 ```
 
 # Merging the data
@@ -165,7 +156,9 @@ But, we're going to want to combine information about u and v in order to make o
 
 We expect that we have one in both datasets for each unique combination of latitude, longitude, date/time. But, we could be wrong, there may be some missing values.  If we for some reason only have "u", "v" is useless because we don't have enough information to draw the direction based on just one component alone.
 
-Therefore, we want to line up all values in both datasets where latitude, longitude, and date/time are equal, discarding any values where a combination exists in one data set but not another.  This is called an *inner join*, and we can simply use the function `inner_join` from the `dplyr` package to accomplish this. All we need to do is specify the variables that we are using to join using the `by =` argument:
+Therefore, we want to line up all values in both datasets where latitude, longitude, and date/time are equal, discarding any values where a combination exists in one data set but not another.  This is called an *inner join*, and we can simply use the function `inner_join` from the `dplyr` package to accomplish this. All we need to do is specify the variables that we are using to join using the `by =` argument.
+
+
 
 
 ```r
@@ -187,8 +180,8 @@ require(dplyr)
 ```
 
 ```r
-uv <- inner_join(umelt, vmelt, by = c("lat", "long", "date"))
-str(uv)
+joins.example <- inner_join(umelt, vmelt, by = c("lat", "long", "date"))
+str(joins.example)
 ```
 
 ```
@@ -197,21 +190,31 @@ str(uv)
 ##  $ long: num  280 280 280 282 282 ...
 ##  $ date: Factor w/ 124 levels "2011_10_01_00",..: 1 1 1 1 1 1 1 1 1 2 ...
 ##  $ u   : num  9.5 6.3 4.3 5.9 2.2 ...
-##  $ v   : num  9.5 6.3 4.3 5.9 2.2 ...
+##  $ v   : num  -2.7 -6.4 -2.5 -3.2 -5.3 ...
 ```
 
 ```r
-head(uv)
+head(joins.example)
 ```
 
 ```
-##    lat  long          date   u   v
-## 1 40.0 280.0 2011_10_01_00 9.5 9.5
-## 2 37.5 280.0 2011_10_01_00 6.3 6.3
-## 3 35.0 280.0 2011_10_01_00 4.3 4.3
-## 4 40.0 282.5 2011_10_01_00 5.9 5.9
-## 5 37.5 282.5 2011_10_01_00 2.2 2.2
-## 6 35.0 282.5 2011_10_01_00 3.5 3.5
+##    lat  long          date   u    v
+## 1 40.0 280.0 2011_10_01_00 9.5 -2.7
+## 2 37.5 280.0 2011_10_01_00 6.3 -6.4
+## 3 35.0 280.0 2011_10_01_00 4.3 -2.5
+## 4 40.0 282.5 2011_10_01_00 5.9 -3.2
+## 5 37.5 282.5 2011_10_01_00 2.2 -5.3
+## 6 35.0 282.5 2011_10_01_00 3.5  3.9
+```
+
+To build the final join we simply daisy-chain these joins together, accumulating a bigger dataset like we are building a snowman, using the `%.%` operator.
+
+
+```r
+sandy_1 <- inner_join(umelt, vmelt, by = c("lat", "long", "date")) %.% 
+  inner_join(airmelt, by = c("lat", "long", "date")) %.% 
+  inner_join(rhummelt, by = c("lat", "long", "date")) %.% 
+  inner_join(presmelt, by = c("lat", "long", "date"))
 ```
 
 # Tweaks: correct formats, calculate speed & direction
@@ -227,23 +230,26 @@ We do all of this in a single `mutate` command.
 
 ```r
 library(lubridate)
-  uv_2 <- mutate(uv, long = long - 360,
+  sandy_2 <- mutate(sandy_1, long = long - 360,
                speed = sqrt((u+v)^2),
                angle = atan2(v, u),
                date = ymd_h(date))
 
-str(uv_2)
+str(sandy_2)
 ```
 
 ```
-## 'data.frame':	1116 obs. of  7 variables:
+## 'data.frame':	1116 obs. of  10 variables:
 ##  $ lat  : num  40 37.5 35 40 37.5 35 40 37.5 35 40 ...
 ##  $ long : num  -80 -80 -80 -77.5 -77.5 -77.5 -75 -75 -75 -80 ...
 ##  $ date : POSIXct, format: "2011-10-01 00:00:00" "2011-10-01 00:00:00" ...
 ##  $ u    : num  9.5 6.3 4.3 5.9 2.2 ...
-##  $ v    : num  9.5 6.3 4.3 5.9 2.2 ...
-##  $ speed: num  19 12.6 8.6 11.8 4.4 ...
-##  $ angle: num  0.785 0.785 0.785 0.785 0.785 ...
+##  $ v    : num  -2.7 -6.4 -2.5 -3.2 -5.3 ...
+##  $ air  : num  284 287 293 288 292 ...
+##  $ rhum : num  78 65 75 82 75 74 81 78 76 81 ...
+##  $ pres : num  95650 95780 98530 97280 98930 ...
+##  $ speed: num  6.8 0.1 1.8 2.7 3.1 ...
+##  $ angle: num  -0.277 -0.793 -0.527 -0.497 -1.177 ...
 ```
 
 (If we had positive longitudes, we would need to alter this command to only subtract 180 from the longitudes that are over 180.)
@@ -254,7 +260,7 @@ We now have too many dates!  You can see all the unique values for a variable us
 
 
 ```r
-unique(uv_2$date)
+unique(sandy_2$date)
 ```
 
 ```
@@ -326,9 +332,9 @@ This is all measurements from October, but we only want the final three days.  W
 
 
 ```r
-uvtrim <- filter(uv_2, date >= ymd("2011-10-28"))
+sandytrim <- filter(sandy_2, date >= ymd("2011-10-28"))
 
-unique(uvtrim$date)
+unique(sandytrim$date)
 ```
 
 ```
