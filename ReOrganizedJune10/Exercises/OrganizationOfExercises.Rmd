@@ -1,0 +1,129 @@
+---
+title: "Ideas and Resources for Exercises"
+author: "Daniel Kaplan"
+date: "May 5, 2014"
+output: html_document
+---
+
+## Student Work
+
+As a start, let's divide student work into three categories:
+
+1. Drill
+    Questions whose answer can be found by simple examination or a trivial computation: one to three lines.  Fixed choice falls under this category.  Should **not** require an Rmd template.
+2. Exercises
+    Problems whose solution requires several lines of programming or an narrative explanation that is several paragraphs.  Should **not** require an Rmd template.
+3. Activities
+    Problems of an extended nature requiring an Rmd template.
+    
+## Mechanics of writing questions and problems
+
+Each exercise or activity should be placed in its own Rmd file.  There might be several related drill problems in an Rmd file.
+
+For silly reasons, the file **must be named** in this format: `2014-06-10-[unique descriptive name]`.  The unique descriptive name need only be unique for the attached date.  The date can be anything you want, e.g. `1918-11-11-`, so long as its in the right format.
+
+There will be `yaml` front matter at the top of the Rmd file.  It looks like this:
+
+    ---
+    layout: exercise  [or drill or activity]
+    categories:
+    - join
+    - inner_join
+    - caseMedicare
+    - interpretation
+    - graphics
+    tags: 
+    - Erik Anderson [the author]
+    - data [filenames]
+    - and so on
+    excerpt: A short descriptive sentence (not necessarily a title)
+    title: Joining Medicare 
+    ---
+
+We need to construct a library of categories that reflect the content and structure of the course.  For now, just try what comes to mind.  We'll sort it out after we have a couple of dozen files.
+
+Put answers inside `<aside> </aside>` tags.  
+
+## Drill Examples
+
+* [Show a graph.] What sort of geom is ...?
+* [Show a graph.] What are the variables involved in the frame?
+* [Show a graph.] How many guides are there?
+* How many cases are there in the inner_join of [give package name of table A] and [give package name of table B]?
+* How many variables are plotted.
+
+## Exercise Examples
+
+* Find the number of `French` cases in [data table A]?
+* Find the number of cases that are both `English` and `antique` in [data table B]?
+* Cluster the data in [data table C] and make a graph showing the clusters.
+* Using `mutate()`, construct [some new variable] and [give some report of it, e.g. mean, graph, ... ]
+
+## Activity Examples
+
+Early in the course, these might be straightforward, with an Rmd template showing how to access data, make various sorts of plots, etc.
+
+Later in the course, the activities should involve some or all of 
+
+* data transformations (e.g. group, summarize, filter, join, melt)
+* making graphics
+* choosing graphics
+
+Imagine an activity to take 15 minutes to 1 hour.
+
+They should be drawn from case studies.  
+
+
+
+## Miscellaneous Examples
+
+This is not complete.
+
+### Parsing Graphics
+
+<http://www.nytimes.com/interactive/2007/12/15/us/politics/DEBATE.html?_r=0>
+
+* How many layers are there?  (Make separate judgments for static and dynamic)
+* For each layer, what is the frame?
+* For each frame, what does the data table look like that underlies the graph?
+
+
+Lots of examples of visualizations: <http://learning.blogs.nytimes.com/2011/04/08/data-visualized-more-on-teaching-with-infographics/?action=click&module=Search&region=searchResults&mabReward=relbias%3Ar&url=http%3A%2F%2Fquery.nytimes.com%2Fsearch%2Fsitesearch%2F%3Faction%3Dclick%26region%3DMasthead%26pgtype%3DHomepage%26module%3DSearchSubmit%26contentCollection%3DHomepage%26t%3Dqry401%23%2Fdata+visualization>
+
+Trajectory infographic: explain what the glyphs are and what data they encode.
+
+* <http://www.flickr.com/photos/shanair/4288246965/in/set-72157622648454054/>
+* <http://richworks.in/wp-content/uploads/2010/04/431.jpg>
+
+### Making Graphics
+
+Create a scatter plot showing the location of the world's largest cities.  Code the population glyph with a radius that's the square-root of the population.  Use colors to indicate countries or deciles of the population, or regions.
+
+`CaseStudies/Cities/ListOfCities.RData`
+
+## Summarize
+
+Find the mean of the latitude and longitude for each country.  Plot these out with total urban population as the glyph size.
+
+`CaseStudies/Cities/ListOfCities.RData`
+
+### Join
+
+Find the population of each country.  Join this with the population in cities $> 1,000,000$.  Make a map showing the "large urban population fraction" in each country.
+
+Also need to join in the country names.
+
+## Layout of data
+
+The spreadsheet [here](http://vote.minneapolismn.gov/www/groups/public/@clerk/documents/webcontent/wcms1p-126724.xlsx) contains data on the Minneapolis 2013 election by ward and precinct.  Identify the elements of this spreadsheet that are not in standard form for a data table.  [Cached copy](wcms1p-126724.xlsx)
+
+
+## What Fraction
+
+What Fraction of each country's population lives in cities $> 500,000$.  Get country-wide population from `CIAdata(2199)` and use `data(WorldCities,package='DCFdevel')` to add up the country.  Need to locate the two-letter country codes.  They are listed [http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2]: Data scraping exercise.  And [here they are](https://raw.githubusercontent.com/pudo/lobbytransparency/master/etl/countrycodes.csv) in a CSV format. And [still another](http://www.nationsonline.org/oneworld/country_code_list.htm). And [another](http://www.unc.edu/~rowlett/units/codes/country.htm)
+
+
+
+Another exercise: verify these.
+
+

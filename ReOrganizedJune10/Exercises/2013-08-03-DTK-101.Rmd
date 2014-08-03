@@ -1,0 +1,78 @@
+---
+title: "Wide vs Narrow"
+author: "DTK"
+date: "August 3, 2014"
+output: html_document
+description: Looks at a simple, made-up dataset in wide and narrow formats
+tags: 
+- data organization
+- wide vs narrow
+layout: drill
+---
+
+
+Move this CSS to a common place:
+
+<style>
+.answers {color: sienna;}
+</style>
+
+Here are three different organizations (**A**, **B**, and **C**)
+of the same data:
+
+**Data Table A**
+
+Year | Algeria | Brazil | Columbia
+-----|---------|--------|---------
+2000 | 7       | 12     | 16
+2001 | 9       | 14     | 18
+
+**Data Table B**
+
+Country | Y2000 | Y2001
+--------|-------|------
+Algeria | 7     | 9
+Brazil  | 12    | 14
+Columbia| 16    | 18
+
+**Data Table C**
+
+Country | Year | Value
+--------|------|-----
+Algeria | 2000 | 7
+Algeria | 2001 | 9
+Brazil  | 2000 | 12
+Columbia| 2001 | 18
+Columbia| 2000 | 16
+Brazil  | 2001 | 14
+
+
+1. What are the variables in each table?
+#. What is the meaning of a case for each table? Here are some possible choices.
+    * A country
+    * A country in a year
+    * A year
+#. Comparing each of the following *pairs* of tables, say which one is wide and which one is narrow.
+    a. **A** versus **C**
+    b. **B** versus **C**
+    c. **A** versus **C**
+  
+  
+<div class="answers">
+
+### Answers:
+
+1. The variables are:
+    * Table **A**: Year, Algeria, Brazil, Columbia
+    * Table **B**: Country, Y2000, Y2001
+    * Table **C**: Country, Year, Value
+2. The cases are:
+    * Table **A**: a year
+    * Table **B**: a country
+    * Table **C**: a country in a year
+3. Wide versus narrow:
+    * Table **A** versus **C**: A is wide, C is narrow.
+    * Table **B** versus **C**: B is wide, C is narrow.
+    * Table **A** versus **B**: They are both the same relative to each other.  In a narrow format of data, the cases are more detailed than in the wide format. For instance, table **C** has cases that are "a country in a year," which is more detailed than either "year" or "country."
+
+</div>

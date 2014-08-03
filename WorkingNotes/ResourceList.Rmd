@@ -101,6 +101,8 @@ http://learning.blogs.nytimes.com/2010/08/23/teaching-with-infographics-places-t
 
 <http://www.r-bloggers.com/taxize-v0-3-0-update-a-new-data-source-taxonomy-in-writing-and-ubio-examples/>
 
+Dendrogram extensions <http://www.r-statistics.com/2014/07/the-dendextend-package-for-visualizing-and-comparing-trees-of-hierarchical-clusterings-slides-from-user2014/>
+
 ### Network Diagrams 
 
 [In ggplot2](http://is-r.tumblr.com/post/38459242505/beautiful-network-diagrams-with-ggplot2)

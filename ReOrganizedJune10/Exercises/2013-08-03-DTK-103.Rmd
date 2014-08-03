@@ -1,0 +1,71 @@
+---
+title: "Simple Networks"
+author: "DTK"
+date: "August 3, 2014"
+output: html_document
+description: Drawing a network diagram
+tags: 
+- network
+- NCI60
+- correlation
+layout: exercise
+status: in development
+---
+
+```{r include=FALSE}
+require(DCFdevel)
+require(tidyr)
+require(igraph)
+```
+
+Get the probe expression data:
+```{r}
+data(nci60) # gives nci60expression
+```
+
+Convert to narrow format:
+```{r}
+head(nci60expression,10000) %>%
+  gather( cellLine, Expression, -Probe) %>%
+  group_by( Probe ) %>%  
+  filter( var( Expression ) > 2 ) %>%
+  group_by( Probe, cellLine ) %>% # get rid of duplicates
+  summarize( Expression=max(Expression)) ->  
+  result
+```
+
+Turn it into a matrix on which correlations can be found
+```{r}
+result %>% 
+  spread( cellLine, Expression ) %>% 
+  select( -Probe ) -> hoo
+goo <- cor(hoo)
+goo <- data.frame(goo)
+goo <- mutate(goo,otherCellLine=names(goo))
+gather( goo, cellLine, correlation, -otherCellLine) %>%
+  filter(  # kill the duplicates
+    as.character(otherCellLine) > as.character(cellLine) ) %>% 
+  arrange( desc(correlation) ) -> cellCor
+```
+
+```{r}
+network <- graph.data.frame( 
+  arrange(head(cellCor,200),cellLine), 
+                             directed=FALSE )
+plot(network,layout=layout.fruchterman.reingold )
+```
+
+Move this CSS to a common place:
+
+<style>
+.answers {color: sienna;}
+</style>
+
+
+  
+<div class="answers">
+
+### Answers:
+
+
+</div>

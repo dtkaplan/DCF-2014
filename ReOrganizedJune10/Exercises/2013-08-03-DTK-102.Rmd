@@ -1,0 +1,72 @@
+---
+title: "Wide vs Narrow"
+author: "DTK"
+date: "August 3, 2014"
+output: html_document
+description: Choosing between wide and narrow
+tags: 
+- data  organization
+- wide vs narrow
+- join
+- group
+- summarize
+layout: drill
+---
+
+
+Move this CSS to a common place:
+
+<style>
+.answers {color: sienna;}
+</style>
+
+Here are three different organizations (**A**, **B**, and **C**)
+of the same data:
+
+**Data Table A**
+
+Year | Algeria | Brazil | Columbia
+-----|---------|--------|---------
+2000 | 7       | 12     | 16
+2001 | 9       | 14     | 18
+
+**Data Table B**
+
+Country | Y2000 | Y2001
+--------|-------|------
+Algeria | 7     | 9
+Brazil  | 12    | 14
+Columbia| 16    | 18
+
+**Data Table C**
+
+Country | Year | Value
+--------|------|-----
+Algeria | 2000 | 7
+Algeria | 2001 | 9
+Brazil  | 2000 | 12
+Columbia| 2001 | 18
+Columbia| 2000 | 16
+Brazil  | 2001 | 14
+
+1. Which table format do you think would make it easiest to find the change from 2000 to 2001 for each country. How would you do it?
+#. Suppose you have another table, `ContinentData`, which gives the continent that each country is in. Which table format do you think would make it easiest to find the sum of the values for each continent for each of the years?  How would you do it?
+
+  
+<div class="answers">
+
+### Answers:
+
+1. Table **B** is in a format that makes it easy to find the change between years for each country.
+
+    ```{r eval=FALSE}
+tableB %>% transform(diff=Y2001-Y2000)
+```
+    Note that the cases don't change from the input to the output, so `transform()` is an appropriate operation.
+#. Table **C** would make it easy to `join()` the country/continent data.  Then finding the sum for each continent in each year could be accomplished with `group_by()` and `summarize()`  
+    ```{r tidy=FALSE,eval=FALSE}
+tableC %>% join( ContinentData ) %>% 
+  group_by( Continent, Year ) %>% 
+  summarize( total = sum( Value ) )
+  ```
+</div>
