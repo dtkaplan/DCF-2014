@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
+
+<title>Fetching and Reshaping Hurricane Sandy Data</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+</head>
+
+<body>
+<h1>Fetching and Reshaping Hurricane Sandy Data</h1>
+
+<p>We can explore various weather data related to Hurricane Sandy using a <a href="http://www.esrl.noaa.gov/psd/data/gridded/data.ncep.reanalysis.html">large database created by the US government</a>.  Like most web sites for government data, it&#39;s unclear how you would go about finding the exact data you want from the web site.</p>
+
+<p>Fortunately, the <code>R</code> package <code>RNCEP</code> provides a convenient interface for querying this large database.</p>
+
+<pre><code class="r">require(RNCEP)
+</code></pre>
+
+<p>The function for gathering data is the rather generically named <code>NCEP.gather</code> function. This function is fairly complex and the only way to figure out how to use it is to peruse its help page:</p>
+
+<pre><code class="r">?NCEP.gather
+</code></pre>
+
+<p>From this page we discover that to get surface-level wind data, the variables we want are <code>uwnd.sig995</code> and <code>vwnd.sig995</code>.  We also can specify the month and year, which appears to go from 1948 to just a couple days ago. The <code>u</code> gives the longitudinal component of the wind in meters per second, while the <code>v</code> gives the latitudinal component.</p>
+
+<p>We also gather <code>air.sig995</code>, the air temperateure neare the surface (in °K); <code>pres.sfc</code>, the pressure at the surface (Pascals); and <code>rhum.sig995</code>, the relative humidity (%).</p>
+
+<p>To get the data we need to issue two separate queries to get each variable, and we need to download the data for an entire month since <code>NCEP.gather</code> does not allow you to specify whatday of the month. We here focus on an area on the Mid-Atlantic coast in the US, which is one of the areas most affected by the hurricane.</p>
+
+<pre><code class="r">lats &lt;- c(35, 40)
+longs &lt;- c(-80, -75)
+
+u &lt;- NCEP.gather(variable = &#39;uwnd.sig995&#39;, level = &#39;surface&#39;,
+                   months.minmax = c(10, 10), years.minmax = c(2011, 2011),
+                   lat.southnorth = lats, lon.westeast = longs)
+v &lt;- NCEP.gather(variable = &#39;vwnd.sig995&#39;, level = &#39;surface&#39;,
+                   months.minmax = c(10, 10), years.minmax = c(2011, 2011),
+                   lat.southnorth = lats, lon.westeast = longs)
+air &lt;- NCEP.gather(variable = &#39;air.sig995&#39;, level = &#39;surface&#39;,
+                   months.minmax = c(10, 10), years.minmax = c(2011, 2011),
+                   lat.southnorth = lats, lon.westeast = longs)
+pres &lt;- NCEP.gather(variable = &#39;pres.sfc&#39;, level = &#39;surface&#39;,
+                   months.minmax = c(10, 10), years.minmax = c(2011, 2011),
+                   lat.southnorth = lats, lon.westeast = longs)
+rhum &lt;- NCEP.gather(variable = &#39;rhum.sig995&#39;, level = &#39;surface&#39;,
+                   months.minmax = c(10, 10), years.minmax = c(2011, 2011),
+                   lat.southnorth = lats, lon.westeast = longs)
+</code></pre>
+
+<h1>Exploring and reshaping the data</h1>
+
+<p>What format does the data come back in?</p>
+
+<pre><code class="r">str(u)
+</code></pre>
+
+<pre><code>##  num [1:3, 1:3, 1:124] 9.5 6.3 4.3 5.9 2.2 ...
+##  - attr(*, &quot;dimnames&quot;)=List of 3
+##   ..$ : chr [1:3] &quot;40&quot; &quot;37.5&quot; &quot;35&quot;
+##   ..$ : chr [1:3] &quot;280&quot; &quot;282.5&quot; &quot;285&quot;
+##   ..$ : chr [1:124] &quot;2011_10_01_00&quot; &quot;2011_10_01_06&quot; &quot;2011_10_01_12&quot; &quot;2011_10_01_18&quot; ...
+</code></pre>
+
+<pre><code class="r">head(u)
+</code></pre>
+
+<pre><code>## [1] 9.5 6.3 4.3 5.9 2.2 3.5
+</code></pre>
+
+<p>The first line tells us that <code>u</code> is a 3-dimensional matrix, with 18 rows, 32 columns, and 124 of the third dimension.  From the <em>Value</em> section of <code>?NCEP.gather</code>, we know that the row names are the latitudes, the column names are the longitudes, and the 3rd-dimension names are the date. How the heck are we going to get this in a format we can plot?  Fortunately, simply calling <code>melt</code> function from the <code>reshape2</code> function breaks this down into a rectangular format quite nicely:</p>
+
+<pre><code class="r">require(reshape2)
+</code></pre>
+
+<pre><code>## Loading required package: reshape2
+</code></pre>
+
+<pre><code class="r">umelt.raw &lt;- melt(u)
+str(umelt.raw)
+</code></pre>
+
+<pre><code>## &#39;data.frame&#39;:    1116 obs. of  4 variables:
+##  $ Var1 : num  40 37.5 35 40 37.5 35 40 37.5 35 40 ...
+##  $ Var2 : num  280 280 280 282 282 ...
+##  $ Var3 : Factor w/ 124 levels &quot;2011_10_01_00&quot;,..: 1 1 1 1 1 1 1 1 1 2 ...
+##  $ value: num  9.5 6.3 4.3 5.9 2.2 ...
+</code></pre>
+
+<pre><code class="r">head(umelt.raw)
+</code></pre>
+
+<pre><code>##   Var1  Var2          Var3 value
+## 1 40.0 280.0 2011_10_01_00   9.5
+## 2 37.5 280.0 2011_10_01_00   6.3
+## 3 35.0 280.0 2011_10_01_00   4.3
+## 4 40.0 282.5 2011_10_01_00   5.9
+## 5 37.5 282.5 2011_10_01_00   2.2
+## 6 35.0 282.5 2011_10_01_00   3.5
+</code></pre>
+
+<p>Now, each row is one unique combination of latitude, longitude, and date, and the value at that combination. We can provide slightly nicer output by telling <code>melt</code> what we want to name our columns.  We can do this for all our variables.</p>
+
+<pre><code class="r">umelt &lt;- melt(u, varnames = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;), value.name = &quot;u&quot;)
+str(umelt)
+</code></pre>
+
+<pre><code>## &#39;data.frame&#39;:    1116 obs. of  4 variables:
+##  $ lat : num  40 37.5 35 40 37.5 35 40 37.5 35 40 ...
+##  $ long: num  280 280 280 282 282 ...
+##  $ date: Factor w/ 124 levels &quot;2011_10_01_00&quot;,..: 1 1 1 1 1 1 1 1 1 2 ...
+##  $ u   : num  9.5 6.3 4.3 5.9 2.2 ...
+</code></pre>
+
+<pre><code class="r">head(umelt)
+</code></pre>
+
+<pre><code>##    lat  long          date   u
+## 1 40.0 280.0 2011_10_01_00 9.5
+## 2 37.5 280.0 2011_10_01_00 6.3
+## 3 35.0 280.0 2011_10_01_00 4.3
+## 4 40.0 282.5 2011_10_01_00 5.9
+## 5 37.5 282.5 2011_10_01_00 2.2
+## 6 35.0 282.5 2011_10_01_00 3.5
+</code></pre>
+
+<pre><code class="r">vmelt &lt;- melt(v, varnames = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;), value.name = &quot;v&quot;)
+airmelt &lt;- melt(air, varnames = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;), value.name = &quot;air&quot;)
+rhummelt &lt;- melt(rhum, varnames = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;), value.name = &quot;rhum&quot;)
+presmelt &lt;- melt(pres, varnames = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;), value.name = &quot;pres&quot;)
+</code></pre>
+
+<h1>Merging the data</h1>
+
+<p>But, we&#39;re going to want to combine information about u and v in order to make our plot.  So, we want these values side by side.</p>
+
+<p>We expect that we have one in both datasets for each unique combination of latitude, longitude, date/time. But, we could be wrong, there may be some missing values.  If we for some reason only have &ldquo;u&rdquo;, &ldquo;v&rdquo; is useless because we don&#39;t have enough information to draw the direction based on just one component alone.</p>
+
+<p>Therefore, we want to line up all values in both datasets where latitude, longitude, and date/time are equal, discarding any values where a combination exists in one data set but not another.  This is called an <em>inner join</em>, and we can simply use the function <code>inner_join</code> from the <code>dplyr</code> package to accomplish this. All we need to do is specify the variables that we are using to join using the <code>by =</code> argument.</p>
+
+<pre><code class="r">require(dplyr)
+</code></pre>
+
+<pre><code>## Loading required package: dplyr
+## 
+## Attaching package: &#39;dplyr&#39;
+## 
+## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union
+</code></pre>
+
+<pre><code class="r">joins.example &lt;- inner_join(umelt, vmelt, by = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;))
+str(joins.example)
+</code></pre>
+
+<pre><code>## &#39;data.frame&#39;:    1116 obs. of  5 variables:
+##  $ lat : num  40 37.5 35 40 37.5 35 40 37.5 35 40 ...
+##  $ long: num  280 280 280 282 282 ...
+##  $ date: Factor w/ 124 levels &quot;2011_10_01_00&quot;,..: 1 1 1 1 1 1 1 1 1 2 ...
+##  $ u   : num  9.5 6.3 4.3 5.9 2.2 ...
+##  $ v   : num  -2.7 -6.4 -2.5 -3.2 -5.3 ...
+</code></pre>
+
+<pre><code class="r">head(joins.example)
+</code></pre>
+
+<pre><code>##    lat  long          date   u    v
+## 1 40.0 280.0 2011_10_01_00 9.5 -2.7
+## 2 37.5 280.0 2011_10_01_00 6.3 -6.4
+## 3 35.0 280.0 2011_10_01_00 4.3 -2.5
+## 4 40.0 282.5 2011_10_01_00 5.9 -3.2
+## 5 37.5 282.5 2011_10_01_00 2.2 -5.3
+## 6 35.0 282.5 2011_10_01_00 3.5  3.9
+</code></pre>
+
+<p>To build the final join we simply daisy-chain these joins together, accumulating a bigger dataset like we are building a snowman, using the <code>%.%</code> operator.</p>
+
+<pre><code class="r">sandy_1 &lt;- inner_join(umelt, vmelt, by = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;)) %.% 
+  inner_join(airmelt, by = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;)) %.% 
+  inner_join(rhummelt, by = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;)) %.% 
+  inner_join(presmelt, by = c(&quot;lat&quot;, &quot;long&quot;, &quot;date&quot;))
+</code></pre>
+
+<h1>Tweaks: correct formats, calculate speed &amp; direction</h1>
+
+<p>This data is almost <code>ggplot2</code>-ready, but notice the format of the longitudes.  <code>ggplot2</code> wants the longitudes to go between –180° and 180°, whereas this data gives the negative longitudes in a positive format.  So, we need to convert all the longitudes that are above 180° to the negative format by subtracting 360°. (In this case, all the longitudes are negative, so this is what we do below.)</p>
+
+<p>Also, we want to calculate the speed and direction, which we can do by way of trigonometry.</p>
+
+<p>Finally, we convert the string given by NCEP into an R date format using the <code>ymd_h()</code> function from the <code>lubridate</code> package.</p>
+
+<p>We do all of this in a single <code>mutate</code> command.</p>
+
+<pre><code class="r">library(lubridate)
+  sandy_2 &lt;- mutate(sandy_1, long = long - 360,
+               speed = sqrt((u+v)^2),
+               angle = atan2(v, u),
+               date = ymd_h(date))
+
+str(sandy_2)
+</code></pre>
+
+<pre><code>## &#39;data.frame&#39;:    1116 obs. of  10 variables:
+##  $ lat  : num  40 37.5 35 40 37.5 35 40 37.5 35 40 ...
+##  $ long : num  -80 -80 -80 -77.5 -77.5 -77.5 -75 -75 -75 -80 ...
+##  $ date : POSIXct, format: &quot;2011-10-01 00:00:00&quot; &quot;2011-10-01 00:00:00&quot; ...
+##  $ u    : num  9.5 6.3 4.3 5.9 2.2 ...
+##  $ v    : num  -2.7 -6.4 -2.5 -3.2 -5.3 ...
+##  $ air  : num  284 287 293 288 292 ...
+##  $ rhum : num  78 65 75 82 75 74 81 78 76 81 ...
+##  $ pres : num  95650 95780 98530 97280 98930 ...
+##  $ speed: num  6.8 0.1 1.8 2.7 3.1 ...
+##  $ angle: num  -0.277 -0.793 -0.527 -0.497 -1.177 ...
+</code></pre>
+
+<p>(If we had positive longitudes, we would need to alter this command to only subtract 180 from the longitudes that are over 180.)</p>
+
+<h1>Filtering the data</h1>
+
+<p>We now have too many dates!  You can see all the unique values for a variable using the <code>unique</code> function:</p>
+
+<pre><code class="r">unique(sandy_2$date)
+</code></pre>
+
+<pre><code>##   [1] &quot;2011-10-01 00:00:00 UTC&quot; &quot;2011-10-01 06:00:00 UTC&quot;
+##   [3] &quot;2011-10-01 12:00:00 UTC&quot; &quot;2011-10-01 18:00:00 UTC&quot;
+##   [5] &quot;2011-10-02 00:00:00 UTC&quot; &quot;2011-10-02 06:00:00 UTC&quot;
+##   [7] &quot;2011-10-02 12:00:00 UTC&quot; &quot;2011-10-02 18:00:00 UTC&quot;
+##   [9] &quot;2011-10-03 00:00:00 UTC&quot; &quot;2011-10-03 06:00:00 UTC&quot;
+##  [11] &quot;2011-10-03 12:00:00 UTC&quot; &quot;2011-10-03 18:00:00 UTC&quot;
+##  [13] &quot;2011-10-04 00:00:00 UTC&quot; &quot;2011-10-04 06:00:00 UTC&quot;
+##  [15] &quot;2011-10-04 12:00:00 UTC&quot; &quot;2011-10-04 18:00:00 UTC&quot;
+##  [17] &quot;2011-10-05 00:00:00 UTC&quot; &quot;2011-10-05 06:00:00 UTC&quot;
+##  [19] &quot;2011-10-05 12:00:00 UTC&quot; &quot;2011-10-05 18:00:00 UTC&quot;
+##  [21] &quot;2011-10-06 00:00:00 UTC&quot; &quot;2011-10-06 06:00:00 UTC&quot;
+##  [23] &quot;2011-10-06 12:00:00 UTC&quot; &quot;2011-10-06 18:00:00 UTC&quot;
+##  [25] &quot;2011-10-07 00:00:00 UTC&quot; &quot;2011-10-07 06:00:00 UTC&quot;
+##  [27] &quot;2011-10-07 12:00:00 UTC&quot; &quot;2011-10-07 18:00:00 UTC&quot;
+##  [29] &quot;2011-10-08 00:00:00 UTC&quot; &quot;2011-10-08 06:00:00 UTC&quot;
+##  [31] &quot;2011-10-08 12:00:00 UTC&quot; &quot;2011-10-08 18:00:00 UTC&quot;
+##  [33] &quot;2011-10-09 00:00:00 UTC&quot; &quot;2011-10-09 06:00:00 UTC&quot;
+##  [35] &quot;2011-10-09 12:00:00 UTC&quot; &quot;2011-10-09 18:00:00 UTC&quot;
+##  [37] &quot;2011-10-10 00:00:00 UTC&quot; &quot;2011-10-10 06:00:00 UTC&quot;
+##  [39] &quot;2011-10-10 12:00:00 UTC&quot; &quot;2011-10-10 18:00:00 UTC&quot;
+##  [41] &quot;2011-10-11 00:00:00 UTC&quot; &quot;2011-10-11 06:00:00 UTC&quot;
+##  [43] &quot;2011-10-11 12:00:00 UTC&quot; &quot;2011-10-11 18:00:00 UTC&quot;
+##  [45] &quot;2011-10-12 00:00:00 UTC&quot; &quot;2011-10-12 06:00:00 UTC&quot;
+##  [47] &quot;2011-10-12 12:00:00 UTC&quot; &quot;2011-10-12 18:00:00 UTC&quot;
+##  [49] &quot;2011-10-13 00:00:00 UTC&quot; &quot;2011-10-13 06:00:00 UTC&quot;
+##  [51] &quot;2011-10-13 12:00:00 UTC&quot; &quot;2011-10-13 18:00:00 UTC&quot;
+##  [53] &quot;2011-10-14 00:00:00 UTC&quot; &quot;2011-10-14 06:00:00 UTC&quot;
+##  [55] &quot;2011-10-14 12:00:00 UTC&quot; &quot;2011-10-14 18:00:00 UTC&quot;
+##  [57] &quot;2011-10-15 00:00:00 UTC&quot; &quot;2011-10-15 06:00:00 UTC&quot;
+##  [59] &quot;2011-10-15 12:00:00 UTC&quot; &quot;2011-10-15 18:00:00 UTC&quot;
+##  [61] &quot;2011-10-16 00:00:00 UTC&quot; &quot;2011-10-16 06:00:00 UTC&quot;
+##  [63] &quot;2011-10-16 12:00:00 UTC&quot; &quot;2011-10-16 18:00:00 UTC&quot;
+##  [65] &quot;2011-10-17 00:00:00 UTC&quot; &quot;2011-10-17 06:00:00 UTC&quot;
+##  [67] &quot;2011-10-17 12:00:00 UTC&quot; &quot;2011-10-17 18:00:00 UTC&quot;
+##  [69] &quot;2011-10-18 00:00:00 UTC&quot; &quot;2011-10-18 06:00:00 UTC&quot;
+##  [71] &quot;2011-10-18 12:00:00 UTC&quot; &quot;2011-10-18 18:00:00 UTC&quot;
+##  [73] &quot;2011-10-19 00:00:00 UTC&quot; &quot;2011-10-19 06:00:00 UTC&quot;
+##  [75] &quot;2011-10-19 12:00:00 UTC&quot; &quot;2011-10-19 18:00:00 UTC&quot;
+##  [77] &quot;2011-10-20 00:00:00 UTC&quot; &quot;2011-10-20 06:00:00 UTC&quot;
+##  [79] &quot;2011-10-20 12:00:00 UTC&quot; &quot;2011-10-20 18:00:00 UTC&quot;
+##  [81] &quot;2011-10-21 00:00:00 UTC&quot; &quot;2011-10-21 06:00:00 UTC&quot;
+##  [83] &quot;2011-10-21 12:00:00 UTC&quot; &quot;2011-10-21 18:00:00 UTC&quot;
+##  [85] &quot;2011-10-22 00:00:00 UTC&quot; &quot;2011-10-22 06:00:00 UTC&quot;
+##  [87] &quot;2011-10-22 12:00:00 UTC&quot; &quot;2011-10-22 18:00:00 UTC&quot;
+##  [89] &quot;2011-10-23 00:00:00 UTC&quot; &quot;2011-10-23 06:00:00 UTC&quot;
+##  [91] &quot;2011-10-23 12:00:00 UTC&quot; &quot;2011-10-23 18:00:00 UTC&quot;
+##  [93] &quot;2011-10-24 00:00:00 UTC&quot; &quot;2011-10-24 06:00:00 UTC&quot;
+##  [95] &quot;2011-10-24 12:00:00 UTC&quot; &quot;2011-10-24 18:00:00 UTC&quot;
+##  [97] &quot;2011-10-25 00:00:00 UTC&quot; &quot;2011-10-25 06:00:00 UTC&quot;
+##  [99] &quot;2011-10-25 12:00:00 UTC&quot; &quot;2011-10-25 18:00:00 UTC&quot;
+## [101] &quot;2011-10-26 00:00:00 UTC&quot; &quot;2011-10-26 06:00:00 UTC&quot;
+## [103] &quot;2011-10-26 12:00:00 UTC&quot; &quot;2011-10-26 18:00:00 UTC&quot;
+## [105] &quot;2011-10-27 00:00:00 UTC&quot; &quot;2011-10-27 06:00:00 UTC&quot;
+## [107] &quot;2011-10-27 12:00:00 UTC&quot; &quot;2011-10-27 18:00:00 UTC&quot;
+## [109] &quot;2011-10-28 00:00:00 UTC&quot; &quot;2011-10-28 06:00:00 UTC&quot;
+## [111] &quot;2011-10-28 12:00:00 UTC&quot; &quot;2011-10-28 18:00:00 UTC&quot;
+## [113] &quot;2011-10-29 00:00:00 UTC&quot; &quot;2011-10-29 06:00:00 UTC&quot;
+## [115] &quot;2011-10-29 12:00:00 UTC&quot; &quot;2011-10-29 18:00:00 UTC&quot;
+## [117] &quot;2011-10-30 00:00:00 UTC&quot; &quot;2011-10-30 06:00:00 UTC&quot;
+## [119] &quot;2011-10-30 12:00:00 UTC&quot; &quot;2011-10-30 18:00:00 UTC&quot;
+## [121] &quot;2011-10-31 00:00:00 UTC&quot; &quot;2011-10-31 06:00:00 UTC&quot;
+## [123] &quot;2011-10-31 12:00:00 UTC&quot; &quot;2011-10-31 18:00:00 UTC&quot;
+</code></pre>
+
+<p>This is all measurements from October, but we only want the final three days.  We can get just these three days using the <code>filter</code> command to specify that we want only the days that are after or equal to the 28th.</p>
+
+<pre><code class="r">sandytrim &lt;- filter(sandy_2, date &gt;= ymd(&quot;2011-10-28&quot;))
+
+unique(sandytrim$date)
+</code></pre>
+
+<pre><code>##  [1] &quot;2011-10-28 00:00:00 UTC&quot; &quot;2011-10-28 06:00:00 UTC&quot;
+##  [3] &quot;2011-10-28 12:00:00 UTC&quot; &quot;2011-10-28 18:00:00 UTC&quot;
+##  [5] &quot;2011-10-29 00:00:00 UTC&quot; &quot;2011-10-29 06:00:00 UTC&quot;
+##  [7] &quot;2011-10-29 12:00:00 UTC&quot; &quot;2011-10-29 18:00:00 UTC&quot;
+##  [9] &quot;2011-10-30 00:00:00 UTC&quot; &quot;2011-10-30 06:00:00 UTC&quot;
+## [11] &quot;2011-10-30 12:00:00 UTC&quot; &quot;2011-10-30 18:00:00 UTC&quot;
+## [13] &quot;2011-10-31 00:00:00 UTC&quot; &quot;2011-10-31 06:00:00 UTC&quot;
+## [15] &quot;2011-10-31 12:00:00 UTC&quot; &quot;2011-10-31 18:00:00 UTC&quot;
+</code></pre>
+
+<p>Now, those are the values in our dataset.  Success!</p>
+
+</body>
+
+</html>
+
