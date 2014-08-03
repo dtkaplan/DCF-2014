@@ -24,6 +24,7 @@ output: word_document
     a. Frame, Scale, Glyph, Guide, Facet
         i. Use "named" graphics at first: scatterplot, barplot 
     #. Information encoding in glyphs  
+    #. Make a 6-second Vine video about graphics, like [this one](https://vine.co/v/MI5DM173wWz) and [this one](https://vine.co/v/MI5EWixM65A) about glyphs.
 #. Introducing `ggplot`
     a. Dynamite plots
         i. give a simple dataset that can be translated into a dynamite plot
