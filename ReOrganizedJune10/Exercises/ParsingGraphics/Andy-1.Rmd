@@ -1,0 +1,24 @@
+---
+title: "A Complicated Graphic"
+author: "DTK.  Graphic from Andrew Zieffler"
+date: "August 5, 2014"
+output: html_document
+description: "Parsing a cladistic network"
+tags: 
+- graphics
+- heat map
+- cladistics
+- frame
+layout: exercise
+status: complete
+---
+
+The chart below is complex.  Your job is to take it apart.
+
+There are two adjacent frames in this chart. They happen to be arranged concentrically.  Call them "inner" and "outer" for the purposes of identifying them. For each of the frames:
+
+a. What kind of graph is in the frame?
+#. What are the scales that define the meaning of space in each frame?
+
+![Circular cladistic](AndyZ-1.png)
+

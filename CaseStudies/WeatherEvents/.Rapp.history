@@ -1,0 +1,7 @@
+load("/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/WeatherEvents/WeatherEvents.rda")
+names(WeatherEvents)
+summary(WeatherEvents(timeOfDay))
+summary(WeatherEvents$timeOfDay)
+table(WeatherEvents$lat == 0)
+table(WeatherEvents$long == 0)
+q()

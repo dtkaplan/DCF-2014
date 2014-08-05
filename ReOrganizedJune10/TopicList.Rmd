@@ -1,7 +1,7 @@
 ---
 title: "DCF Topics"
 date: "`r I(date())`"
-output: html_document
+output: word_document
 ---
 
 ```{r include=FALSE}

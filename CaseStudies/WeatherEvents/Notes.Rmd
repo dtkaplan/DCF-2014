@@ -1,0 +1,145 @@
+---
+title: "Weather Events"
+author: "Daniel Kaplan"
+date: "August 5, 2014"
+output: html_document
+---
+
+```{r}
+require(dplyr)
+require(tidyr)
+require(DCFdevel)
+require(lubridate)
+```
+
+The idea for this case study came from a Coursera data science course project.
+
+The initial link was [here on RPubs](http://rpubs.com/Peque/economic-and-health-consecuences-of-severe-weather-events-in-the-usa).
+
+Some documentation is at
+* <http://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf>
+* <http://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf>
+
+A better source for these data may be at <http://www.ncdc.noaa.gov/stormevents/>.  **Preceptor Project**: Get these data.
+
+## Raw Data
+
+```{r eval=FALSE}
+data_source = 'https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2'
+if (!file.exists('data.csv.bz2'))
+    download.file(data_source, 'data.csv.bz2', method = 'curl')
+```
+
+Read in the data from its CSV format
+```{r eval=FALSE}
+WeatherEvents <- read.csv("data.csv.bz2")
+```
+
+## Data Cleaning
+
+* The event types aren't consistently named.
+* Damage is saved in two fields: a mantissa and an exponent.
+* Latitude and longitude 
+* A few latitudes and longitudes are zero, and longitude is inverted.
+* REMARKS is voluminous.
+* COUNTYNAME, BGN_LOCATI
+* STATE__
+
+```{r}
+SmallWeather <- sample_n(WeatherEvents, size=3000)
+```
+
+Create a function to translate the damage exponent into a multiplier.
+```{r}
+fixExp <- function(exponent) {
+  ifelse( exponent=='K', 1000L,
+          ifelse(exponent=='M', 1000000L, 1)
+          )
+}
+```
+
+Fix the dates and times:
+```{r}
+fixDates <- function(date) {
+  parse_date_time(as.character(date),"%m/%d/%y %H%M%S")
+}
+fixTimes <- function(time) {
+  time <- as.character(time)
+  res <- numeric(length(time))
+  inds <- nchar(time) == 11
+  foo <- parse_date_time(time[inds],"%H:%M:%S")
+  
+  hours <- hour(foo) + minute(foo)/60
+  PM <- grepl("PM$",time[inds]) & hours<=12
+  hours <- hours + 12*PM
+  other <- time[!inds]
+  otherHours <- as.numeric( substr(other,0,2)) + 
+    as.numeric(substr(other,3,4))/60
+  res[inds] <- hours
+  res[!inds] <- otherHours
+  return(res)
+  }
+```
+
+```{r}
+Tmp <- mutate(WeatherEvents,lat=LATITUDE/100,long=-LONGITUDE/100,
+              timeOfDay=fixTimes(BGN_TIME),
+              date=fixDates(BGN_DATE),
+              propDmg=PROPDMG*fixExp(PROPDMGEXP),
+              cropDmg=CROPDMG*fixExp(CROPDMGEXP))
+              
+Keepers <- select( Tmp, -STATE__,-COUNTY,-BGN_RANGE,-BGN_AZI,
+                   county=COUNTYNAME,state=STATE, type=EVTYPE, 
+                   lat,
+                   long,
+                   date,
+                   timeOfDay,
+                   timeZone=TIME_ZONE,propDmg,cropDmg,
+                   -BGN_LOCATI,-LENGTH,-WIDTH,-F,-MAG, 
+                   fatalities=FATALITIES,injuries=INJURIES,
+                   -REMARKS,-REFNUM)
+inds <- which(Keepers$timeOfDay > 24)
+Keepers$timeOfDay[inds] <- NA
+inds <- which(Keepers$lat<17 | Keepers$lat > 80 | Keepers$long > -50)
+Keepers$lat[inds] <- NA
+Keepers$long[inds] <- NA
+```
+
+```{r}
+W2 <- WeatherEvents
+
+foo <- rev(sort(table(WeatherEvents$type)))
+goo <- data.frame(type=names(foo),count=foo)
+# to create the file for editing
+# write.csv(goo, file="EventTypes.csv",row.names=FALSE)
+types <- read.csv("EventTypes.csv") # after editing
+```
+
+```{r}
+WeatherEvents <- Keepers
+W3 <- inner_join(WeatherEvents, select(types, type, newType))
+W3 <- mutate(W3, type=newType)
+W3 <- select(W3, -newType)
+WeatherEvents <- W3
+save(WeatherEvents, file="WeatherEvents.rda")
+WeatherEventsSample <- sample_n(WeatherEvents,size=10000)
+save(WeatherEventsSample, file="WeatherEventsSample.rda")
+```
+
+## Questions
+
+1. In which months do floods happen? `month(date)`
+2. Which types of events have the largest number of injuries, fatalities, property damage, crop damage?
+3. Is there a relationship between fatalities and property damage?
+4. What time of day do tornados happen?  
+5. Are thunderstorms a morning, afternoon, evening, or nighttime phenomenon?
+6. When do the reported lightning strikes occur?
+7. How often are injuries or fatalities associated with lightning?
+8. Where do cold-weather events occur in each month?
+9. Where do hot-weather events occur?
+
+Cleaning data: 
+* How many types of events in the original data?
+* Are AM and PM used consistently?  Is it a 12-hour or 24-hour clock?
+
+
