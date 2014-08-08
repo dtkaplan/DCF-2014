@@ -1,0 +1,393 @@
+---
+title: "DCF Topics"
+date: "`r I(date())`"
+output: word_document
+---
+
+```{r include=FALSE}
+require(dplyr)
+sectionCounter=0
+#########
+docLinks <- function(section,spacer=' :: '){
+  category(section)
+  paste('**Documents**: [Ideas](CourseNotes/',
+        section,'/IdeasAndResources.Rmd)', 
+        spacer,
+        '[Draft Narrative](CourseNotes/',
+        section,'/DraftNarrative.Rmd)',sep='')
+  }
+#########
+categoryList <- list()
+category <- function(...) {
+  category <- unlist(list(...))
+  for (k in category) {
+  if (!k %in% names(categoryList))
+    categoryList[[k]] <<- c(LETTERS[sectionCounter])
+  else
+    categoryList[[k]] <<- c(categoryList[[k]],LETTERS[sectionCounter])
+  }
+}
+```
+
+#### Temporary: Other files brought into this re-organization.
+
+See also : `DCF-2014/Narrative/Overall_Outline.Rmd`  Consolidate that file into this one.
+
+Also `Narrative/Ideas.Rmd`.
+
+Also `Sections/Introduction/Overview.Rmd`
+
+#### Readings for graphs
+
+Hadley's [layered grammar of graphics](http://mimno.infosci.cornell.edu/info3300/readings/layered-grammar.pdf) **instructors**
+
+An essay about [presenting data with graphics](http://schoolofdata.org/handbook/courses/data-to-diagrams/)
+
+[Applied Data Science from Columbia](http://columbia-applied-data-science.github.io/appdatasci.pdf)
+
+[Manyeyes graphics examples](http://www.manyeyes.com/software/analytics/manyeyes/)
+
+#### =============== Day 1 ========================
+
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Introduction
+
+`r I(docLinks('Introduction'))`
+
+1. Visualizations
+1. The purpose of a visualization.  Show two visualizations of the same data: one good for one purpose, another for another purpose.
+1. Infographics versus data charts.  This course doesn't deal with infographics `r category('infographics')`
+
+
+
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Data Organization
+
+`r I(docLinks('DataOrganization'))`
+
+1. Datatables
+    a) Cases and variables
+        i. Rows and columns
+        i. Quantitative and categorical `r category('rectangular data','case meaning')`
+    a. Meaning of a case.
+        i. How the meaning of an individual case can change.  A datatable gives a **view of data**.  There are typically other views possible, sometimes derived from a particular view.
+        i. Examples: 
+            a. Runners as individuals and as groups, e.g. by sex, by age group, by sex and age group.
+            a. Flight data involving two airports compared to airport data (e.g. latitude and longitude) on its own.  Taxi time versus airport.  Airplane model data: mass and engines
+    a. Various common formats: CSV, XLSX 
+    a. Database:`r category('database','wide/narrow')`
+        i. **Database** is a collection of datatables.  Often, the datatables have different cases.
+        i. Examples:
+            a. Flight time case
+            a. NCI case
+            a. BirdAirplaneStrikes case   
+    a. Wide and narrow: 
+        i. What's a case and what's a variable is somewhat fluid.
+            a. Examples:
+                * Individual runners in multiple years: wide and narrow
+                * 96-well plate and spectrophotometer
+                * UN data where the case is a country and where the case is a country in a year and where the case is a particular measurement in a country in a year
+            a) Commentary: It's not that one form is right and the others are wrong.  Some forms are better for a particular purpose, e.g. making a scatterplot of year-2 versus year-1 is easily handled with wide data.
+    a. **Shaping** (wrangling? processing? organizing?) data means transcribing data from one datatable form to another. (It doesn't mean distorting data or altering or redacting).
+        * Many of the techniques for working with data are about shaping it, so that you can present it in the way that you think best rather than in the ways that happen to match the original shapes.
+1. Other forms 
+    just a mention: "There are other forms of data, e.g. photographs, movies, text.  The datatable is arguably the most important.  Many other forms of data eventually get reduced to datatables for the purposes of display and analysis."
+1. Reading and Storing Data
+
+
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Basics of Markdown and Course Logistics
+
+`r I(docLinks('Markdown'))`
+
+1. Templates
+1. compiling
+1. handing in (RPubs?  Give a link?)  Best if they can hand in URLs, but this isn't possible on the RStudio server.  RPubs works fine for HTML, but not for Rmd.
+    * Custom function: maybe place the Rmd in HTML comments at the bottom of the HTML file?
+    * FTP shell script on server
+    
+Idea: Start them out with the knitr side-by-side display function, so that things are re-run as they get changed. ????
+
+
+#### =============== Day 2 ========================
+
+    
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Basics of R
+
+`r I(docLinks('Rbasics'))`
+
+1. prompt, expression, value
+1. values and arithmetic and grouping parentheses
+1. functions, arguments and parentheses
+    a. help
+    a. tab in RStudio
+1. assignment with `<-`
+1. named arguments with `=`, ... name`=`value`.  Note, the name comes
+1. character strings.  You're welcome to use quotes around the name of an argument.
+    a. names of files, labels, levels of categorical variables
+1. data frames
+1. numeric, factor, character data
+    a. We often think of factors as if they were characters.
+    a. Technical stuff: factors vs character, class()
+1. booleans and comparison
+    a. `==` not `=` to test for equality.  Testing for equality is different than giving a named argument.
+1. packages and names like `mosaic::Galton`
+    a. names are case sensitive
+    a. how you can see that a package is not installed
+    a. how you can see that a package is not loaded
+    a. how to install a package
+    a. CRAN and gitHub packages
+1. copying and replacing
+    a. functions return a value that is distinct from the original
+    a. Use assignment `<-` with a new name to make a copy.
+    a. Use `<-` with an existing name to replace the existing object
+1. Mechanics:
+    a. Bailing out: ESC
+    a. up arrow and history
+        i. In the console, you can't scroll up to edit, as you might do with a word processor.
+        i. In an Rmd file, you can scroll up and edit, but remember that you have to re-run the commands.
+    a. run and chunk-run
+    a. compiling in its own environment
+        i) When compiling a Rmd file, it's always done in a new environment.  That differs from running the chunks.  **instructors**
+        
+Resources: 
+
+* <http://rforcats.net/>.  (See also the get cute cat and dog examples therein.)
+* Facebook's online course on [exploratory data analysis with R](https://www.udacity.com/course/viewer#!/c-ud651/l-685569241/e-824578546/m-824578547)
+* [R and science](http://www.fastcolabs.com/3028381/how-the-rise-of-the-r-computer-language-is-bringing-open-source-to-science)
+* [R and business](http://www.fastcolabs.com/3030063/why-the-r-programming-language-is-good-for-business) and [more](http://blog.revolutionanalytics.com/2014/05/companies-using-r-in-2014.html)
+
+
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Basic data commands
+
+Just to get them writing commands in a simple setting.
+
+`r category('summarize()','group_by()','mutate()')`
+
+1. `summarize()`
+1. `group_by()` and `summarize()` together
+1. `mutate()`
+
+ 
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. From Data to Graph
+
+`r I(docLinks('GraphingIntro'))`
+
+To have some gratification relatively early in the course.
+
+`r category('GraphingIntro')`
+
+1. Use `mPlot()`, `mBar()`, `mMap()`, and `mNet()` to construct graphics.
+1. Examples
+    a. Running time versus age
+    a. Birds by month
+    a. Gapminder data for one country in one year
+    a. Immigration flows
+1. Putting such graphics in an Rmd file
+
+`r category('hi','bye')`
+
+#### =============== Day 3 ========================
+
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Constructing and Deconstructing Graphics
+
+`r I(docLinks('GraphicsConstructDeconstruct'))`
+
+This will switch back and forth between deconstruction and construction, within each topic
+
+a. Frames and glyphs (basics)
+    1. Attributes of glyphs 
+        i. Scatter: size and color
+        i. Bar: color, position
+1. Scales and Guides
+    a. Number line
+    a. Categorical
+        i. spatial
+        i. color
+        i. shape
+    a. Date and time
+1. Facets and Layers
+1. Annotations (later on)
+1. Coordinate transformations (later on --- remember logs!)
+
+`r category('frames','glyphs','scales','facets','annotations','transforms')`
+
+`r category('hi','bye')`
+
+#### =============== Day 4 ========================
+
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Classic charts and their interpretation
+
+`r I(docLinks('ClassicCharts'))`
+
+A first pass at aesthetics.
+
+* Colors for categories
+* Position, orientation, length for quantities
+* Order makes a difference
+    * A complicated case: <../Examples/JobGrowth/jobGrowth.Rmd>
+
+1. Scatterplot
+1. Dotplot
+1. Box-and-whiskers plot
+1. Log scales
+    a. Compress high spread
+    a. Economics, elasticity, and proportional change
+1. Time series and line plots
+1. Barplot
+    a) stacked, dodge, proportion
+1. Heat map
+1. Network (graph)
+    [A blog tutorial on igraph](http://www.r-bloggers.com/network-visualization-in-r-with-the-igraph-package/) shows how to set colors, etc.  [A more detailed tutorial](http://www.lsi.upc.edu/~CSN/lab/session1.pdf)
+    a) Directed
+    a. Undirected
+1. Trees and why not all networks are a tree
+
+#### =============== Day 5 ========================
+
+
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. The Data backstory and wrangling
+
+`r I(docLinks('DataBackstory'))`
+
+`r category('hi','bye')`
+
+Data do not always come to you in a form that's ready for constructing graphics.  (We'll call such data: *glyph-ready* data.)  Often, the "raw" data is something other than what's in the graph.  The process of transforming data from its raw form into a glyph-ready form is often called *data manipulation*.  The word 'manipulation' has a negative connotation.  We will use **data wrangling** to refer to this process.
+
+The process of creating a presentation varies from one situation to another.  Often, the process is:
+
+1. Imagine a form of presentation that would help you to accomplish your purpose.
+2. Figure out the corresponding glyph-ready format for data.
+3. Take the data you have, in whatever form they may be, and use data wrangling techniques to transform them into the glyph-ready form.
+
+1. Introductory examples (without programming)
+
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Data Table Operations
+
+`r I(docLinks('TableOperations'))`
+
+1. Review Group, Summarize, Mutate
+    a. tally
+        i. Minneapolis Mayor's race.  Do a simple tally and ask "Who won?"  Actually the law requires ... and move on to `removeOne()`.
+        i. Refactor Galton to have information for each family: father, mother, nkids.  Then, for the height data: sex, height, family.  In your example, say that Galton has already been joined with family.
+1. Select variables  (Relational PROJECT)
+1. Filter  (RELATIONAL SELECT)
+    a. head, tail --- to pull out the early ones
+1. Mutate
+    a. conditional choice
+1. Arrange (RELATIONAL SORT)
+1. Join (RELATIONAL JOIN)
+    a. inner
+    a. left
+    a. semi
+    a. anti
+1. pivot and fold (melt and cast)
+
+#### =============== Day 6 ========================
+
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Stats 
+
+`r I(docLinks('Stats'))`
+
+Introduce the concept and then show how to compute and plot it.
+
+1. Density in 1-d
+    a. binning
+    a. binless (e.g. density )
+    a. box and whisker
+1. Density in 2-d
+    a. binning
+    a. hexbin
+    a. binless methods and contour plots
+1. Lines and smoothers
+1. Precision and variation
+    a. Range, standard deviation
+    b. Standard error and what it means
+    c. Error bands
+    
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Making Specialized Graphics
+
+`r I(docLinks('SpecializedGraphics'))`
+
+1. Maps
+    a. Choropleths
+    b. Scatter or heat or vector with borders as a guide
+1. Dot plots
+1. Strip charts
+1. Dynamite plots, their shortcomings and alternatives
+
+#### =============== Day 7 ========================
+
+
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Techniques with many variables 
+
+`r I(docLinks('ManyVariables'))`
+
+1. Parallel Axes
+1. Clustering
+1. Classification Tree (CART or machine learning)
+1. Dimension reduction `r category('dimension reduction')`
+    a. Multivariable clustering -> categorical
+    a. Principal components
+
+#### =============== For Faculty/Self-study ========================
+
+LOW PRIORITY
+
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Cleaning Data
+
+`r I(docLinks('CleaningData'))`
+
+Define a function for each of the really important things.  Make this into a `cleaningFunctions` package.  Or is there an R cleaning package
+
+1. Simple things
+    a. Recategorization and spelling fixes (using joins): DCF 2013 `Notes/Day4/CleaningTheBirds.html`
+    b. substitution: getting rid of the commas in the zip-code population data.  See
+<file:///Users/kaplan/KaplanFiles/DCF/DCF-2013/Data/ZipCodes/getZipPopulation.html>
+2. Break text into individual words.
+
+[School of Data](http://schoolofdata.org/handbook/courses/data-cleaning/)
+
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Scraping Data, data sources
+
+`r I(docLinks('ScrapingData'))`
+
+[Quandl](http://www.quandl.com/)
+
+Genetics?
+
+[Web technologies task view](http://cran.r-project.org/web/views/WebTechnologies.html)
+
+#### =============== Optional/Self-Study ========================
+
+
+### `r I(LETTERS[sectionCounter <- sectionCounter+1])`. Enrichments
+
+LOWEST PRIORITY
+
+These are topics that don't need to be handled as part of the sequence, but where we might want to have an essay or video, etc. to cover the topic briefly.
+
+1. Presentation Tables
+    It may seem odd to start a section on graphics with text, but concise text, easily assimulated by eye, is a form of graphics.
+1. Judgements about graphics
+1. Perils of decoration
+1. Excel misuse
+1. Relating to original observations (e.g. lab notebook), record the page number with the case.
+1. Uncertainty in statistics
+1. Advanced models and machine learning
+1. Voices of the experts
+1. Word Counts 
+    Look at different genres --- show the leading non-common words.
+1. Word Cloud
+    Counts don't always do it.  
+1. Data Scraping: just a very brief mention of what it is.
+    a. Informal formats (e.g. the Cherry Blossom race) for human consumption. 
+    a. Different ways data are distributed: interactive, static files, via URL 
+1. Meta graphics.  What are the basic features we want to display? Comparison, extent, individual cases in context, relationships, connections. Why is a picture worth a thousand words and when is it not? 
+1. Color and perceptions
+1. Which graphical features are suitable for precision, which not.
+1. Shapefiles and map coordinates
+1. The case studies (one essay/video for each)
+
+
+```{r}
+# Show the list of categories
+categoryList
+```

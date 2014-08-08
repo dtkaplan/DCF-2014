@@ -1,0 +1,41 @@
+---
+title: "Testing Homework Hand In"
+author: "Daniel Kaplan"
+date: "August 7, 2014"
+output: html_document
+---
+
+This document is testing methods for posting both the HTML and the RMD documents on RPubs.
+
+It's based on the software posted [here](http://rstudio-pubs-static.s3.amazonaws.com/15314_85b9a1d206f54dbe9d5180bd851a0049.html).
+
+```{r}
+attachFile <- function(file){
+  myrmd = base64enc::dataURI(file = file, mime = 'text/rmd')
+  dl_link = paste0("<a href='%s' target='_blank' download='",
+                   basename(file),"'> &#8658; ",file,"</a>  ")
+  cat(sprintf(dl_link, myrmd))
+}
+attachFiles <- function( ... ) {
+  files <- unlist(list(...)) # arguments to a vector of strings
+  cat("#### Attached files\n\n")
+  for(F in files) { 
+    attachFile(F)
+    cat("\n")
+    }
+}
+```
+
+Now to try it.  
+```{r echo=FALSE,results='asis'}
+attachFile("TestHandingIn.Rmd")
+cat("\n")
+attachFile("XLSXfile.xlsx")
+```
+
+
+This is the one I want to use ... multiple files:
+
+```{r echo=FALSE,results='asis'}
+attachFiles("TestHandingIn.Rmd","XLSXfile.xlsx","../TopicList.Rmd")
+```
