@@ -1,0 +1,18 @@
+---
+title: "Basic R Commands"
+author: "DTK"
+date: "August 12, 2014"
+output: html_document
+description: identifying cases and variables
+tags: 
+- R Commands
+layout: exercise
+status: complete
+---
+
+There are several small, example data tables in the `ggplot2` package.  Look at the `msleep` data table by using the `View()` function with the name of the object as an argument.
+
+* What is the meaning of the `brainwt` variable?
+* How many cases are there?
+* What is the real-world meaning of a case?
+* What are the levels of the `vore` variable?

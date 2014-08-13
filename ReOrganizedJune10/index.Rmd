@@ -1,0 +1,13 @@
+---
+title: "Data and Computing Fundamentals"
+author: "Home Page"
+date: "Fall 2014"
+output: html_document
+---
+
+Eventually, this will be the front page for the course.
+
+The time log. [Link to enter new data](https://docs.google.com/forms/d/1lH02nfMVvVmCxyus3TBHQvG58pV-cGDEcTfaBJAIk3k/viewform)
+
+<iframe src="https://docs.google.com/spreadsheets/d/1ROnT3PBL_iVguJQPKrGAXncf-wHKzEYHQQtE7c6JYG4/pubhtml?widget=true&amp;headers=false"></iframe>
+

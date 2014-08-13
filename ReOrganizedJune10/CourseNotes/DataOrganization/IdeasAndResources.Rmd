@@ -10,6 +10,29 @@ In this document, place ideas and resources for this section of the notes.
 
 ## For exercises
 
+### Tidy format
+
+Table in PDF document from the DOJ on [Nonfatal Domestic Violence](http://www.bjs.gov/content/pub/pdf/ndv0312.pdf).  What's non-tidy about the data in this table?
+
+### Variables
+
+What's non-tidy about the data in [this table](http://nces.ed.gov/programs/digest/d13/tables/dt13_230.60.asp)?  
+
+Imagine a new table where the case is an individual child who has been bullied. (This is sometimes called "micro-data," a term that makes sense only if one thinks that "data" are summaries.) What would the tidy data from which this table is derived look like?
+
+### Wrangler Data from App
+
+http://vis.stanford.edu/wrangler/app/
+
+Migration data `migration-example.csv`  What are the variables?  Re-arrange this in tidy format.
+
+Crime data --- the data shown in [their video](http://vimeo.com/19185801) --- in `crime-example.csv`.  Put this table into tidy format. (Hint: Here's a video showing a tool for doing this.  You don't need to learn about the tool, just look at the final result.)
+
+
+
+* [the codebook](http://www.icpsr.umich.edu/cgi-bin/file?comp=none&study=27643&ds=1&file_id=1008871&path=NACJD)
+
+### Happiness
 happy {GGally}  R Documentation
 Data related to happiness from the General Social Survey, 1972-2006.
 

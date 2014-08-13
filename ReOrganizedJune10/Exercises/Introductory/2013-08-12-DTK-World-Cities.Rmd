@@ -1,0 +1,18 @@
+---
+title: "Basic R Commands"
+author: "DTK"
+date: "August 12, 2014"
+output: html_document
+description: Drawing a network diagram
+tags: 
+- R Commands
+layout: exercise
+status: complete
+---
+
+Bring into your R session the data table named `WorldCities` from the `DCFdevel` package.  Use `View( WorldCities )` to look at the data.
+
+* How many cases are there?
+* What are the variables?
+* Using the documentation provided by `help()`, say what the `date` variable means.
+

@@ -1,0 +1,30 @@
+---
+title: "File Types, Data, and Documents"
+author: "Data and Computing Fundamentals"
+output: html_document
+---
+
+Common file types and the sorts of files you will be working with here.
+
+The data files are intended to be accessible to a variety of software.  Rather than assigning a specific application to open each type of file, the file name extension tells you what kind of file it is so that you can decide what you need to do with it.
+
+* .Rmd
+* .html
+* .Rda
+* .csv
+* .xlsx
+* .doc
+* .txt
+
+When doing an assignment, you will be creating an `.Rmd` file, compiling it to `.html`, and then handing in your assignment by uploading the file to Moodle.
+
+Create the blank `.Rmd` file in RStudio by selecting
+
+You will generally be handing in `.html` files that you have compiled from the `.Rmd` that you author.  The `.html` files can be arranged to include other files, such as their original source.  To do this, open the "File/New File/R Markdown/From Template".  Choose the "Assignment" template from the `CourseR` package. 
+
+PICTURE HERE?
+
+Save the `.Rmd` file in an appropriate place on your system.  It's up to you what you name the file, so long as it ends with the file-type extension `.Rmd`.  A recommendation: use the assignment number and your initials or name, e.g. `Assignment-One-BHO.Rmd`.  No spaces in the name, please. 
+
+**Make sure** to follow the instructions in the template.  As you do your work, edit the `.Rmd` file that you saved; you don't need to get another template for that assignment.
+

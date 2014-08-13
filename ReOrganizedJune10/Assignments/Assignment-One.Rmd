@@ -1,0 +1,21 @@
+---
+title: "Assignment for Week One"
+author: "Data and Computing Fundamentals"
+date: "Macalester College"
+output: html_document
+---
+
+1. Using the RStudio editor, create an R/Markdown document.  The Rmd document should be named `AssignmentOne.Rmd`.
+    a. Find two data-oriented graphics.  Give a URL link to them, or include them in the Rmd document.  Describe briefly the topic the graphics apply to and what is the form of the data underlying the graphics. Taking a picture of a graph in a textbook is perfectly acceptable.
+    #. Find a schematic graphic oriented toward science.  Here's an example, drawn from Wikpedia: **PERHAPS FROM DETECTION THRESHOLD OR FROM MICHAELIS-MENTON DYNAMICS or CONSUMPTION/PRODUCTION FUNCTIONS.  Include that graphic in your document
+#. Read the notes on [*Starting with R*](../CourseNotes/Rbasics/R-Basics.Rmd).
+    a. Do these exercises based on the notes.  Put your answers in the `AssignmentOne.Rmd` file, giving a subsection header (`###`) for each exercise.
+        1. [Names and Strings](../Exercises/Introductory/2013-08-12-DTK-View-String.html)
+        #. [World Cities](../Exercises/Introductory/2013-08-12-DTK-World-Cities.html)
+        #. [Seatbelts](../Exercises/Introductory/2013-08-12-DTK-Seatbelts.html)
+        #. [Sleep Data](../Exercises/Introductory/2013-08-12-DTK-msleep.html)
+#. Read the notes on *[File Types, Data, and Documents](../CourseNotes/DataOrganization/FileTypes.html).*.  Do these exercises:
+    a. The first
+    #. the second ... 
+#. Enter the information on how long you worked in the [time log](https://docs.google.com/forms/d/1lH02nfMVvVmCxyus3TBHQvG58pV-cGDEcTfaBJAIk3k/viewform). [The class's data are viewable [here](https://docs.google.com/spreadsheets/d/1ROnT3PBL_iVguJQPKrGAXncf-wHKzEYHQQtE7c6JYG4/pubhtml).]
+    
