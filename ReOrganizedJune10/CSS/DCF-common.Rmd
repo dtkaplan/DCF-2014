@@ -1,0 +1,15 @@
+<!--
+% Common elements of a DCF document
+-->
+
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
+
+```{r include=FALSE}
+require(DCFdevel)
+require(mosaic)
+require(knitr)
+require(dplyr)
+require(tidyr)
+opts_chunk$set( tidy=FALSE, out.width="50%", comment=NA )
+options( width=60 )
+```

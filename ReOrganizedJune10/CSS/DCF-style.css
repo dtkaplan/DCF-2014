@@ -1,0 +1,13 @@
+body {
+        font-family: 'Lora', serif;
+      }
+      .figure {
+        background-color:ghostwhite;
+        padding:12pt;
+      }
+      .caption{
+        font-style:italic;
+        width:40%;
+        margin:12pt;
+        float: left;
+      }

@@ -2,10 +2,34 @@
 title: "Data and Computing Fundamentals"
 author: "Home Page"
 date: "Fall 2014"
-output: html_document
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    fig_caption: yes
+    toc: yes
 ---
 
+
 Eventually, this will be the front page for the course.
+
+## Week 1
+
+## Week 2
+
+## Week 3
+
+## Week 4
+
+## Week 5
+
+## Week 6
+
+## Week 7
+
+
+## DTK To Do List
+
+
 
 The time log. [Link to enter new data](https://docs.google.com/forms/d/1lH02nfMVvVmCxyus3TBHQvG58pV-cGDEcTfaBJAIk3k/viewform)
 
