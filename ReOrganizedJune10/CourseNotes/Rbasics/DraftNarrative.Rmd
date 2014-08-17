@@ -1,6 +1,23 @@
 ---
-title: "Draft Narrative"
-output: html_document
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    fig_caption: yes
+    toc: yes
 ---
 
-In this document, place draft narrative for this section of the notes. 
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```
+
+`str()`, `names()`, `head()`, `sample_n()`, 
+
+
+putting things together: `c()`,  
+
+`mean()`, `sum()`, and so on.
+
+Meaning of `NA` 
+
+Example of `mean( , na.rm=TRUE )`
+
+SAVE transformation functions (e.g. `rank()`, `ntiles()`, `row_number()` ) until mutate.

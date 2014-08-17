@@ -9,22 +9,64 @@ output:
     toc: yes
 ---
 
+## To do
 
-Eventually, this will be the front page for the course.
+* In DCFdevel, redefine `summarize()` and `summarise()` so that the basic functions have `na.rm=TRUE`????
+* Change world cities population from integer to numeric.
+* Change NaN in NHANES to NA
+* Change all data in DCF to follow Capital dataframe name, lower-case variable name.
+* BabyNamesYearly should be changed to just baby names.
 
-## Week 1
+
+## Week 1: Infrastructure
+
+**Class Meeting**: Tuesday 10 Sept.
+
+**Notes**: 
+* [The Structure of Data](CourseNotes/DataOrganization/DraftNarrative.html) **STILL IN DRAFT**
+* [A Quick Start with R](CourseNotes/Rbasics/R-Basics.html)
+* [Paths and file types](CourseNotes/DataOrganization/FileTypes.html)
+* [R Functions to Know](CourseNotes/Rbasics/R-functions-to-know.html)  DELETE THIS. MOVED TO Rbasics/DraftNarrative.
+
+**Other resources**:  
+* Videos: [Starting RStudio], [Creating an Rmd Document], [R Chunks in Rmd], [Handing in an Rmd Document]
+
+[Assignment One](Assignments/Assignment-One.html) due Wednesday 18 Sept.
 
 ## Week 2
 
-## Week 3
+**Class Meeting**: Tuesday 17 Sept.
 
-## Week 4
+**Notes**:
+* [R Commands](CourseNotes/Rbasics/DraftNarrative.html) NEEDS TO BE WRITTEN
+* [Data Verbs](CourseNotes/BasicDataCommands/DraftNarrative.html) TO BE WRITTEN
+* [Glyphs, Frames, and Guides](CourseNotes/GraphingIntro/DraftNarrative.html) TO BE WRITTEN
 
-## Week 5
+[Assignment Two](Assignment-Two.html) due Thursday 19 Sept.
 
-## Week 6
 
-## Week 7
+
+## Week Three
+
+**Class Meeting**: Tuesday 17 Sept.
+
+**Notes**:
+* More Data Verbs
+* Tidying Data
+* Classic charts
+* More Graphics Properties: Facets, layers.
+
+[Assignment Three](Assignment-Three.html) due Thursday 26 Sept.
+
+
+## Week 4: Data Backstory
+
+## Week 5: Stats
+
+## Week 6: Multiple Variables
+
+## Week 7: Cleaning, Scraping
+
 
 
 ## DTK To Do List

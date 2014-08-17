@@ -1,13 +1,235 @@
 ---
-title: "Draft Narrative: Basic Data operations"
-output: html_document
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    fig_caption: yes
+    toc: yes
 ---
 
-```{r include=FALSE}
-require(dplyr)
-load("/Users/kaplan/KaplanFiles/DCF-2014/DCF-devel/data/NHANES.rda")
-options(na.rm=TRUE)
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
 ```
+
+# Data Verbs
+
+In English grammar, a verb is a word that expresses an action.^[And, to be more complete, a state of being.  But that isn't relevant here.] In working with data, a verb is a function that transfigures a data table in some specified way.
+
+The word "transfigure" is used intentionally.  A data verb turns a data table into a new data table. The new data table may have the same kinds of cases as the original, or it may have different kinds of cases.  For instance, data verbs can be used to transfigure a data table with cases about individual people (each living in a country) into a data table where the cases are countries.
+
+The basic data verbs you will study in these notes^[Other data verbs are `filter()`, `mutate()`, `arrange()`, `join()`, `gather()`, and `spread()`] are:
+
+* `summarise()`
+* `group_by()`
+
+Keep these things in mind about data-verb functions:
+
+* The data-verb function **always** takes a data table as an input.
+* The data-verb function takes other arguments that specify the details of the transfiguration.
+* The data-verb function **never** changes the input data table. Instead it returns a new data table.  You can use assignment to store that table.  (If you assign the output to the same name as the input, the new value will overwrite the old.)
+* Since data-verb functions take a data table as input and produce a data table as a return value, it's natural to construct complex transfigurations by *chaining* a sequence of verbs together.
+
+## Summarise
+
+The `summarise()` data verb^[Also known by the American spelling, `summarize()`], calculates values that combine the cases in a specified way.  Common calculations include:
+
+* `n()` --- counts the cases.
+* `sum()`, `mean()`, `median()`, `sd()` --- summarizes of a numerical variable.
+* `max()`, `min()` --- finds maxima and minima of numerical variable.
+
+
+
+To illustrate the uses of `summarise()`, consider the `WorldCities` data table (in the `DCFdevel` package). 
+```{r}
+data( WorldCities,package="DCFdevel" )
+names( WorldCities )
+# DELETE THIS LINE BELOW AFTER FIXING THE DCF PACKAGE dataframe
+WorldCities <- mutate(WorldCities, Population=as.numeric(Population))
+```
+This consists of 23,018 of the most populous cities in the world.
+
+To see this, we can summarize the cases with a simple count.  That is:
+```{r}
+WorldCities %>%
+  summarise( count=n() )
+```
+
+Perhaps you want to know the total population in these cities, or the average population per city or the smallest city in the table.
+```{r}
+WorldCities %>%
+  summarise( averPop=mean(Population),
+             totalPop=sum(Population),
+             smallest=min(Population) )
+```
+
+EXERCISE:
+
+Find the location of 
+
+* the most northern and most southern city.  The city closest to 
+* the equator.
+
+END OF EXERCISE.
+
+The average city on the list has about 110,000 people.  The total population of people living in these cities is about 2.6 billion --- a bit more than one-third of the world population.  The smallest city has --- this seems strange! --- zero people; not really a city at all.
+
+Some things to notice about the use of `summarise()`:
+
+* The chaining syntax, `%>%` has been used to pass the first argument to `summarize()`.  This will be useful later on, when there is more than one step in a transfiguration.  It's OK to *end* a line with `%>%`, but **never** start a line with it.
+* The output of `summarize()` is a data table.  True, there is only one case in the output of the example: "all cities."  The `summarise()` function aggregates over the cases in the input data --- the output therefore has a different meaning for case.
+* Named assignment has been used to give names to the variables in the output data.frame.
+
+
+## Group_by
+
+The `group_by()` data verb sets things up so that other data verbs will perform their action on a group-by-group basis.  For instance:
+
+```{r}
+WorldCities %>% 
+  group_by( Country ) %>%
+  summarise( count=n() ) %>% head
+```
+
+The transfiguration produced by `group_by()` is very subtle.  You won't notice it unless you perform some other action on the output of `group_by()`; it really just marks the data table as being grouped and arranges the its structure to be as efficient as possible for those other operations.
+
+Using `group_by()` along with `summarize()` and `n()`, provides a basis for counting up the number of cases in groups and subgroups, or for calculating group-wise statistics.  
+
+Note that the functions used within `summarise()` --- `n()`, `max()`, `sum()`, etc. --- are **not** data verbs.  Remember that a data verb takes a data table as input and returns a transfigured data table as output.  In contrast, the summary functions, `n()`, `sum()`, and so on, take a set of numbers as input and return a *single number* as output.  The `summarise()` function will take insert these numbers from the summary function into the output dataframe
+
+## Is That All?
+
+`Summarise()` is a team player; it works best in combination with other data verbs.  Once you learn those data verbs, particularly `filter()` and `mutate()`, you'll be able to carry out many more operations.  The richness of the data-verb system comes from the ways the different verbs can be combined together.  With just `group_by()` and `summarize()` you will be very limited.
+
+
+### EXERCISE
+
+SIMPLE, SIMPLE: `NA` is a fact of life.  Using `na.rm=TRUE` when the result of a computation is `NA`.  Explaining what `NA` means.  `is.na()`.
+
+SIMPLE, SIMPLE: levels of categorical variables, e.g. 'alive' versus 'Alive' in `NHANES`.
+
+Use `==` and `mean()` to find the proportion of cases at a given level, e.g. what fraction of smokers have died.  Here's an example of the syntax you'll need, using `sex` instead of `smoker`.
+```{r}
+data(NHANESDCF, package="DCFdevel")  # CHANGE THIS LINE TO data(NHANES)
+NHANES %>% group_by( sex ) %>%  
+  summarise( living=mean( death=='alive', na.rm=TRUE ))
+```
+
+Add in: Look carefully at the quantity being given to `mean()`.  The variable name is `death`.  Since it's a variable name, there are no quotes around it.  The `==` tests of equality.  The quoted string, `"alive"`, is one of the levels of the categorical variable `death`.  Altogether, `mean( death=="alive" )` means "the proportion of cases still alive."^[Admittedly, it's a bit odd to have a variable named `death` that can have a value `"alive"`. In the NHANES data, `death` indicates whether or not the person died, and whether the death (if any) was from cardiovascular causes.]
+
+
+Then break down by smoker, etc. as the exercise.  Don't show them this, but ask them to draw conclusions: which group is more likely to be alive.
+
+```{r}
+NHANES %>% group_by(smoker) %>% 
+  summarise( count=n(), 
+             living=mean(death=="alive", na.rm=TRUE) )
+NHANES %>% group_by(sex, smoker) %>%
+  summarise( living=mean(death=="alive", na.rm=TRUE) )
+```
+
+Then, ask them to break it down by people over 60 and people under 60.
+
+```{r}
+NHANES %>% group_by(age<=60,sex, smoker) %>%
+  summarise( living=mean(death=="alive", na.rm=TRUE) )
+```
+
+Among the young males, which group is more likely to be alive: smokers or non-smokers.  How about among older males?  Young females? Older females?
+
+Explain something about Simpson's paradox.
+
+Another EXERCISE ...
+
+Make a stacked bar chart of proportions for each of the smoking, sex, age groups.  Use this to illustrate the different kinds of plots.
+
+Another EXERCISE ...
+
+Using `ntile()` to convert quantitative to categorical.  List some of the other converters, e.g., `cut()`.
+
+### END OF EXERCISE
+
+### An example
+
+To illustrate, consider the NHANES data containing body shape, health, and mortality information. The case is an individual person.  
+
+```{r}
+data(NHANESDCF)
+```
+
+One of the variables is `HDL` --- [HDL cholesterol](http://www.mayoclinic.org/diseases-conditions/high-blood-cholesterol/in-depth/hdl-cholesterol/art-20046388). (HDL is the "good" kind of cholesterol, as opposed to LDL cholesterol, which is reported in the `LDL` variable).
+
+Suppose you want to know a typical HDL level. "Typical" is with respect to the values for all the cases, not just the value for a single case.  Since all the cases are being combined, `summarize()` is appropriate.
+
+```{r eval=FALSE}
+NHANES %>% 
+  group_by( sex ) %>%
+  summarise( typical=mean( HDL, na.rm=TRUE ), 
+             shortest=min( height, na.rm=TRUE ),
+             n=n() )
+```
+
+```{r}
+NHANES %>% summarise( typical=mean( HDL, na.rm=TRUE ) )
+```
+
+Or, perhaps you want the typical HDL, the shortest height, and the number of cases.
+```{r}
+NHANES %>% 
+  summarise( typical=mean( HDL, na.rm=TRUE ), 
+                      shortest=min( height, na.rm=TRUE ),
+                      count=n() )
+```
+
+
+* Each of the numerical calculations has been instructed to ignore missing data.  Without this, the missing data shapes the result:
+    ```{r}
+NHANES %>% summarise( typical=mean( HDL ), 
+                      shortest=min( height ))
+```
+* The `n()` function doesn't need to be passed a variable.  All of the variables in a data table have the same number of cases.
+
+
+## Group_by
+
+The `group_by()` data verb sets things up so that other data verbs will perform their action on a group-by-group basis.  For instance:
+
+```{r}
+NHANES %>% 
+  group_by( sex ) %>%
+  summarise( typical=mean( HDL, na.rm=TRUE ), 
+             shortest=min( height, na.rm=TRUE ),
+             n=n() )
+```
+
+Using `group_by()` along with `summarize()` and `n()`, provides a basis for counting up the number of cases in groups and subgroups:
+
+```{r}
+NHANES %>% 
+  group_by( sex, smoker ) %>%
+  summarize( n=n() )
+```
+
+```{r}
+NHANES %>% 
+  group_by( sex, smoker ) %>%
+  summarize( n=n() )  -> foo
+foo %>% mutate( proportion=n/sum(n) )
+  summarize( proportion=sum(count)/n() ) %>% head()
+  summarize( proportion=I(sum(n)/n()) )
+```
+
+## EXERCISES:
+
+
+### One
+
+What does this do?
+```{r results='hide'}
+NHANES %>% 
+  group_by( sex, smoker ) %>%
+  summarize( n=n() )
+```
+
+### Two
+
 
 Maybe in this section, mean BP for smokers and non-smokers.
 

@@ -1,11 +1,107 @@
 ---
-title: "Draft Narrative"
-output: html_document
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    fig_caption: yes
+    toc: yes
 ---
 
-Data come in many forms.  These notes focus on an organization of data that is simple yet very widely used: the **datatable**.  Datatables are organized into **cases** and **variables**
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```
 
-Variable is not the unknown encountered in algebra, but a specific quantity or quality that can vary from case to case.  In a datatable, that quantity or quality is measured from each in a set of objects.   The datatable records the measurement in a rectangular array.  Each case is one row of the array, each variable is one column. 
+```{r include=FALSE}
+require(xtable)
+```
+
+# Data 
+
+These notes focus on an organization of data that is simple yet very widely used, what's sometimes called "tidy data."^[See [Hadley Wickham](https://github.com/hadley/tidy-data).]  At the heart of tidy data is the **data table**.  Here's an example: a listing from the US Social Security Administration of the yearly births in the US along with the name given to the baby. 
+
+```{r echo=FALSE,results="asis"}
+data(babyNames)
+xtable( babyNames[round(seq(700000,1000000,length=7)),] )
+```
+
+```{r eval=FALSE,echo=FALSE}
+babyNames %>% group_by(year,sex) %>% summarise( total=sum( count )) -> foo
+```
+
+For instance, there were 6 boys named Ahmet born in the US in 1986, 19 girls named Sherina in 1970.  Common sense tells you that this is just a small part of the original table.  In fact, the 19 Sharinas are only a small fraction of 1,748,097 girls born in 1970.  In 1986 the Ahmets were just 7 of the 1,839,985 boys. This particular data table covers the years 1880 through 2013 and a total of 333,417,770 babies, somewhat larger than the current population of the US.
+
+These data are "tidy" simply because they are organized according to some simple rules.  
+
+* The rows, called *cases*, each refer to a specific, unique and similar sort of thing, e.g. girls named Sherina in 1970. 
+* The columns, called *variables*, each have the same sort of thing recorded for each row.  For instance, `count` gives the number of babies for each case; `sex` tells which gender the case refers to. 
+* Every row is a "case" (except the first, which gives names to the variables).  
+* Every column is a variable.
+
+In contrast, here's a table that isn't in tidy form: 
+
+![Ward and precinct votes cast in the 2013 Minneapolis Mayoral election. [source](http://vote.minneapolismn.gov/www/groups/public/@clerk/documents/webcontent/wcms1p-126724.xlsx)](MinneapolisVoting.png)
+
+<div style="clear:both;"></div> <!-- break between caption and text -->
+
+The table is attractive and neatly laid out.  There are helpful labels and summaries that make it easy for a person to read and draw conclusions. (For instance, Ward 1 had a higher voter turnout than Ward 2, and both wards were lower than the city total.)
+
+But being neat is not what makes data tidy.  This table, however neat it is, violates the rules for tidy data.
+
+* Each row is the same sort of thing: a case.  That's not true here.  For most of the table, the rows represent a single precinct.  But other rows give ward or city-wide totals.  The first two rows are a caption describing the data, not a case.
+* Each column is a variable.  That's mostly true in this table, but the tidy pattern is interrupted by labels that are not variables.  For instance, the first two cells in row 15 are the label "Ward 1 Subtotal," different from how the wards are represented in most of the first column, and not telling anything about the precinct.
+
+The tidy data rules make it easy to summarize or analyze data.  For instance, in the tidy baby names table, it's easy to find the total number of babies: just add up all the numbers in the `count` variable.  It's similarly easy to find the number of cases: just count the rows.  And if you want to know the total number of Ahmeds or Sherinas across the years, there's an easy way to do that.
+
+In contrast, it would be more difficult in the Minneapolis election data to find, say, the total number of ballots cast.  If you add up the numbers in column I, the result will be *three times* the number of ballots, because some of the rows contain summaries.
+
+Indeed, if you wanted to do calculations based on the Minneapolis election data, you would first want to put it in a tidy form, like this:
+
+```{r echo=FALSE,results="asis"}
+neat <- read.csv("/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/MinneapolisMayor2013/electionStatistics.csv")
+neat$Ward <- as.character(neat$Ward)
+neat$Precinct <- factor(neat$Precinct, 
+                        levels=c("1","1C","2","2D","3","3A","4","4D",
+                                 "5","5A","6","6C","7","8","9","10"))
+neat2 <- neat
+names(neat2) <- gsub("\\."," ",names(neat))
+xtable( neat2[round(seq(1,25,by=3)), c(1,2,3,5,6,7,8)])
+```
+
+The tidy form is, admittedly, not as attractive as the form published by the Minneapolis government.  But the tidy form is much easier to use for the purpose of generating summaries and analyses. 
+
+The strategy of using tidy data so that reports can easily be made lets you construct ways of presenting data that can be more effective than a formatted spreadsheet.  For instance, here is a presentation of the turnout in each ward that makes it easy to see how much variation there is.
+
+```{r echo=FALSE}
+ggplot(data=neat,aes(x=Precinct,y=Total.Turnout))+geom_point() + ylim(0,.55) + xlab("Voter Turnout (%)")
+```
+
+The tidy format also makes it easier to bring together data from different sources.  For instance, to explain the variation in voter turnout, you might want to look at variables such as party affiliation, age, income, etc.  Such data might be available on a ward-by-ward basis from other records, such as the (public) voter registration logs and census records.  This would be difficult if you had to deal with an ideosyncratic format for each different source of data.
+
+## Variables
+
+In data, the word "variable" has a different meaning than found in high-school algebra.  In algebra, a variable is an unknown quantity.  In data, a variable is known; it's been measured.  "Variable" refers to a specific quantity or quality that can vary from case to case.
+
+There are two major types of variables: *categorical* and *quantitative*. A quantitative variable is just what it sounds like: a number.  
+
+A categorical variable tells which category a case falls into.  For instance, in the baby names data table, `sex` is a categorical variable with two **levels** F and M, standing for female and male.  Similarly the `name` for each case is categorical.  It happens that there are 92,600 different levels for `name`, ranging from Aaron, Ab, and Abbie to Zyhaire, Zylis, and Zymya.
+
+
+### EXERCISE
+
+DRILLS telling these apart.
+
+INTRODUCE "ordinal" and ask whether there is a natural order to the variables.
+
+### END OF EXERCISE
+
+## Cases
+
+Each case refers to a specific and unique entity.  In the 
+
+## The Codebook
+
+A separate document that explains what the variables and cases are.  For instance, the codebook would specify what physical units a measurement is in (e.g. length, degrees, years) or the meaning of a level for a categorical variable (e.g. F means female, M male).  
+
+
+## TAKE OUT
 
 Here is a small datatable giving measurements of gene expression in each of several types (or "lines")" of human cancer cells.  ... Cases are the several cell types, each variable gives measurements of a particular gene.  In these data, there is one variable that gives the identity or name of the case (give some examples). That's not true of every datatable.  Each column of the table is headed with the identity or name of that variable; this will always be so in a datatable.
 

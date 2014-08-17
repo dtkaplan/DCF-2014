@@ -1,0 +1,30 @@
+---
+title: "Assignment for Week Two"
+author: "Data and Computing Fundamentals"
+date: "Macalester College"
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    fig_caption: yes
+    toc: yes
+---
+
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```
+
+* Groupwise means and sd.
+* Counts using group_by() and n().  (Group by the levels of the variable to be counted, perhaps including another variable for subdivisions.)
+* Converting counts to proportions. (Divide by sum().)
+    ```{r}
+    KidsFeet %>% group_by( biggerfoot,sex ) %>% 
+    summarize(count=n() )
+    ```
+* Graphics with mPlot(), mBar(), mMap()
+
+* Add a layer to a map, perhaps zip-code population with state boundaries.
+
+## Deconstructing Graphics
+
+Here's a link to a graphic.  You are to include it in your assignment write-up and then provide the answers.  (Remember, you can right-click on the link to get the URL, then paste that into your Rmd document.)
+
+DECONSTRUCTING EXAMPLES

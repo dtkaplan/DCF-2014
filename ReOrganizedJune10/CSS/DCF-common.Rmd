@@ -2,14 +2,19 @@
 % Common elements of a DCF document
 -->
 
-<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
+<!-- UNCOMMENT THE NEXT LINE FOR PRODUCTION -->
+<!-- link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora" -->
 
 ```{r include=FALSE}
-require(DCFdevel)
 require(mosaic)
 require(knitr)
 require(dplyr)
 require(tidyr)
 opts_chunk$set( tidy=FALSE, out.width="50%", comment=NA )
-options( width=60 )
+options( width=60, 
+         na.rm=TRUE,
+         # Printing tables
+         xtable.type="html",
+         xtable.include.rownames=FALSE)
+require(DCFdevel)
 ```

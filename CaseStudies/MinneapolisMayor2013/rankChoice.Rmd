@@ -50,7 +50,7 @@ names(votes) <- c("First","Second","Third")
 votes <- mutate(votes,whoFrom=First,currentVote=First)
 ```
 
-Maybe give them first the data with the minor candates (after the first four), listed as 'minor'
+Maybe give them first the data with the minor candidates (after the first four), listed as 'minor'
 
 ***cases and variables***
 

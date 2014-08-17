@@ -3,4 +3,6 @@ title: "Ideas and Resources"
 output: html_document
 ---
 
-In this document, place ideas and resources for this section of the notes. 
+Hadley's "Tidy Data" article: <https://github.com/hadley/tidy-data>
+
+His data set on deaths is under `case-study`, with the basic data in a file `deaths.rds`.
