@@ -1,6 +1,172 @@
 ---
-title: "Draft Narrative"
-output: html_document
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    fig_caption: yes
+    toc: yes
 ---
 
-In this document, place draft narrative for this section of the notes. 
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```
+
+Data graphics provide one of the most accessible, compelling, and expressive modes to investigate and depict patterns in data.  Statistical models are another important mode, but it typically takes considerable training to understand statistical models.
+
+The point of these notes is to
+
+* show examples of standard kinds of data graphics, what they are used for, and how to read them;
+* provide simple, high-level interactive computer commands for making common sorts of graphics; 
+* introduce a unifying framework --- a grammar --- for describing and specifying graphics, so that you can create custom graphics types that support displaying data in a purposeful way.
+
+## Common Kinds of Graphs
+
+There are many, many different genres of data graphics, and many different variations on each genre.  Here are some of the most commonly encountered kinds.
+
+* Scatterplots showing relationships between two or more variables.
+* Displays of distribution, such as histograms.
+* Bar charts, comparing values of a single variable across groups.
+* Network diagrams, showing how entities are connected to one another.
+
+You are likely to be familiar with some or all of these genres.
+
+### Scatter plots
+
+The main purpose of a scatter plot is to show the relationship between two variables across several or many cases.  Most often, there is a Cartesian coordinate system in which the x-axis represents one variable and the y-axis the value of a second variable.
+
+
+
+Example: Consider the NHANES data giving medical and morphometric measurements of individual people.  Here is a scatter plot showing the relationship between two variables: height and age.
+
+```{r echo=FALSE}
+data(NHANESDCF)
+set.seed(208)
+NHANES %>% sample_n( size=1000 ) %>%
+  ggplot(aes(x=age, y=height)) + geom_point() + 
+  xlab("Age (years)") + ylab("Height (m)") -> pheight
+pheight
+```
+
+Each dot is one case.  The position of that dot signifies the value of the two variables for that case. 
+
+
+#### MOVE TO "Design Decisions"
+
+In principle, the variables could be assigned to the other axes, but typically there is some purpose behind the use of a scatter plot, for instance to show how height varies with age.  It's conventional to put the *response variable* on the y-axis and the *explanatory variable* on the x-axis.  Other terms for "explanatory variable" include "independent variable" or "causal variable."  The "response variable" is also known as the "dependent variable", "result," or "effect." 
+
+
+Often, the size, shape, or color of the "dots" is used to show the value of another variable.  For instance:
+
+```{r echo=FALSE}
+pheight + geom_point(aes(color=sex))
+```
+
+### EXERCISE
+
+Show these graphs and ask them to explain what they show.
+
+### EXERCISE
+
+### Displays of Distribution
+
+A histogram shows how many cases fall into given ranges of the variable.  For instance, here's a histogram of heights from NHANES:
+
+```{r}
+ggplot(NHANES, aes(x=height)) + 
+    geom_histogram(aes(y = ..count..), 
+                   binwidth=0.1, color="black", fill=NA) + 
+    xlab("Height (m)") + ylab("Count")
+```
+
+The most common height is about 1.65 m --- that's the location of the tallest bar.  Only a handful are taller than 2.0 m.
+
+A simple alternative to a histogram is a *frequency polygon*.  It's like a histogram but without the bars.  
+
+To illustrate, here's a frequency polygon of NHANES height. To show the relationship of the polygon with the histogram, the histogram has been drawn in the background. 
+
+```{r}
+ggplot(NHANES, aes(x=height)) + 
+    geom_freqpoly( aes(y= ..count..),binwidth=0.1,
+                  color="black",fill=NA) + 
+    geom_histogram(aes(y = ..count..), 
+                   binwidth=0.1, color=rgb(0,0,1,.2), fill=NA) + 
+    xlab("Height (m)") + ylab("Count")
+```
+
+Frequency polygons make it straightforward to include other variables, like sex:
+
+```{r}
+ggplot(NHANES, aes(x=height)) + 
+    geom_freqpoly(aes(y = ..count.., color=sex), 
+                   binwidth=0.1, fill=NA) + 
+    xlab("Height (m)") + ylab("Count")
+```
+
+It's also common to display the distribution of cases across two variables.  
+
+```{r echo=FALSE}
+ggplot(NHANES, aes(x=age, y=height)) + geom_hex() + 
+  xlab("Age (years)") + ylab("Height (m)")
+```
+
+This is much like a scatter plot, but without the distraction of the individual dots.
+
+FOR GRAMMAR SECTION: Density plots draw on cases collectively.
+
+#### EXERCISE
+
+Explain what the frequency polygon and the density smoother say about the heights of males and females. 
+
+#### For design choices
+
+Why not a histogram: Displaying two variables.
+
+```{r}
+ggplot(NHANES, aes(x=height)) + 
+    geom_histogram(aes(y = ..count..,color=sex,fill=sex), 
+                   binwidth=0.1) + 
+    xlab("Height (m)") + ylab("Count")
+```
+
+In talking about position/dogding, use this example of a misleading plot.
+
+```{r}
+ggplot(NHANES, aes(x=height)) + 
+    geom_freqpoly(aes(y = ..density.., color=sex), 
+                   binwidth=0.1, fill=NA, position="stack") + 
+    xlab("Height (m)") + ylab("Count")
+```
+
+
+
+Stacking bars or polygons or densities: make sure to fill them in so that the reader can figure out which group is which.  If you want them to overlap, fill them with transluscent color.
+
+
+
+
+##### Density Plots
+
+```{r}
+ggplot(NHANES, aes(x=height)) + 
+    geom_density(aes(y = ..density.., color=sex), 
+                   binwidth=0.1, fill=NA) + 
+    xlab("Height (m)") + ylab("Count")
+```
+
+### Bar Plots
+
+Show fraction alive as a function of sex and smoking status.
+
+Show proportion in each age of the height ntiles.  Stack them. 
+
+### Networks
+
+## Making Data Graphics: Introduction
+
+Steps:
+
+1. Choose a modality: scatter(), density(), barplot(), network()
+2. Choose the variable that corresponds to each aspect of the plot.
+3. Cut and paste the command into your report.
+
+These functions just construct graphics.  The data already need to be in a form where there is a variable for each aspect being used, e.g. an x- and y-variable for a scatter plot.
+
+

@@ -1,0 +1,15 @@
+---
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    fig_caption: yes
+    toc: yes
+---
+
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```
+
+Mutate, Filter, Arrange?  save Join for later.
+
+Example with Mutate: Calculation the proportion of smokers who are alive adjusted for sex and age.  You'll need `mutate()` to add the proportion variable on.
+

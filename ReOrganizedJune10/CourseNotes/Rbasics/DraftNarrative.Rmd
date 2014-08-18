@@ -18,6 +18,8 @@ putting things together: `c()`,
 
 Meaning of `NA` 
 
-Example of `mean( , na.rm=TRUE )`
+Example of `mean( , na.rm=TRUE )`.   Difference with `NaN`.
+
+`==` and other comparison operators.  How `sum()` and `mean()` work to produce counts and proportions.
 
 SAVE transformation functions (e.g. `rank()`, `ntiles()`, `row_number()` ) until mutate.

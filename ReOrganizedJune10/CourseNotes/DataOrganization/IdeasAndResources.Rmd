@@ -30,6 +30,50 @@ Crime data --- the data shown in [their video](http://vimeo.com/19185801) --- in
 
 
 
+## TAKEN OUT of Narrative
+
+Here is a small datatable giving measurements of gene expression in each of several types (or "lines")" of human cancer cells.  ... Cases are the several cell types, each variable gives measurements of a particular gene.  In these data, there is one variable that gives the identity or name of the case (give some examples). That's not true of every datatable.  Each column of the table is headed with the identity or name of that variable; this will always be so in a datatable.
+
+
+> NCI table transposed so cell lines are cases.  
+
+Use this elsewhere ...
+> A printed table is not always a suitable form for displaying a datatable.  For instance, it's not practical to show on paper or the screen the full datatable from which the one in Table 1 is extracted. The full datatable is just too big --- about 5000 times as large as what is seen in in Table 1.  Even if the full datatable could be displayed, you would have trouble drawing any insight from it; people are not very good at interpreting lots of numerals.
+
+> To make sense of this large datatable, it helps to display it in another form altogether
+
+* NCI genes
+    1. A small segment of the data
+    2. A heat map for 100 genes x 60 cell lines
+    3. A rectangle within a rectangle showing where the data from 1 and 2 fit in the entire dataset.
+
+The datatable of gene-expression measurements is numerical.  Numerical values can be thought of as **continuous**, able to take on any of an infinity of possibilities.  Between any two numbers there is another number, e.g., between 3 and 4 is 3.12, 3.13, and so on; between 3.12 and 3.13 there is 3.121, 3.122, and so on.  There's no limit to the possibilities.
+
+The measurements in variables are often numerical, but often they will be something else: categories.  Categorical variables are **discrete**.  Rather than having an infinity of possibilities, categorical variables can be one of several (or many) possibilities.  The possible values of a categorical variable are called **levels**.  In the data below, `sex` is a categorical variable, with levels 'M' and 'F'.  The `death` variable has three levels: `alive`, `cardiodeath`, `otherdeath`. 
+
+In between: how many times has a person been married, how many children does that child have.  Even though nobody can be married 1.75 times, or have 2.2 children, such variables are taken as numbers.  Part of the reason is that it's meaningful to calculate such things as averages.  You wouldn't be surprised to hear that a group of people has, on average, 2.2 children, even though no individual can possibly do so.
+
+Numbers have a natural order.  For instance, 3 is always between 1 and 4.  Categorical variables need not have any such order. For example, if the categories are languages --- Chinese, English, French, German, ... --- there is no natural order.  It's meaningless to say that English is between Chinese and French.  Similarly, there's no such thing as an average language.  Without an order, averages make no sense.  
+
+Sometimes a variable is represented by discrete levels that do have a natural order.  For instance, family incomes might be recorded as "Poor", "Middle", "Upper-middle", "Rich".  When a categorical variable has a natural order, it's called an **ordinal variable**.
+
+In NHANES, the case is an individual person (at a given moment in time).  There are several variables: some numeric and some categorical.
+
+* mosaic::NHANES.  As you've seen in <The Introduction>, you can mix quantitative and categorical data. Show a table of a subset of the data,  with colors to show which vars are being used and different symbols to show which rows were in the example.  Point is: Data can be large.  This should be an advantage rather than a disadvantage.  But looking at large tables does not convey this information to the human.
+* Rank Choice or NC-Voter?  You can have mostly categorical data.
+
+### Different cases for different purposes
+
+> Convert NHANES data to groupwise averages, e.g. over sex and smoker, what is the average BMI.  Now the case is a group of people.  Are the different cases different?  This is a matter of statistical inference; statistics and interpreting and presenting data go hand in hand.
+
+### Wide vs long
+
+Show the NCI data as long by cell line.
+
+
+## What kind of data isn't in datatable format?
+
+
 * [the codebook](http://www.icpsr.umich.edu/cgi-bin/file?comp=none&study=27643&ds=1&file_id=1008871&path=NACJD)
 
 ### Happiness
@@ -66,4 +110,5 @@ marital. marital status: married, never married, divorced, widowed, separated.
 sex. sex: female, male.
 
 wtsall. probability weight. 0.43–6.43.
+
 

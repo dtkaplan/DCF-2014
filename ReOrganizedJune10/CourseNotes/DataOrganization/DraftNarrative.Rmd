@@ -92,54 +92,44 @@ INTRODUCE "ordinal" and ask whether there is a natural order to the variables.
 
 ### END OF EXERCISE
 
-## Cases
+## Cases and what they represent
 
-Each case refers to a specific and unique entity.  In the 
+As already said, a row of a tidy data table refers to a case.  To this point, you may have little reason to prefer the word "case" to "row."  
+
+In working with data, keep in mind what a case stands for in the real world.  Sometimes the meaning is obvious.  For instance, here eight cases from a (tidy) data table showing each in the Minneapolis mayoral election in 2013.  (The voters were directed to mark their ballot with the first three choices of candidates, in order.  This is part of a procedure called [rank choice voting](http://vote.minneapolismn.gov/rcv/).)
+
+```{r echo=1,results="asis"}
+data( Minneapolis2013 )
+set.seed(67); xtable( sample_n( Minneapolis2013, size=8) )
+```
+
+Altogether, there are 80,101 rows^[It's interesting to note that the citywide tally, by precinct and ward, gives only 80,099.  There are two extra ballots in the vote table.  Perhaps a couple of legitimate absentee ballots, postmarked before the election, were received after the tally was made.] in the table.  Each row corresponds to a ballot cast in the 2013 election.  That's the meaning of "case" in this situation.
+
+The case is different in the vote summary table; a case is a ward in a precinct.  In the baby names data, a case is a name and sex in one year.
+
+When thinking about cases, ask this question: What description would make every case unique?  In the vote summary data, a precinct does not uniquely identify a case.  The individual precincts each appear in several rows.  But each precinct & ward combination appears once and only once.
+
+Here's a small part of a data table about results from a 10-mile running race held each year in Washington, D.C.
+
+```{r echo=FALSE, results='asis'}
+runners <- read.csv( "/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/CherryBlossomRace/Cherry-Blossom-Longitudinal.csv" )
+xtable(runners[15996:16010, c(1,5,2,6,4)])
+```
+
+What's the meaning of a case here?  It's tempting to think that a case is a person.  After all, it's people who run road races.  But notice that individuals appear more than once: Jane Poole ran each year from 2003 to 2007.  (Her times improved consistently as she got older!) Jane Smith ran in the races from 1999 to 2006, missing only the year 2000 race.  This suggests that the case is a runner in one year's race.
+
+Note that even if the individual identifier in the first column were stripped away, the case would still be a runner in one year's race.  Data tables do not necessarily display all the variables needed to figure out what makes each row unique.  For such information, you sometimes need to look at the documentation of how the data were collected and what the variables mean.
+
 
 ## The Codebook
 
-A separate document that explains what the variables and cases are.  For instance, the codebook would specify what physical units a measurement is in (e.g. length, degrees, years) or the meaning of a level for a categorical variable (e.g. F means female, M male).  
+The "codebook" is a document --- separate from the data table --- that describes various aspects of how the data were collected, what the variables mean and what the different levels of categorical variables refer to.  The word "codebook" comes from the days when data was encoded for the computer in ways that make it hard for a human to read.  
 
+For data provided by R packages, a codebook is available via the `help()` function, e.g., for the `babyNames` data in the `DCFdevel` package, try:
+```{r eval=FALSE}
+help( babyNames )
+```
 
-## TAKE OUT
+For the runners data, the codebook would tell you that the meaning of the `gun` variable is the time from when the start gun went off to when the runner crosses the finish line and that the unit of measurement is "minutes."  It would also state the obvious: that `age` is the person's age in years and `sex` has two levels, male and female, represented by M and F.^[Such codes are not always self evident to the reader.  In Welsh, the codes might be B for females and G for males.  Not "boy" and "girl" but "Gwryw" for female and "Benyw" for male.  A non-Welsh speaker would easily be confused without the codebook.]
 
-Here is a small datatable giving measurements of gene expression in each of several types (or "lines")" of human cancer cells.  ... Cases are the several cell types, each variable gives measurements of a particular gene.  In these data, there is one variable that gives the identity or name of the case (give some examples). That's not true of every datatable.  Each column of the table is headed with the identity or name of that variable; this will always be so in a datatable.
-
-
-> NCI table transposed so cell lines are cases.  
-
-Use this elsewhere ...
-> A printed table is not always a suitable form for displaying a datatable.  For instance, it's not practical to show on paper or the screen the full datatable from which the one in Table 1 is extracted. The full datatable is just too big --- about 5000 times as large as what is seen in in Table 1.  Even if the full datatable could be displayed, you would have trouble drawing any insight from it; people are not very good at interpreting lots of numerals.
-
-> To make sense of this large datatable, it helps to display it in another form altogether
-
-* NCI genes
-    1. A small segment of the data
-    2. A heat map for 100 genes x 60 cell lines
-    3. A rectangle within a rectangle showing where the data from 1 and 2 fit in the entire dataset.
-
-The datatable of gene-expression measurements is numerical.  Numerical values can be thought of as **continuous**, able to take on any of an infinity of possibilities.  Between any two numbers there is another number, e.g., between 3 and 4 is 3.12, 3.13, and so on; between 3.12 and 3.13 there is 3.121, 3.122, and so on.  There's no limit to the possibilities.
-
-The measurements in variables are often numerical, but often they will be something else: categories.  Categorical variables are **discrete**.  Rather than having an infinity of possibilities, categorical variables can be one of several (or many) possibilities.  The possible values of a categorical variable are called **levels**.  In the data below, `sex` is a categorical variable, with levels 'M' and 'F'.  The `death` variable has three levels: `alive`, `cardiodeath`, `otherdeath`. 
-
-In between: how many times has a person been married, how many children does that child have.  Even though nobody can be married 1.75 times, or have 2.2 children, such variables are taken as numbers.  Part of the reason is that it's meaningful to calculate such things as averages.  You wouldn't be surprised to hear that a group of people has, on average, 2.2 children, even though no individual can possibly do so.
-
-Numbers have a natural order.  For instance, 3 is always between 1 and 4.  Categorical variables need not have any such order. For example, if the categories are languages --- Chinese, English, French, German, ... --- there is no natural order.  It's meaningless to say that English is between Chinese and French.  Similarly, there's no such thing as an average language.  Without an order, averages make no sense.  
-
-Sometimes a variable is represented by discrete levels that do have a natural order.  For instance, family incomes might be recorded as "Poor", "Middle", "Upper-middle", "Rich".  When a categorical variable has a natural order, it's called an **ordinal variable**.
-
-In NHANES, the case is an individual person (at a given moment in time).  There are several variables: some numeric and some categorical.
-
-* mosaic::NHANES.  As you've seen in <The Introduction>, you can mix quantitative and categorical data. Show a table of a subset of the data,  with colors to show which vars are being used and different symbols to show which rows were in the example.  Point is: Data can be large.  This should be an advantage rather than a disadvantage.  But looking at large tables does not convey this information to the human.
-* Rank Choice or NC-Voter?  You can have mostly categorical data.
-
-### Different cases for different purposes
-
-> Convert NHANES data to groupwise averages, e.g. over sex and smoker, what is the average BMI.  Now the case is a group of people.  Are the different cases different?  This is a matter of statistical inference; statistics and interpreting and presenting data go hand in hand.
-
-### Wide vs long
-
-Show the NCI data as long by cell line.
-
-
-## What kind of data isn't in datatable format?
+An example of a complicated codebook of the sort sometimes found in the tabulation of government or social science data, is [this document](http://www.icpsr.umich.edu/cgi-bin/file?comp=none&study=27643&ds=1&file_id=1008871&path=NACJD) describing data from the Uniform Crime Reporting Data from the US Department of Justice.  You generally need a lot of knowledge about the specific field to make sense of such things.

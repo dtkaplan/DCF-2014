@@ -101,10 +101,18 @@ Note that the functions used within `summarise()` --- `n()`, `max()`, `sum()`, e
 
 ### EXERCISE
 
+#### One
+
 SIMPLE, SIMPLE: `NA` is a fact of life.  Using `na.rm=TRUE` when the result of a computation is `NA`.  Explaining what `NA` means.  `is.na()`.
+
+#### Two
 
 SIMPLE, SIMPLE: levels of categorical variables, e.g. 'alive' versus 'Alive' in `NHANES`.
 
+
+
+
+#### Four
 Use `==` and `mean()` to find the proportion of cases at a given level, e.g. what fraction of smokers have died.  Here's an example of the syntax you'll need, using `sex` instead of `smoker`.
 ```{r}
 data(NHANESDCF, package="DCFdevel")  # CHANGE THIS LINE TO data(NHANES)
@@ -207,15 +215,6 @@ NHANES %>%
   summarize( n=n() )
 ```
 
-```{r}
-NHANES %>% 
-  group_by( sex, smoker ) %>%
-  summarize( n=n() )  -> foo
-foo %>% mutate( proportion=n/sum(n) )
-  summarize( proportion=sum(count)/n() ) %>% head()
-  summarize( proportion=I(sum(n)/n()) )
-```
-
 ## EXERCISES:
 
 
@@ -265,7 +264,7 @@ Perhaps jazz it up with age-group.
 
 ## What fraction are diabetic in the various age groups
 
-```{r}
+```{r eval=FALSE}
 mutate(NHANES, AgeGroup=ntils(age,n=10,format='left')) %>% 
   group_by(sex,AgeGroup) %>%
   summarize(dfrac=mean(diabetic=='diabetic',na.rm=TRUE),
@@ -319,7 +318,7 @@ Also, assignment.  Use `<-` to distinquish between assignment and named argument
 
 
 For each sex and smoker group, what fraction has diabetes?
-```{r}
+```{r eval=FALSE}
 group_by(NHANES,sex,smoker) %>% mutate(count=n()) -> tmp
 summarize(tmp, sum(diabetic=='diabetic')/count )
 dcast(group_by(NHANES,sex,smoker) %>% proportion(diabetic),
