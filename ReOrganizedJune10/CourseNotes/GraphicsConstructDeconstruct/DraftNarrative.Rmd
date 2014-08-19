@@ -9,6 +9,10 @@ output:
 ```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
 ```
 
+```{r include=FALSE}
+library(xkcd)
+```
+
 Data graphics provide one of the most accessible, compelling, and expressive modes to investigate and depict patterns in data.  Statistical models are another important mode, but it typically takes considerable training to understand statistical models.
 
 The point of these notes is to
@@ -24,6 +28,7 @@ There are many, many different genres of data graphics, and many different varia
 * Scatterplots showing relationships between two or more variables.
 * Displays of distribution, such as histograms.
 * Bar charts, comparing values of a single variable across groups.
+* Maps, showing how a variable relates to geography. 
 * Network diagrams, showing how entities are connected to one another.
 
 You are likely to be familiar with some or all of these genres.
@@ -48,22 +53,6 @@ pheight
 Each dot is one case.  The position of that dot signifies the value of the two variables for that case. 
 
 
-#### MOVE TO "Design Decisions"
-
-In principle, the variables could be assigned to the other axes, but typically there is some purpose behind the use of a scatter plot, for instance to show how height varies with age.  It's conventional to put the *response variable* on the y-axis and the *explanatory variable* on the x-axis.  Other terms for "explanatory variable" include "independent variable" or "causal variable."  The "response variable" is also known as the "dependent variable", "result," or "effect." 
-
-
-Often, the size, shape, or color of the "dots" is used to show the value of another variable.  For instance:
-
-```{r echo=FALSE}
-pheight + geom_point(aes(color=sex))
-```
-
-### EXERCISE
-
-Show these graphs and ask them to explain what they show.
-
-### EXERCISE
 
 ### Displays of Distribution
 
@@ -109,6 +98,114 @@ ggplot(NHANES, aes(x=age, y=height)) + geom_hex() +
 
 This is much like a scatter plot, but without the distraction of the individual dots.
 
+
+### Bar Chart
+
+The familiar bar chart is effective when the objective is to compare a few different quantities.
+
+Example: From the NHANES data, how likely is a person to have died during the follow-up period, based on their age group?
+
+```{r echo=FALSE}
+data(NHANESDCF)
+NHANES %>% 
+#  mutate( ageGroup=ntile(age, 7) ) %>% 
+  mutate( ageGroup=cut( age, c(20,30,40,50,60,70,80,90,100) ),
+          death2=ifelse(is.na(death), 'alive', death)) %>% 
+  group_by( smoker, sex, ageGroup, death ) %>%
+  summarise( count=n() ) -> NHANEScts
+## Not using death2, which counts NA in followup as alive.
+## First plot
+NHANEScts %>% 
+  group_by( ageGroup, death ) %>%
+  summarise( count=sum(count) ) -> ByAge
+ByAge %>% group_by( ageGroup ) %>% 
+  mutate( total=sum(count)) %>%
+  filter( death=="alive" ) %>%
+  mutate( fracAlive=count/total ) -> FracAlive
+```
+
+```{r echo=FALSE,warning=FALSE}
+FracAlive %>% na.omit %>% 
+  ggplot(aes(x=ageGroup,y=fracAlive)) + 
+  geom_bar(stat='identity',position=position_stack(width=.9),
+           alpha=.5) + ylab( "Fraction Alive at End of Follow-Up" ) +
+  xlab("Age") + 
+  theme_xkcd()
+```
+
+It's easy to compare bars to their neighbors and to discern the overall trend: survival goes down as age goes up. 
+
+There's plenty of space taken up the bars to include information about other variables.
+
+For instance, here's a comparison between smokers and non-smokers:
+
+```{r echo=FALSE,warning=FALSE}
+NHANEScts %>% 
+  group_by( smoker, ageGroup, death ) %>%
+  summarise( count=sum(count) ) -> ByAgeSmoke
+ByAgeSmoke %>% group_by( smoker, ageGroup ) %>% 
+  mutate( total=sum(count)) %>%
+  filter( death=="alive" ) %>%
+  mutate( fracAlive=count/total ) -> FracAliveSmoke
+FracAliveSmoke %>% na.omit() %>% mutate( `Smoking Status`=smoker) %>% 
+ggplot(aes(x=ageGroup, y=fracAlive ,fill=`Smoking Status`))+
+geom_bar(stat='identity',position="dodge") + 
+  ylab("Fraction Alive at end of Follow-Up") +
+  xlab("Age") + 
+  theme_xkcd()
+```
+
+At each age, smokers were less likely than non-smokers to have survived to the end of the study's follow-up period.
+
+
+### Maps
+
+```{r echo=FALSE}
+Growth <- CIAdata(2002)
+Growth$growth <- pmin(Growth$growth,5)
+p <- makeWorldMap( Growth, 'country')
+p + geom_polygon(col="gray",width=.5,aes(fill=growth)) +
+  xlab("Longitude") + ylab("Latitude") + ggtitle("Population Growth (% per year)") + 
+  scale_fill_continuous( low = "lightblue", high = "red", space = "Lab",
+  na.value = "grey50", guide = "colourbar") 
+```
+
+
+### Networks
+
+
+
+## Making Data Graphics: Introduction
+
+Steps:
+
+1. Choose a modality: scatter(), density(), barplot(), network()
+2. Choose the variable that corresponds to each aspect of the plot.
+3. Cut and paste the command into your report.
+
+These functions just construct graphics.  The data already need to be in a form where there is a variable for each aspect being used, e.g. an x- and y-variable for a scatter plot.
+
+
+
+
+### FOR GRAPHICAL DECISIONS
+
+Redo the NHANES mortality as a logistic regression.
+
+
+
+Show fraction alive as a function of sex and smoking status.
+
+Show proportion in each age of the height ntiles.  Stack them. 
+
+
+### EXERCISE
+
+Show these graphs and ask them to explain what they show.
+
+### EXERCISE
+
+
 FOR GRAMMAR SECTION: Density plots draw on cases collectively.
 
 #### EXERCISE
@@ -126,7 +223,7 @@ ggplot(NHANES, aes(x=height)) +
     xlab("Height (m)") + ylab("Count")
 ```
 
-In talking about position/dogding, use this example of a misleading plot.
+In talking about position/dodging, use this example of a misleading plot.
 
 ```{r}
 ggplot(NHANES, aes(x=height)) + 
@@ -151,22 +248,34 @@ ggplot(NHANES, aes(x=height)) +
     xlab("Height (m)") + ylab("Count")
 ```
 
-### Bar Plots
+#### Design Decisions
 
-Show fraction alive as a function of sex and smoking status.
+Dealing with very large datasets:
 
-Show proportion in each age of the height ntiles.  Stack them. 
+* Transparency in scatter plots.
+* Use densities rather than cases.
 
-### Networks
+#### MOVE TO "Design Decisions"
 
-## Making Data Graphics: Introduction
-
-Steps:
-
-1. Choose a modality: scatter(), density(), barplot(), network()
-2. Choose the variable that corresponds to each aspect of the plot.
-3. Cut and paste the command into your report.
-
-These functions just construct graphics.  The data already need to be in a form where there is a variable for each aspect being used, e.g. an x- and y-variable for a scatter plot.
+In principle, the variables could be assigned to the other axes, but typically there is some purpose behind the use of a scatter plot, for instance to show how height varies with age.  It's conventional to put the *response variable* on the y-axis and the *explanatory variable* on the x-axis.  Other terms for "explanatory variable" include "independent variable" or "causal variable."  The "response variable" is also known as the "dependent variable", "result," or "effect." 
 
 
+Often, the size, shape, or color of the "dots" is used to show the value of another variable.  For instance:
+
+```{r echo=FALSE}
+pheight + geom_point(aes(color=sex))
+```
+
+### For an exercise:
+
+What does this graph tell you about pregnancy?
+
+ggplot(data=NHANES, aes(x=pregnant, y=age)) + geom_violin()  + theme(legend.position="none") + labs(title="") 
+
+ggplot(data=NHANES, aes(x=pregnant, y=age)) + geom_violin()  + aes(colour=sex) + facet_wrap(~smoker, ncol=4) + theme(legend.position="none") + labs(title="") + coord_flip() 
+
+### Exercise:
+
+Make a graph to indicate whether smokers are systematically lower in weight than non-smokers.
+
+ggplot(data=NHANES, aes(x=smoker, y=BMI)) + geom_violin()  + theme(legend.position="none") + labs(title="")

@@ -23,10 +23,10 @@ output:
 **Class Meeting**: Tuesday 10 Sept.
 
 **Notes**: 
-* [The Structure of Data](CourseNotes/DataOrganization/DraftNarrative.html) **STILL IN DRAFT**
+* [The Structure of Data](CourseNotes/DataOrganization/DraftNarrative.html) ** NEED TO  break out exercises.**
 * [A Quick Start with R](CourseNotes/Rbasics/R-Basics.html)
 * [Paths and file types](CourseNotes/DataOrganization/FileTypes.html)
-* [R Functions to Know](CourseNotes/Rbasics/R-functions-to-know.html)  DELETE THIS. MOVED TO Rbasics/DraftNarrative.
+
 
 **Other resources**:  
 * Videos: [Starting RStudio], [Creating an Rmd Document], [R Chunks in Rmd], [Handing in an Rmd Document]
@@ -39,19 +39,20 @@ output:
 
 **Notes**:
 * [R Commands](CourseNotes/Rbasics/DraftNarrative.html) NEEDS TO BE WRITTEN
-* [Data Verbs](CourseNotes/BasicDataCommands/DraftNarrative.html) TO BE WRITTEN
-* [Glyphs, Frames, and Guides](CourseNotes/GraphingIntro/DraftNarrative.html) TO BE WRITTEN
+* [Data Verbs](CourseNotes/BasicDataCommands/DraftNarrative.html) NEED TO Pull out exercises and the early notes about NHANES to turn into exercises.
+* [Glyphs, Frames, and Guides](CourseNotes/GraphicsConstructDeconstruct/DraftNarrative.html) IN PROGRESS ...
 
 [Assignment Two](Assignment-Two.html) due Thursday 19 Sept.
 
 
+EXERCISE COLLECTIONS: [graphics](CourseNotes/GraphicsConstructDeconstruct/Exercises.html)
 
 ## Week Three
 
 **Class Meeting**: Tuesday 17 Sept.
 
 **Notes**:
-* More Data Verbs
+* [More Data Verbs](CourseNotes/BasicDataCommands/MoreDataVerbs.html)
 * Tidying Data
 * Classic charts
 * More Graphics Properties: Facets, layers.

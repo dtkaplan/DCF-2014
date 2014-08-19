@@ -11,6 +11,8 @@ output:
 
 `str()`, `names()`, `head()`, `sample_n()`, 
 
+Using TAB in RStudio.  (For video also.)
+
 
 putting things together: `c()`,  
 
@@ -23,3 +25,5 @@ Example of `mean( , na.rm=TRUE )`.   Difference with `NaN`.
 `==` and other comparison operators.  How `sum()` and `mean()` work to produce counts and proportions.
 
 SAVE transformation functions (e.g. `rank()`, `ntiles()`, `row_number()` ) until mutate.
+
+what NULL means

@@ -1,0 +1,159 @@
+---
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    fig_caption: yes
+    toc: yes
+---
+
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```
+
+
+
+
+#### Drill One
+
+`r startProblem("2014-08-19-graphics-1")`
+This plot, based on the NHANES data table, shows the distribution of heights among males and females.  
+
+```{r echo=FALSE}
+data(NHANES, package="mosaic")
+ggplot(NHANES, aes(x=height)) + 
+    geom_density( aes(y= ..density.., color=sex, fill=sex),
+                  alpha=.4 ) +
+    xlab("Height (m)") + ylab("Density") + baseTheme
+```
+
+Explain briefly what the plot shows about height and sex.
+
+`r I(textItem(name='height-distribution'))`
+
+
+`r endProblem()`
+
+
+### Drill Two
+
+`r startProblem("2014-08-19-graphics-3")`
+
+These two graphs show the same data (from NHANES) on pregnancy and age. The first is a density plot, the second is a "violin" plot.
+
+```{r echo=FALSE,results='hold'}
+ggplot(data=NHANES, aes( x=age,color=pregnant,fill=pregnant)) + 
+  geom_density(alpha=.5,position="stack")  + 
+  labs(title="A") 
+ggplot(data=NHANES, aes( x=age,color=pregnant,fill=pregnant)) + 
+  geom_density(alpha=.5)  + 
+  labs(title="B") 
+```
+
+Explain briefly what's different in the graphical setup between graph A and graph B and which one you think would be more useful in demonstrating the relationship between pregnancy and age.
+
+MULTIPLE CHOICE
+
+`r I(textItem(name='violin'))`
+
+`r endProblem()`
+
+
+### Drill Three
+
+There is often a choice between using color and using location to display a variable.  The following two plots are based on the variables in the same data (NHANES).  Explain how the different variables are represented.
+
+```{r}
+ggplot(data=NHANES, aes(x=bmi,color=smoker,fill=smoker)) + geom_density(alpha=.5)  + 
+   labs(title="A")
+ggplot(data=NHANES, aes(x=smoker, y=bmi)) + geom_violin()  + 
+  theme(legend.position="none") + labs(title="B")
+```
+
+### Exercise:
+
+Make a graph from the NHANES data to indicate whether smokers are systematically lower in weight than non-smokers.
+
+
+
+### FOR GRAPHICAL DECISIONS
+
+Redo the NHANES mortality as a logistic regression.
+
+
+
+Show fraction alive as a function of sex and smoking status.
+
+Show proportion in each age of the height ntiles.  Stack them. 
+
+
+### EXERCISE
+
+Show these graphs and ask them to explain what they show.
+
+### EXERCISE
+
+
+FOR GRAMMAR SECTION: Density plots draw on cases collectively.
+
+ 
+
+#### For design choices
+
+Why not a histogram: Displaying two variables.
+
+```{r}
+ggplot(NHANES, aes(x=height)) + 
+    geom_histogram(aes(y = ..count..,color=sex,fill=sex), 
+                   binwidth=0.1) + 
+    xlab("Height (m)") + ylab("Count")
+```
+
+In talking about position/dodging, use this example of a misleading plot.
+
+```{r}
+ggplot(NHANES, aes(x=height)) + 
+    geom_freqpoly(aes(y = ..density.., color=sex), 
+                   binwidth=0.1, fill=NA, position="stack") + 
+    xlab("Height (m)") + ylab("Count")
+```
+
+
+
+Stacking bars or polygons or densities: make sure to fill them in so that the reader can figure out which group is which.  If you want them to overlap, fill them with transluscent color.
+
+
+
+
+##### Density Plots
+
+```{r}
+ggplot(NHANES, aes(x=height)) + 
+    geom_density(aes(y = ..density.., color=sex), 
+                   binwidth=0.1, fill=NA) + 
+    xlab("Height (m)") + ylab("Count")
+```
+
+#### Design Decisions
+
+Dealing with very large datasets:
+
+* Transparency in scatter plots.
+* Use densities rather than cases.
+
+#### MOVE TO "Design Decisions"
+
+In principle, the variables could be assigned to the other axes, but typically there is some purpose behind the use of a scatter plot, for instance to show how height varies with age.  It's conventional to put the *response variable* on the y-axis and the *explanatory variable* on the x-axis.  Other terms for "explanatory variable" include "independent variable" or "causal variable."  The "response variable" is also known as the "dependent variable", "result," or "effect." 
+
+
+Often, the size, shape, or color of the "dots" is used to show the value of another variable.  For instance:
+
+```{r echo=FALSE}
+data(NHANES,package="mosaic")
+set.seed(208)
+NHANES %>% sample_n( size=1000 ) %>%
+  ggplot(aes(x=age, y=height)) + geom_point() + 
+  xlab("Age (years)") + ylab("Height (m)") -> pheight
+pheight + geom_point(aes(color=sex))
+```
+
+
+
