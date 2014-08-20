@@ -99,7 +99,7 @@ ggplot(NHANES, aes(x=age, y=height)) + geom_hex() +
 This is much like a scatter plot, but without the distraction of the individual dots.
 
 
-### Bar Chart
+### Bar Charts
 
 The familiar bar chart is effective when the objective is to compare a few different quantities.
 
@@ -160,7 +160,9 @@ At each age, smokers were less likely than non-smokers to have survived to the e
 
 ### Maps
 
-```{r echo=FALSE}
+Using a map to plot data helps both to identify particular cases and to show spatial patterns and discrepancy.  
+
+```{r echo=FALSE,message=FALSE}
 Growth <- CIAdata(2002)
 Growth$growth <- pmin(Growth$growth,5)
 p <- makeWorldMap( Growth, 'country')
@@ -170,10 +172,46 @@ p + geom_polygon(col="gray",width=.5,aes(fill=growth)) +
   na.value = "grey50", guide = "colourbar") 
 ```
 
+From this map of population growth (in % per year), you can see the handful of countries with negative growth (that is, population decline) such as Russia and Poland.  The countries in Africa, with the exception of South Africa and Namibia, have fast population growth.  (A rate of 5% per year means that the population will double every 14 years.)
 
 ### Networks
 
+A *network* is a set of connections, called *edges*, between elements, called *vertices*. A vertex corresponds to a case. The network describes which vertices are connected to other vertices. 
 
+The `NCI60` data set (in the DCFdevel package) is about the genetics of cancer.  The data set looks at more than 40,000 probes for the expression of genes, in each of 60 cancer cell lines. In the network here, a vertex is a given cell line --- a sample of cells from one person with a particularly kind of cancer.
+
+To measure the connections between cell lines, the correlation coefficient for probe expression in every pair of cell lines was calculated.  Each pair's correlation coefficient indicates the strength of connection between the two cell lines in that pair. Here, the 200 largest correlations are shown.
+
+
+
+
+```{r echo=FALSE}
+# An example
+CellEdges <- read.csv("nciNetwork.csv")
+SmallEdges <- head(CellEdges,200)
+VV <- edgesToVertices( SmallEdges, 
+                       from=cellLine, to=otherCellLine )
+VV$width = 1:nrow(VV)
+VV$color <- runif(nrow(VV))
+EE <- edgesForPlotting( VV, ID=ID, x=x, y=y,
+                        SmallEdges, 
+                        from=cellLine, to=otherCellLine) 
+VV$type <- substr(VV$ID,0,2)                       
+ggplot(EE, aes(x=x,y=y)) + 
+  geom_segment(size=2,
+               aes(
+                 xend=xend,yend=yend,
+                 alpha=abs(correlation)),
+               ) + 
+  geom_point(data=VV,aes(x=x,y=y,color=type,size=size),
+             size=12,fill="lightgray",alpha=.4) +
+  geom_text( data=VV, aes(x=x,y=y, label=type)) +
+  theme(legend.position="none")
+```
+
+Every vertex, that is, every cell line, is depicted as a dot.  The dot's color and label gives the type of cancer involved.  These are Ovarian, Colon, Central Nervous System, Melanoma, Renal, Breast, and Lung cancers. 
+
+The network shows that the melanoma cell lines (ME) are closely related to each other and not so much to other cell lines.  The same is true for colon cancer cell lines (CO) and for central nervous system (CN) cell lines.
 
 ## Making Data Graphics: Introduction
 
