@@ -9,6 +9,247 @@ output:
 ```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
 ```
 
+## Objectives
+
+It's reasonable to learn to read before learning to write.  These notes are intended to help you **read** R expressions.  Later on, you'll learn to write by copying and modifying example expressions.
+
+You'll probably get an inkling of what the expressions used as examples here are intended to do, but that's not what's important now.  Instead, focus on
+
+* Distinguishing between *functions* and arguments.
+* Distinguishing between *data tables* and the *variables* that are contained in them.
+* Identifying when a function is being used.
+* Identifying the arguments to a function.
+* How assignment allows values to be stored and referred to by name.
+* How the output of one function can become the input to another.
+
+You are **not** expected at this point to be able to write R expressions.  You'll have plenty of opportunity to do that once you've learned to read R expressions.
+
+If you are already experienced with writing statements in R, please read this footnote.^[Chances are, the expressions you will see in these notes will look little or nothing like the commands that you are used to writing.  The expressions here are written in what might be called a "dialect" or "accent" of R.  This dialect emphasizes functions and functions that work with data frames.  (The more general term, "data table" is used here.)  A small set of functions is emphasized that will be unfamiliar: `group_by()`, `summarise()`, `filter()` and so on.  These have been designed carefully by Hadley Whickham and his collaborators to give a smooth, consistent interface between the data scientist and the computer. In addition, you will see extensive use of *chaining*, a way of connecting the inputs and outputs of function.  This involves the `%>%` function.  To give an example, the mathematical expression $\cos( \sqrt{x} )$ would traditionally be written in R as `cos( sqrt( x ) )`, with the output of `sqrt()` being passed as the input to `cos()`. In the chaining style, this would be written `x %>% sqrt() %>% cos()`.  You can decide for yourself whether you prefer the traditional or chaining style for the kinds of operations introduced in these notes.  You can use either.  Finally, you will see *only* the `<-` notation used for assignment.  There's nothing wrong with using `=`, but this is saved for the arguments to functions rather than storage.]  If not, just move on.
+
+## Expressions
+
+When you write an expression in R, you are drawing on two distinct things:
+
+* A set of functions that carry out specific operations.
+* A syntax for combining the functions, data tables, and variables together so that you can create new, custom operations.
+
+For these notes, you will need only a small set of functions, about 30 altogether. It won't be too hard to memorize their names and what they do.
+
+You should take note of an important distinction about the arguments to the various functions. (Remember that "argument" is synonymous with "input."  Functions take one or more inputs and produce an output.  The output is sometimes called the "return value" of the function.)
+
+* Some functions take as one of their inputs a data table.  There might be other inputs as well.
+* Some functions do not take a data table, but a variable from a data table.
+
+Occasionally, you will also use a function that takes a quoted character string as an argument, typically to identify a file somewhere on your computer or the Internet, or to serve as a label in graphics.  You'll also occasionally use numbers as arguments.
+
+To help you distinguish *data tables* from the *variables* in them, these notes will use a simple convention.
+
+* The names of data tables will start with a CAPITAL letter.  For instance: `WorldCities`, `NCI60`, `BabyNames`, and so on.
+* The names of variables within data tables will start with a lower-case letter. For instance: `latitude`, `country`, `population`, `date`, `sex`, `count`, `countryRegion`. Using a capital letter for a non-leading character in a variable name is OK and is typical when there is more than one word going into a name.
+
+Remember that this is a **convention**, not a rule enforced by the language.  As you create your own data tables and variables, it is up to you to follow the convention. And, apologies, but sometimes you will encounter data or variables that fail to follow this convention.  With time, such situations will be identified and fixed.  But they can't be fixed everywhere, since sometimes you rely on resources developed by people or institutions who don't follow the conventions.
+
+
+## R Commands
+
+Here are some of the functions you will often use:
+
+**Dataframes as an argument**: `str()`,`head()`, `summarise()`, `group_by()`, `ggplot()`, `makeChart()`, `filter()`, `select()`, `sample_n()`, `join()`.
+
+**Variables as an argument**: `mean()`, `max()`, `sqrt()`, `IQR()`, `+`, `==`, `>`, and so on.
+
+Note that functions names are always followed by a pair of parentheses.  When the function is being used as part of a command, the arguments to the function go inside the parentheses.
+
+**Miscellaneous functions**: The functions that take a quoted character string as an argument: `data()`, `xlab()`, `ggtitle()`, etc.
+
+## Syntax
+
+In a human language like English or Chinese, "syntax" is the arrangement of words and phrases to create well-formed sentences.  For example, "Four horses pulled the king's carriage," combines noun phrases ("Four horses", "the king's carriage") with a verb.  
+
+In R, syntax refers to the arrangement of functions, data tables, and variables to create well-formed expressions that carry out a computation or create something new such as a graphic.
+
+To illustrate common forms of R expressions, first bring a data table and the variables it contains into R.
+
+```{r eval=FALSE}
+data( "BabyNames" )
+```
+
+```{r echo=FALSE}
+data("babyNames")
+BabyNames <- babyNames
+```
+
+### Just Looking ...
+
+Some functions you use are intended to display something about a data table or variable in the computer console.  For instance:
+```{r}
+names( BabyNames )
+nrow( BabyNames )
+str( BabyNames )
+```
+
+### Creating or Updating a Data Frame
+
+Sometimes you want to store the return value of a function under a name.  Do this with the **assignment** syntax.
+
+```{r}
+BabiesBySex <- group_by( BabyNames, sex )
+```
+
+As you can tell from the capitalization, `BabyNames` is a data table, while `sex` is a variable within the data table.  The `group_by()` function is one of several that take a data table as input (along with other information such as the names of variables) and produce a new data table.  The data table being produced here is named `BabiesBySex`.
+
+Often, you'll use the new object to perform a calculation, e.g. to find the number of girls and boys covered by the data set.
+```{r}
+summarise( BabiesBySex, total=sum( count ) )
+```
+
+You are, of course, able to assign the output of such commands to a new object, for instance:
+```{r}
+MyResult <- summarise( BabiesBySex, total=sum( count ) )
+nrow( MyResult )
+MyResult
+```
+
+### Chains of Operations
+
+It's common to use the output of one function as the input to another.  This was done in the previous example.  The output of `group_by( BabyNames )` was used as an input to `summarise()`.  There are two basic styles to do this:
+
+1. Name the intermediate result (e.g., `BabiesBySex`) and use that result by name in the next computation.
+2. Use a chaining^[Computer scientists call this "piping."] syntax.
+
+You've seen the name-the-intermediate style above.  Here's what that same computation looks like using the chaining syntax:
+
+```{r}
+BabyNames %>%
+  group_by( sex ) %>%
+  summarise( total=sum( count ) )
+```
+
+This means, "Give `BabyNames` as the first argument to `group_by()` and give that result as the first argument to `summarize()`.  The arguments within the parentheses, `( sex )` or `( total=sum( count ))` get pushed into second position when the function is evaluated.^[This is called "infix" notation. Something like it is used when doing arithmetic in R.  For example, `3 + 2` is a perfectly good expression: add 3 to 2.  In fact, `"+"` is the name of the function.  `3 + 2` gets translated by R into a function-parentheses expression, `"+"(3,2)`.  So the value to the left of `+` becomes the first argument of of the `"+"()` function, and the argument to the right of `+` gets pushed into the second argument's slot.  Try `"-"(4,5)`.]
+
+A matter of punctuation ... It's **absolutely essential** that when you start a new line in a command, the last item on that line be `%>%`.^[Otherwise, R will think your command is complete and will treat the next line as a new command.]
+
+You can assign the output of a chained expression to a new object.  The recommended punctuation for this is:
+
+```{r}
+MyResult <- 
+  BabyNames %>%
+  group_by( sex ) %>%
+  summarise( total=sum( count ) )
+```
+
+To illustrate a genuine computation using the chaining syntax, here's a depiction of how the popularity of the name "Prince" varies over the years.  (Don't worry about what the functions are doing here.  You will get to that later.)
+
+```{r}
+Princes <-
+  BabyNames %>%
+  filter( name=="Prince" ) %>%
+  group_by( year, sex ) %>%
+  summarise( yearlyTotal=sum( count ) )
+# Now graph it!
+ggplot( Princes, aes(x=year,y=yearlyTotal) ) + 
+  geom_point(aes(color=sex) ) + 
+  geom_vline( xintercept=1978 )
+```
+
+The name "Prince" has been increasing in popularity over the last 40 years.  An obvious explanation is the popularity of the musician, Prince. The vertical line in the graph marks the year that Prince's first album was released: 1978.  
+
+### Assigning variables
+
+For the most part, functions that take a data table as an input take additional arguments.  These additional arguments specify the details of what is to be done with the input data table.  You will see a few patterns over and over.
+
+#### Give the name of one or more variables.
+
+Functions that operate on variables --- `mean()`, `sum()`, `==`, and so on --- always take variables as arguments, not data tables.  
+
+In data table functions such as `group_by()` and `select()`, in addition to a data table, the names of one or more variables are also given as input.  For example, `group_by( BabyNames, year, sex )`.  Just the bare variable name is needed, no quotes and no `=`.
+
+When the chaining style is used, the `group_by()` and `select()` functions will appear to take only variables as inputs.  The data table is inserted implicitly by the chain.  For instance, here are two styles with exactly the same meaning.
+
+```{r eval=FALSE}
+Result <- 
+  BabyNames %>% 
+  select( year, name )
+```
+and 
+```{r eval=FALSE}
+Result <- select( BabyNames, year, name )
+```
+
+
+#### Create a new variable.  
+
+Functions such as `summarise()` and `mutate()` can create new variables.  In every case, you specify both the *name* of the new variable and the value you want it to take.  The syntax is *name* `=` *value*.
+
+Example:
+
+```{r eval=FALSE}
+summarise( BabiesBySex, total=sum( count ) )
+``` 
+Here, a new variable called `total` is being created. When creating new variables, you can use anything you think appropriate as the name of the variable or variables to be created.  It must be a legitimate variable name: starting with a character and containing only characters or digits or `.` or `_`.  A recommended style is that the names you choose for variables be short and mnemonic of what the variable contains.
+
+#### Identifying arguments
+
+Many functions, especially the ones that create graphics, have a large number of possible arguments.  In order to keep things straight, the arguments may be given a name. Consider, for instance 
+
+```{r results='hide'}
+ggplot( Princes, aes(x=year,y=yearlyTotal) ) + 
+  geom_point(aes(color=sex) ) + 
+  geom_vline( xintercept=1978 )
+```
+
+Here, `x` is the name of an argument to the function `aes()`.  The expression, `x=year` means that the `x` input will be the values of the `year` variable.  Similarly, `geom_vline()` has a large number of potential arguments, including `xintercept`, `alpha`, `linetype`, `color`, etc.  The expression `xintercept=1978` says to set the `xintercept` argument to the value 1978.
+    
+### EXERCISES
+
+For each of the functions, indicate whether it operates on a variable or a data table. `mean()`, `sum()`, `str()`, `group_by()`
+
+DO MULTIPLE CHOICE EXAMPLES
+
+
+In the following statements, say which names refer to data tables and which ones refer to variables.  In order to make it a bit of a challenge, the statements don't necessarily respect the convention that names of data tables start with a capital letter and names of variables start with a lower-case letter.
+
+DO MULTIPLE CHOICE EXAMPLES
+
+Here are several chains of functions. For each of the functions listed, say whether there is an implicit input coming from the chaining `%>%`.
+
+```{r}
+Princes <-
+  BabyNames %>%
+  filter( name=="Prince" ) %>%
+  group_by( year, sex ) %>%
+  summarise( yearlyTotal=sum( count ) )
+```
+
+* `filter()`: Implicit input: yes or no
+* `summarise()`: Implicit input: yes or no
+* `sum()`, Implicit input: yes or no
+In an expression like
+
+```
+summarize( BabyNames, )
+
+```
+In the previous examples, you've seen some phrases like `yearlyTotal=sum( count )` or `color=sex`.  These involve the `=` sign, which is used to give a name to a variable.
+
+
+Add a new variable PRINCE containing "Prince."  Add a new variable containing "increase over previous year."
+
+EXERCISES FROM NETTA:
+
+You can copy the commands shown in the notes, modifying them to address the question at hand.
+
+
+
+Functions that work on a data table.
+
+Functions that work on a variable within a data table.
+
+
+## RStudio Menu and Keyboard Shortcuts
+
+
+
 `str()`, `names()`, `head()`, `sample_n()`, 
 
 Using TAB in RStudio.  (For video also.)
