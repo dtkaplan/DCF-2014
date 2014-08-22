@@ -1,0 +1,314 @@
+---
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    fig_caption: yes
+    toc: yes
+---
+
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```
+
+
+(Some color palettes](xhttp://learnr.wordpress.com/2009/04/15/ggplot2-qualitative-colour-palettes/)
+
+You have already seen some of the [basic types of graphs](../GraphicsConstructDeconstruct/DraftNarrative.html).  These notes are about the underlying similarities and commonalities of the various graph types.  Recognizing these can help you design graphics that serve your specific purpose in displaying data. 
+
+## Data Tables
+
+A data graph is a visualization of the cases in a *single* data table.^[Sometimes you will want to layer data graphs on top of one another, but each layer is a visualization of a single data table.]  Each case will become a mark in the graph.  That mark might be simple, like a dot.  The mark might be complex: intricate shapes, text, and so on. Remember
+
+> A single data table is the origin of each data graph.  Each individual case in the data table will become one mark.
+
+## Frames
+
+Underlying data graphics is the *frame*.  Whether the graphic is on paper or on a screen, the frame defines what each location means.  Most often, the frame is a rectangular region.  Position in the frame is identified by two numbers.
+
+You create a frame when you decide which two variables in your data will correspond to the two coordinates.
+
+```{r echo=FALSE}
+# make some data
+# inflation [2092], unemployment [2129], migration [21120, and infant mortality (per 1000) [2091] from CIA data.
+CountryData <- read.csv("ExampleCountryData.csv")
+```
+
+For instance, consider a dataset as you might use to explore the determinants of outward migration from countries. You might start your investigation with a data table like this, giving the migration count for each country as well as some of the explanatory candidates: inflation, unemployment, infant mortality.
+
+```{r echo=FALSE,results='asis'}
+set.seed(101)
+xtable( sample_n( CountryData, size=6))
+```
+
+The cases are countries, the variables are migration, inflation, unemployment, and infant mortality.  To save space, only six of the `r nrow(CountryData)` cases are shown here.
+
+Typically, you will define a frame by selecting two variables from your data table. For instance, here's a frame based on migration and unemployment:
+
+```{r echo=FALSE}
+ggplot(CountryData, aes(y=migr, x=unemployment)) + geom_blank()
+```
+
+The frame provides the meaning to location in space.  For instance, imagine a country with an migration rate of 40 per 1000 people and unemployment of 25%.  That country's position in this frame would be:
+
+```{r echo=FALSE}
+mycountry <- data.frame( migr=40, unemployment=25)
+ggplot(CountryData, aes(y=migr, x=unemployment)) + geom_point(data=mycountry, color='blue',size=5, aes(y=migr, x=unemployment)) + xlim(0,60) + ylim(0,100)
+```
+
+## Glyphs
+
+The frame itself doesn't display any of the cases.  Instead, marks of ink in the frame will represent the cases.  There will be one mark for each case.
+
+A simple glyph is the basic shape used in scatter plots: a dot, a square, a triangle, an x, and so on.  The following graph uses small blue dots.  Since each case is a country, each blue dot represents one country.
+
+```{r echo=FALSE}
+ggplot(CountryData, aes(y=migr, x=unemployment)) + 
+  geom_point( color='blue',size=2)
+```
+
+The data table in the graph has `r nrow(CountryData)` cases.  So there are `r nrow(CountryData)` dots.^[On occasion, a case may have a missing value for one or more variable.  Typically, such cases are omitted when making the graph.]
+
+You can see from the graph that there's one dot --- one country --- near the top of the frame.  That country happens to be Syria.  The high migration results from the long civil war wracking that country.
+
+There are six countries with unemployment rates greater than 50%. These are Zimbabwe, Djibouti, Liberia, Burkina Faso, Turkmenistan and the Republic of the Congo.  
+
+The glyphs are simple. Only position in the frame distinquishes one glyphs from another.  The shape, size, etc. of all of the glyphs are identical. There's nothing about the glyph itself which identifies the country:
+there is no graphical attribute for the glyph that names the country. It's no problem to add one, but the result is not very satisfactory:
+
+```{r echo=FALSE}
+ggplot(CountryData, aes(y=migr, x=unemployment)) + 
+  geom_point( color='blue',size=2) + geom_text( aes(label=country))
+```
+
+The aspects of each glyph that we can perceive are called *aesthetics*, or *graphical attributes*. The word "aesthetics" applied in the context of glyphs is not used in the modern sense.  Nowadays, most people associate "aesthetics" with notions of beauty and artistic taste.  The earlier meaning of the work, *properties relating to perception by the senses*, is the one intended when it comes to glyphs. 
+
+Location in the frame is just one of the aesthetics for a glyph, that is, one of the ways glyphs can represent data to your visual perception. For instance, color could be used to show inflation rate.
+
+```{r echo=FALSE}
+ggplot(CountryData, aes(y=migr, x=unemployment)) + 
+  geom_point( alpha=0.9, aes(color=inflation),size=2)
+```
+
+Another aesthetic is size.  Here size reflects the infant mortality rate:
+
+```{r echo=FALSE}
+ggplot(CountryData, aes(y=migr, x=unemployment)) + 
+  geom_point( alpha=0.9, aes(color=inflation, size=infant))
+```
+
+## Scales and Guides
+
+There are four aesthetics in the graph above.  Each of the four aethetics is set in correspondence with a variable; we say the variable is *mapped* to the aesthetic.  Migration is being mapped to horizontal position, unemployment to vertical position, inflation to color, and infant mortality to size.
+
+A *scale* is the relationship between a variable and the aesthetic to which it is mapped.  For unemployment, the scale says what value of the variable will correspond to position at the bottom of the frame, what value will correspond to the top of the frame, and where things fall inbetween.
+
+Not all scales are about position.  For instance, inflation is translated to color: black for inflation near zero, blue for inflation need 50%.  Similarly, infant mortality is translated to size: the middle-sized dot corresponds to a yearly mortality of 60 per 100.
+
+Scales translate values into aesthetic properties. *Guides* help to human reader to do the back translation.  For position aesthetics, the most common sort of guide is the familiar axis with it's tick marks and labels.  But notice also the guide that tells how dot color corresponds to inflation.  There's still another guide telling how dot size corresponds to infant mortality.
+
+## Scaling Sensibly
+
+The chart above makes it difficult to draw any inferences about the relationship between migration and the other variables.  Almost all the countries are in the same, small region.  The dots overlap extensively; it's hard to tell how many of the small dots there are or how they are spread out.  There's almost no information visible about inflation.
+
+The scales used in the graph are the problem here.  The scale that maps migration to position, is concentrating the dots near 0.  The scale that maps inflation to color is too concentrated: the viewer can't distinguish between rates of 1% per year and, say, 10% per year, even though these may be very different economically.  The infant mortality scale, with dot radius proportional to mortality, tends to focus attention on the very high-mortality countries.
+
+Each of these difficulties can be addressed by an appropriate change of the scaling relationship between the variable and the graphical attribute.  The following graph shows the same data, but on different scales:
+
+* Logarithmic spatial scales spread apart the clustered points.
+* The dot size is scaled by *area* insted of radius, producing a more visible (and more honest) perception of size.
+* The color is broken into discrete groups so that the viewer can easily distinguish high-inflation from low-inflation countries.
+
+```{r echo=FALSE}
+CountryData %>% mutate(Inflation=cut(inflation, breaks=c(0,3,5,10,60) )) -> CountryData
+CountryData %>% ggplot(aes(y=migr, x=unemployment)) + 
+  geom_point( alpha=0.9, 
+              aes(color = Inflation, 
+                  size  = infant)) + 
+  scale_x_log10() + scale_y_log10() +
+  scale_size_area(guide=guide_legend(title="Infant Mortality (per 1000)")) +
+  scale_color_brewer(palette="Paired", guide=guide_legend(title="Inflation (%/year)"))
+
+```
+
+With the appropriate scaling, the countries are spread out in an approachable way.  You have a hope of making an inference about the relationship among these variables.  For instance, use the graph to judge the validity of this hypothesis: "Low inflation countries tend to have more outward migration than high inflation countries." The answer may not be obvious, but at least the question is approachable.
+
+### EXERCISE
+
+#### One
+
+TRY VARYING the assignment of variables to graphical attributes using `mPlot()`.  Show the graph you find the most informative.
+
+#### Two
+
+Get inflation and unemployment data using `CIAdata()`.  Is there a relationship between the two?  Find a variable that indicates the economic strata of the countries.  Does this change the picture?  Make the graph you find most compelling and describe your conclusions based on this graph.
+
+#### Three
+
+*For JOIN*.  Use the latitude and longitude of each country to plot the economic/health data on a map.
+
+### End of exercise
+ 
+ 
+## Components of Data Graphics
+
+You've seen four general components of data graphics:
+
+1. Frame: Specified by picking two variables.
+#. Glyph: A shape representing a single case. Variables set graphical attributes of the shape: size, color, shape, and so on. The location of the glyph --- location is an important graphical attribute! --- is set by the two variables defining the frame.
+#. Scale: The relationship between the value of a variable and the graphical attribute to be displayed for that value.
+#. Guide: An indication for the human viewer of the scale, that is, graphics how a variable encodes into its graphical attribute.  Common guides are x- and y-axis tick marks and color keys. 
+
+These concepts apply to data graphics generally.  Here are some examples based on a data table derived from the NHANES data. 
+
+```{r echo=FALSE}
+data(NHANESDCF,package="DCFdevel")
+```
+
+Recall that in NHANES each case is an individual person.  Here's a small part of the data table:
+
+```{r echo=FALSE, results='asis'}
+set.seed(63493)
+nNHANES <- nrow(NHANES)
+smallNHANES <- na.omit(select(NHANES,age,sex,smoker,death,weight,BMI,diabetic))
+xtable( sample_n( smallNHANES, size=6 ) )
+```
+
+
+It's certainly possible to graph the NHANES data table itself.  There are `r nNHANES` cases in the data, so there are `r nNHANES` marks in the graph. Here's a graph showing the relationship between age, smoking status, and mortality for all of the individual people in the NHANES data.
+
+
+```{r echo=FALSE,fig.cap="MY CAPTION IS HERE."}
+smallNHANES %>% 
+  mutate( dotsize=ifelse(death=="alive",0.5, .7),
+          alpha=ifelse(death=="alive", .2, .3)) %>%
+  ggplot( aes(x=smoker,y=age,color=death,)) + 
+  geom_point( position="jitter", 
+              aes(alpha=alpha) ) +
+  scale_alpha(guide="none")
+```
+
+
+In the following examples, the individual-by-individual data in NHANES is part of the *backstory*.  The next graphs will be made with tables where the cases are *groups of people* and summarize survival for different groups. 
+
+```{r echo=FALSE}
+data(NHANESDCF)
+NHANES %>% 
+#  mutate( ageGroup=ntile(age, 7) ) %>% 
+  mutate( ageGroup=cut( age, c(20,30,40,50,60,70,80,90,100),
+                        labels=c("Twenties","Thirties","Forties", 
+                                 "Fifties", "Sixties", "Seventies", 
+                                 "Eighties","Nineties") ),
+          death2=ifelse(is.na(death), 'alive', death)) %>% 
+  group_by( smoker, sex, ageGroup, death ) %>%
+  summarise( count=n() ) -> NHANEScts
+## Not using death2, which counts NA in followup as alive.
+## First plot
+NHANEScts %>% 
+  group_by( ageGroup, death ) %>%
+  summarise( count=sum(count) ) -> ByAge
+ByAge %>% group_by( ageGroup ) %>% 
+  mutate( total=sum(count)) %>%
+  filter( death=="alive" ) %>%
+  mutate( fracAlive=count/total ) %>%
+  select(-death) -> FracAlive
+```
+
+```{r echo=FALSE, results='asis'}
+xtable( na.omit( FracAlive ))
+```
+
+```{r echo=FALSE}
+FracAlive %>% na.omit %>% 
+  ggplot(aes(x=ageGroup,y=fracAlive)) + 
+  geom_bar(stat='identity',position=position_stack(width=.9),
+           alpha=.5) + ylab( "Fraction Alive at End of Follow-Up" ) +
+  xlab("Age") + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=16))
+```
+
+Seven cases in the data table, seven glyphs in the graph.  Here are the details:
+
+* Frame: defined by two variables, "fraction alive" and "age."  Fraction alive is an ordinary quantitative variable, but "age" is categorical.  
+* Glyph: a gray-colored bar.  The base of the bar is always at 0, the top at the fraction alive.  
+* Scales: "Fraction alive," a variable running from 0 to 1, is scaled in a linear way in the vertical direction.  "Age," a categorical variable, is arranged in the natural order and spread evenly along the horizontal direction.
+* Guides: The usual number-line guide for the vertical axis.  For the horizontal axis, the label for each age group at the position set by the scale for that group.
+
+```{r echo=FALSE,warning=FALSE}
+NHANEScts %>% 
+  group_by( smoker, ageGroup, death ) %>%
+  summarise( count=sum(count) ) -> ByAgeSmoke
+ByAgeSmoke %>% group_by( smoker, ageGroup ) %>% 
+  mutate( total=sum(count)) %>%
+  filter( death=="alive" ) %>%
+  mutate( fracAlive=count/total ) -> FracAliveSmoke
+```
+
+Here's another graph depicting survival rates.  This one includes an additional variable describing whether the people in the group smoked.  The data are:
+
+```{r echo=FALSE,results='asis'}
+FracAliveSmoke %>% select(-death) %>% na.omit() %>% xtable()
+```
+
+
+There are 14 cases in the data table, so there will be 14 glyphs.
+
+```{r echo=FALSE}
+FracAliveSmoke %>% na.omit() %>% mutate( `Smoking Status`=smoker) %>% 
+ggplot(aes(x=ageGroup, y=fracAlive ,fill=`Smoking Status`))+
+geom_bar(stat='identity',position="dodge") + 
+  ylab("Fraction Alive at end of Follow-Up") +
+  xlab("Age") + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=16))
+```
+
+A graphical attribute of bar color has been added.  The color is set by the "Smoking Status" variable.   A guide to the relatonship between Smoking Status and color has been added. 
+
+### EXERCISE
+
+GIVE THE SMOKER DATA
+
+Make a graph from the smoker data that looks like the following.  (Hint: What variables are represented by which graphical attributes.) ACTUALLY: Ask them in a drill which variable is mapped to which graphical attribute.
+
+```{r echo=FALSE}
+FracAliveSmoke %>% na.omit() %>% mutate( `Smoking Status`=smoker) %>% 
+ggplot(aes(y=fracAlive, x=`Smoking Status` ,fill=ageGroup))+
+geom_bar(stat='identity',position="dodge") + 
+  ylab("Fraction Alive at end of Follow-Up") +
+  xlab("Age") + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=16))
+```
+
+Here's the same data, but with the glyph changed from a zero-based bar to a dot with position and color attributes:
+```{r echo=FALSE}
+FracAliveSmoke %>% na.omit() %>% mutate( `Smoking Status`=smoker) %>% 
+ggplot(aes(x=ageGroup, y=fracAlive ,fill=`Smoking Status`))+
+geom_point(size=2, aes(color=`Smoking Status`)) + 
+  ylab("Fraction Alive at end of Follow-Up") +
+  xlab("Age") + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=16))
+```
+
+Still another glyph: a bar showing the difference in survival between smokers and non-smokers.  The horizontal position of the bar is set by the age group.  The top of the bar is set by the non-smoker survival rate, the bottom by the smoker survival rate.
+
+```{r echo=FALSE}
+FracAliveSmoke %>% select(ageGroup,smoker,fracAlive) %>% 
+spread(smoker,fracAlive) %>% na.omit %>%
+ggplot( aes(x=ageGroup,y=smoker)) + ylab("Fraction Surviving") +
+  geom_errorbar(size=2,width=.2,aes(ymax=nonsmoker,ymin=smoker))
+```
+
+
+## Position (NOT YET)
+
+Stacked, Dodged, ...
+
+Make the survival by age and smoker a STACKED bar plot.  Why is this silly?
+
+```{r echo=FALSE}
+FracAliveSmoke %>% na.omit() %>% mutate( `Smoking Status`=smoker) %>% 
+ggplot(aes(y=fracAlive, x=`ageGroup` ,fill=`Smoking Status`))+
+geom_bar(stat='identity',position="stack") + 
+  ylab("Fraction Alive at end of Follow-Up") +
+  xlab("Age") + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=16))
+```
+
+DO WEIGHT AGAINST AGE GROUP WITH position DODGE.
+
+Also show the box-whisker plot overlayed
+
+

@@ -107,9 +107,11 @@ Example: From the NHANES data, how likely is a person to have died during the fo
 
 ```{r echo=FALSE}
 data(NHANESDCF)
-NHANES %>% 
-#  mutate( ageGroup=ntile(age, 7) ) %>% 
-  mutate( ageGroup=cut( age, c(20,30,40,50,60,70,80,90,100) ),
+NHANES %>%  
+  mutate( ageGroup=cut( age, c(20,30,40,50,60,70,80,90,100),
+                        labels=c("Twenties","Thirties","Forties", 
+                                 "Fifties", "Sixties", "Seventies", 
+                                 "Eighties","Nineties") ),
           death2=ifelse(is.na(death), 'alive', death)) %>% 
   group_by( smoker, sex, ageGroup, death ) %>%
   summarise( count=n() ) -> NHANEScts
