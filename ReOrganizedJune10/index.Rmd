@@ -14,6 +14,7 @@ output:
 * In DCFdevel, redefine `summarize()` and `summarise()` so that the basic functions have `na.rm=TRUE`????
 * Change world cities population from integer to numeric.
 * Change NaN in NHANES to NA
+* Give NHANES a new name so as not to conflict with `mosiac`.
 * Change all data in DCF to follow Capital dataframe name, lower-case variable name.
 * BabyNamesYearly should be changed to just baby names.
 
@@ -39,28 +40,33 @@ output:
 
 **Notes**:
 * [R Commands](CourseNotes/Rbasics/DraftNarrative.html) NEEDS TO BE WRITTEN
-* [Data Verbs](CourseNotes/BasicDataCommands/DraftNarrative.html) NEED TO Pull out exercises and the early notes about NHANES to turn into exercises.
-* [Glyphs, Frames, and Guides](CourseNotes/GraphicsConstructDeconstruct/DraftNarrative.html) IN PROGRESS ...
+* [Data Verbs](CourseNotes/BasicDataCommands/DraftNarrative.html) Complete, NEED TO Pull out exercises and the early notes about NHANES to turn into exercises.
+* [Basic Graphics](CourseNotes/GraphicsConstructDeconstruct/DraftNarrative.html) Need to add directions for `makeChart()`, the wrapper for mBar, mScatter, and so on.
+* [Glyphs, Frames, and Guides](CourseNotes/GraphicsConstructDeconstruct/Glyphs.html) 
 
-[Assignment Two](Assignment-Two.html) due Thursday 19 Sept.
+[Assignment Two](Assignments/Assignment-Two.html) due Thursday 19 Sept.
 
 
 EXERCISE COLLECTIONS: [graphics](CourseNotes/GraphicsConstructDeconstruct/Exercises.html)
 
 ## Week Three
 
-**Class Meeting**: Tuesday 17 Sept.
+**Class Meeting**: Tuesday Oct 1.
 
-**Notes**:
+**Notes**:  
 * [More Data Verbs](CourseNotes/BasicDataCommands/MoreDataVerbs.html)
-* Tidying Data
-* Classic charts
-* More Graphics Properties: Facets, layers.
+* Tidying Data: Wide and long (How to do it.  We did the recognition of it in Week 1.)
+* More Graphics Properties: facets & layers.  
+    * See CVC/Summer2014/Notes/GraphicsBasics/graphics-basics.Rmd
 
 [Assignment Three](Assignment-Three.html) due Thursday 26 Sept.
 
 
 ## Week 4: Data Backstory
+
+* Join:   
+    * CVC/Summer2014/Notes/Join/join-notes.Rmd
+* Organization/Normalization of data: CVC/Summer2014/Notes/MedicareSpending/PriceOfHealth.Rmd
 
 ## Week 5: Stats
 
@@ -68,7 +74,7 @@ EXERCISE COLLECTIONS: [graphics](CourseNotes/GraphicsConstructDeconstruct/Exerci
 
 ## Week 7: Cleaning, Scraping
 
-
+* Bird cleaning: <CVC/Worksheets/BirdCleaning.md>
 
 ## DTK To Do List
 

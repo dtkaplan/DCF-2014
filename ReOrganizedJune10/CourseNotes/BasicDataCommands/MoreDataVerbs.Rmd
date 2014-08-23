@@ -9,7 +9,8 @@ output:
 ```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
 ```
 
-Mutate, Filter, Arrange?  save Join for later.
+Mutate, Filter & Select, Arrange?  save Join for later.
 
 Example with Mutate: Calculation the proportion of smokers who are alive adjusted for sex and age.  You'll need `mutate()` to add the proportion variable on.
 
+More for mutate: rates in CIA country data.

@@ -1,0 +1,25 @@
+---
+title: "Assignment for Week Three"
+author: "Data and Computing Fundamentals"
+date: "Macalester College"
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    fig_caption: yes
+    toc: yes
+---
+
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```
+
+## Review
+
+* CVC/Summer2014/Activities/NCI60.Rmd.  There's only one join operation in the thing, but that's why the topic is in this week rather than week 3.
+
+## Join  
+
+Biblical names: get a list of bible-related names, join these with BabyNames so that there's a biblical column.  How have biblical names gone up or down over the years.
+
+Standardizing country codes: See the CVC/Summer2014 exercise: WorldPop.Rmd
+
+Disasters --- join with population data to produce a risk factor for each state.

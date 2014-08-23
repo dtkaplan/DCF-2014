@@ -3,7 +3,7 @@
 -->
 
 <!-- UNCOMMENT THE NEXT LINE FOR PRODUCTION -->
-<!-- link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora" -->
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
 
 ```{r include=FALSE}
 require(mosaic)
@@ -12,6 +12,7 @@ require(dplyr)
 require(tidyr)
 
 # For typesetting
+library(xtable)
 library(ggthemes)
 baseTheme <- theme_tufte( ticks=TRUE )
 library(xkcd)

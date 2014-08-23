@@ -17,8 +17,36 @@ Drill on data verbs:
 
 Drill on wide/narrow:  
 * pivot, fold, gather, spread, unite, ...
+* NCI60 --- just the probe data.  Change to narrow format and find the probes with the highest standard deviation of expression across all cell lines.
 
+### Filter
 
-Graphics:       
-* Kids names by sex over the years.
+CVC/Summer2014/Activities/Migration.Rmd --- there are all sorts of rank comparisons here involving the maximum, top five, and so on.
+
+Ordway bird seasonality: See <file:///Users/kaplan/KaplanFiles/MOSAIC/CVC/Summer2013/Session3/RelationalData.html#/21>    
+* Pick out the 10 most common bird species.  How does their capture differ by month.
+
+Disasters: Make US maps showing, for different types of disasters, where they happen the most.
+
+Pick out the zip codes you would target for:
+
+* lots of elderly.
+* young people and high income.
+
+### Long and Narrow
+
+Turn the immigration data into narrow, so that you can calculate the pairs that are close to being bilateral.  
+
+### Mutate:
+
+* Rates in the country data, e.g. miles of road per area, 
+* Fraction alive, cardio, other in NHANES
+* ifelse and rounds in the mayoral data: CVC/Summer2014/Activies/MinneapolisMayoralElection.Rmd
+* Where do the elderly live in the US?  Zip-code data: see <file:///Users/kaplan/KaplanFiles/MOSAIC/CVC/Summer2014/Notes/GraphicsBasics/graphics-basics.html#17>
+
+### Graphics:  
+
+* Kids names by sex over the years: Winston, Adolf, the ones from Netta.
+
+* Layers: Dynamite plots
 

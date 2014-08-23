@@ -38,4 +38,22 @@ output:
     a. Use `file.choose()` in the console to find the full path name of this Rmd file.  Paste the result into the answers you are writing in this document.
     #. the second ... 
 #. Enter the information on how long you worked in the [time log](https://docs.google.com/forms/d/1lH02nfMVvVmCxyus3TBHQvG58pV-cGDEcTfaBJAIk3k/viewform). [The class's data are viewable [here](https://docs.google.com/spreadsheets/d/1ROnT3PBL_iVguJQPKrGAXncf-wHKzEYHQQtE7c6JYG4/pubhtml).]
-    
+
+## Exercises on structure of data: 
+
+* Non-tidy: <https://dl.dropboxusercontent.com/u/5098197/Math155/ActiveDuty_MaritalStatus.xls>
+* Long and Narrow: Create a sketch of a data table about lab experiments, where the same plants are being studied repeatedly: longitudinal data, e.g. like this:  
+
+Height of plant
+
+Plant | Week 1 | Week 2 | Week 3
+------|--------|--------|--------
+A     |  17    |  19    |  21
+B     |  14    |  14    |  12
+
+Now imagine that you want to deal with some other situations:
+
+* For some plants, the measurements were made 10 days apart.
+* You want to include the name of the person doing the height measurement for a given plant in each week.
+* You decide to do some assays for various plant hormones over time.
+
