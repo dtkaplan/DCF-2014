@@ -1,0 +1,30 @@
+---
+title: "Assignment or Week Number Goes Here"
+author: "Your Name Goes Here"
+output: html_document
+---
+
+<!--  Keep this line and the following ones. -----
+      Boilerplate Section
+```{r include=FALSE,eval=FALSE}
+library( DCFdevel ) # or the package for your course.
+includeSourceDocument("This file.Rmd")
+```
+---- Keep this line and the preceeding ones. -->
+
+## You Can Remove This Section
+
+**But read it first!**
+
+Things to do ... 
+
+* Save this file using an appropriate name, including your initials, e.g. `Assignment-Three-BHO.Rmd`. No spaces, please!
+* Compile the file, even before you have added any content.  This will ensure that the template is working.
+* In the above chunk, there is an R function `includeSourceDocument()`.  Replace the argument to that function with a quoted character string containing the **exact** name of the `.Rmd` file for this document, as you saved it.  If the assignment specifies additional files to include, add their names as additional arguments.  **DO NOT** give the name of the `.html` file as an argument.
+* Fill in an appropriate `title:` and your name under `author:` in the top matter data.  It's not sufficient to have your initials in the `.Rmd` file name: your name **must** appear in the `Author:` field.
+* After you have done the above, delete this section.  Assignments that include this section will be **scored lower**.  If you delete the section before reading it ... well you won't be reading this.  If you need to, you can see this section again by opening up the template anew.
+
+**DELETE THIS LINE AND ABOVE**, up to and including the section heading.  
+
+
+
