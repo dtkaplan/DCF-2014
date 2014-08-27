@@ -9,6 +9,8 @@ output:
     toc: yes
 ---
 
+NO MEETING ON Wed. 26 November, day before Thanksgiving.
+
 ## To do
 
 * In DCFdevel, redefine `summarize()` and `summarise()` so that the basic functions have `na.rm=TRUE`????
@@ -21,7 +23,7 @@ output:
 
 ## Week 1: Infrastructure
 
-**Class Meeting**: Tuesday 10 Sept.
+**Class Meeting**: Wednesday 11 Sept.
 
 **Notes**: 
 * [The Structure of Data](CourseNotes/DataOrganization/DraftNarrative.html) ** NEED TO  break out exercises.**
@@ -36,7 +38,7 @@ output:
 
 ## Week 2
 
-**Class Meeting**: Tuesday 17 Sept.
+**Class Meeting**: Wednesday 18 Sept.
 
 **Notes**:
 * [R Commands](CourseNotes/Rbasics/DraftNarrative.html) NEEDS TO BE WRITTEN
@@ -44,14 +46,14 @@ output:
 * [Basic Graphics](CourseNotes/GraphicsConstructDeconstruct/DraftNarrative.html) Need to add directions for `makeChart()`, the wrapper for mBar, mScatter, and so on.
 * [Glyphs, Frames, and Guides](CourseNotes/GraphicsConstructDeconstruct/Glyphs.html) 
 
-[Assignment Two](Assignments/Assignment-Two.html) due Thursday 19 Sept.
+[Assignment Two](Assignments/Assignment-Two.html) due Friday 20 Sept.
 
 
 EXERCISE COLLECTIONS: [graphics](CourseNotes/GraphicsConstructDeconstruct/Exercises.html)
 
 ## Week Three
 
-**Class Meeting**: Tuesday Oct 1.
+**Class Meeting**: Wednesday Oct 2.
 
 **Notes**:  
 * [More Data Verbs](CourseNotes/BasicDataCommands/MoreDataVerbs.html)
@@ -59,7 +61,7 @@ EXERCISE COLLECTIONS: [graphics](CourseNotes/GraphicsConstructDeconstruct/Exerci
 * More Graphics Properties: facets & layers.  
     * See CVC/Summer2014/Notes/GraphicsBasics/graphics-basics.Rmd
 
-[Assignment Three](Assignment-Three.html) due Thursday 26 Sept.
+[Assignment Three](Assignment-Three.html) due Friday 27 Sept.
 
 
 ## Week 4: Data Backstory
@@ -68,12 +70,15 @@ EXERCISE COLLECTIONS: [graphics](CourseNotes/GraphicsConstructDeconstruct/Exerci
     * CVC/Summer2014/Notes/Join/join-notes.Rmd
 * Organization/Normalization of data: CVC/Summer2014/Notes/MedicareSpending/PriceOfHealth.Rmd
 
+Graphics Choices/Decisions ??
+
 ## Week 5: Stats
 
 ## Week 6: Multiple Variables
 
 ## Week 7: Cleaning, Scraping
 
+* CaseStudies/Disasters: dates and times.
 * Bird cleaning: <CVC/Worksheets/BirdCleaning.md>
 
 ## DTK To Do List

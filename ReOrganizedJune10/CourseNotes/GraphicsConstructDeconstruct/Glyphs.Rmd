@@ -292,6 +292,9 @@ ggplot( aes(x=ageGroup,y=smoker)) + ylab("Fraction Surviving") +
   geom_errorbar(size=2,width=.2,aes(ymax=nonsmoker,ymin=smoker))
 ```
 
+## Images for Glyphs:
+
+<file:///Users/kaplan/KaplanFiles/MOSAIC/CVC/Summer2014/Notes/GraphicsBasics/graphics-basics.html#4>
 
 ## Position (NOT YET)
 
