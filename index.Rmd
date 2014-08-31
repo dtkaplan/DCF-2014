@@ -1,6 +1,6 @@
 ---
 title: "Data and Computing Fundamentals"
-author: "Home Page"
+author: "Development Page"
 date: "Fall 2014"
 output:
   html_document:

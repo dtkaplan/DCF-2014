@@ -14,3 +14,14 @@ Mutate, Filter & Select, Arrange?  save Join for later.
 Example with Mutate: Calculation the proportion of smokers who are alive adjusted for sex and age.  You'll need `mutate()` to add the proportion variable on.
 
 More for mutate: rates in CIA country data.
+
+
+
+## Elaboration: Data verb languages
+
+The used in these notes is `dplyr`.  A complete list of others would be long, 
+* dplyr - R 
+* data.table - R
+* SQL - database servers
+
+`dplyr` will generate SQL.

@@ -8,8 +8,11 @@ require(ScoreR)
 startProblem("DCF-Assignment2")
 ```
 
+```{r child="../CSS/DCF-common.Rmd"}
+```
 
-## Week 2
+## Week 2 Drill
+
 
 ### Multiple Choice
 

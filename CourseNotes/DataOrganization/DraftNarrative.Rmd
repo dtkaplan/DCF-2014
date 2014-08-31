@@ -1,12 +1,12 @@
 ---
 output:
   html_document:
-    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    css: ../../CSS/DCF-style.css
     fig_caption: yes
     toc: yes
 ---
 
-```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```{r child="../../CSS/DCF-common.Rmd"}
 ```
 
 ```{r include=FALSE}
@@ -17,10 +17,15 @@ require(xtable)
 
 These notes focus on an organization of data that is simple yet very widely used, what's sometimes called "tidy data."^[See [Hadley Wickham](https://github.com/hadley/tidy-data).]  At the heart of tidy data is the **data table**.  Here's an example: a listing from the US Social Security Administration of the yearly births in the US along with the name given to the baby. 
 
+<div class="displayAsFigure">
 ```{r echo=FALSE,results="asis"}
 data(babyNames)
 xtable( babyNames[round(seq(700000,1000000,length=7)),] )
 ```
+<p class="caption"> A very small subset of a data table showing how many babies were given each name in each year.</p>
+</div>
+
+<div style="clear:both;"></div> <!-- break between caption and text -->
 
 ```{r eval=FALSE,echo=FALSE}
 babyNames %>% group_by(year,sex) %>% summarise( total=sum( count )) -> foo
@@ -54,6 +59,8 @@ In contrast, it would be more difficult in the Minneapolis election data to find
 
 Indeed, if you wanted to do calculations based on the Minneapolis election data, you would first want to put it in a tidy form, like this:
 
+
+<div class="displayAsFigure">
 ```{r echo=FALSE,results="asis"}
 neat <- read.csv("/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/MinneapolisMayor2013/electionStatistics.csv")
 neat$Ward <- as.character(neat$Ward)
@@ -65,13 +72,24 @@ names(neat2) <- gsub("\\."," ",names(neat))
 xtable( neat2[round(seq(1,25,by=3)), c(1,2,3,5,6,7,8)])
 ```
 
+<p class="caption"> The Minneapolis election data in tidy form.</p>
+</div>
+
+<div style="clear:both;"></div> <!-- break between caption and text -->
+
 The tidy form is, admittedly, not as attractive as the form published by the Minneapolis government.  But the tidy form is much easier to use for the purpose of generating summaries and analyses. 
 
 The strategy of using tidy data so that reports can easily be made lets you construct ways of presenting data that can be more effective than a formatted spreadsheet.  For instance, here is a presentation of the turnout in each ward that makes it easy to see how much variation there is.
 
+<div class="displayAsFigure">
 ```{r echo=FALSE}
-ggplot(data=neat,aes(x=Precinct,y=Total.Turnout))+geom_point() + ylim(0,.55) + xlab("Voter Turnout (%)")
+ggplot(data=neat,aes(x=Precinct,y=Total.Turnout))+geom_point() + ylim(0,.55) + ylab("Voter Turnout (%)")
 ```
+<p class="caption">A graphical depiction of voter turnout in the different wards.</p>
+</div>
+<div style="clear:both;"></div> <!-- break between caption and text -->
+
+
 
 The tidy format also makes it easier to bring together data from different sources.  For instance, to explain the variation in voter turnout, you might want to look at variables such as party affiliation, age, income, etc.  Such data might be available on a ward-by-ward basis from other records, such as the (public) voter registration logs and census records.  This would be difficult if you had to deal with an ideosyncratic format for each different source of data.
 
@@ -84,13 +102,6 @@ There are two major types of variables: *categorical* and *quantitative*. A quan
 A categorical variable tells which category a case falls into.  For instance, in the baby names data table, `sex` is a categorical variable with two **levels** F and M, standing for female and male.  Similarly the `name` for each case is categorical.  It happens that there are 92,600 different levels for `name`, ranging from Aaron, Ab, and Abbie to Zyhaire, Zylis, and Zymya.
 
 
-### EXERCISE
-
-DRILLS telling these apart.
-
-INTRODUCE "ordinal" and ask whether there is a natural order to the variables.
-
-### END OF EXERCISE
 
 ## Cases and what they represent
 
@@ -98,11 +109,12 @@ As already said, a row of a tidy data table refers to a case.  To this point, yo
 
 In working with data, keep in mind what a case stands for in the real world.  Sometimes the meaning is obvious.  For instance, here eight cases from a (tidy) data table showing each in the Minneapolis mayoral election in 2013.  (The voters were directed to mark their ballot with the first three choices of candidates, in order.  This is part of a procedure called [rank choice voting](http://vote.minneapolismn.gov/rcv/).)
 
-```{r echo=1,results="asis"}
+```{r echo=FALSE,results="asis"}
 data( Minneapolis2013 )
 set.seed(67); xtable( sample_n( Minneapolis2013, size=8) )
 ```
 
+    
 Altogether, there are 80,101 rows^[It's interesting to note that the citywide tally, by precinct and ward, gives only 80,099.  There are two extra ballots in the vote table.  Perhaps a couple of legitimate absentee ballots, postmarked before the election, were received after the tally was made.] in the table.  Each row corresponds to a ballot cast in the 2013 election.  That's the meaning of "case" in this situation.
 
 The case is different in the vote summary table; a case is a ward in a precinct.  In the baby names data, a case is a name and sex in one year.
@@ -111,10 +123,16 @@ When thinking about cases, ask this question: What description would make every 
 
 Here's a small part of a data table about results from a 10-mile running race held each year in Washington, D.C.
 
+<div class="displayAsFigure">
 ```{r echo=FALSE, results='asis'}
 runners <- read.csv( "/Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/CherryBlossomRace/Cherry-Blossom-Longitudinal.csv" )
 xtable(runners[15996:16010, c(1,5,2,6,4)])
 ```
+<p class="caption">An excerpt of runners' performance over the years in a 10-mile race.</p>
+</div>
+
+<div style="clear:both;"></div> <!-- break between caption and text -->
+
 
 What's the meaning of a case here?  It's tempting to think that a case is a person.  After all, it's people who run road races.  But notice that individuals appear more than once: Jane Poole ran each year from 2003 to 2007.  (Her times improved consistently as she got older!) Jane Smith ran in the races from 1999 to 2006, missing only the year 2000 race.  This suggests that the case is a runner in one year's race.
 
