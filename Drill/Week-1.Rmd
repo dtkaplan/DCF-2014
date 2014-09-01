@@ -102,3 +102,23 @@ For each of the following, say whether the variable is quantitative or categoric
     "Quantitative"=TRUE,
     "It's not a variable."=FALSE)`
   
+  
+### Problem 3  
+  
+```{r child="../Exercises/Introductory/2013-08-12-DTK-View-String.Rmd"}
+```
+
+### Problem 4
+
+```{r child="../Exercises/Introductory/2013-08-12-DTK-World-Cities.Rmd"}
+```
+
+### Problem 5
+
+```{r child="../Exercises/Introductory/2013-08-12-DTK-msleep.Rmd"}
+```
+
+### Problem 6
+
+```{r child="../Exercises/Introductory/2013-08-12-DTK-Seatbelts.Rmd"}
+```

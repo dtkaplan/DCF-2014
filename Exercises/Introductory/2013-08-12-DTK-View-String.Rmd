@@ -17,3 +17,6 @@ Newcomers often get confused about the difference between a quoted character str
 #. Now do the same thing, but using the quoted character string `"msleep"` rather than the name of the object.  That is, `View( "msleep" ).
 
 In your own words, briefly explain the difference between `msleep` and `"msleep"`.
+
+`r I(textItem(name="viewString",rows=4,totalPts=10))`
+

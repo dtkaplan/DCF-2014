@@ -8,6 +8,7 @@ output: html_document
 ```{r include=FALSE}
 require(knitr)
 require(DCFdevel)
+require(NHANES)
 opts_chunk$set( comment = NA )
 ```
 
@@ -153,7 +154,8 @@ An object is a packet of information.  Just about everything you'll be using in 
 
 It helps to distinguish between the packet and the information itself.  The information contained in the object is called its *value*.
 
-Here are some of the objects that appear in the examples above:  
+Here are some of the objects that appear in the examples above:
+
 
 Name     | Value                  | Kind of thing
 ---------|------------------------|---------------
@@ -198,10 +200,5 @@ The following terms should be meaningful to you from this reading:
 
 package, function, command, argument, assignment, object, object name, data table, named argument, quoted character string
 
-## Exercises:
 
-1. [viewString](../../Exercises/Introductory/2013-08-12-DTK-View-String.html)
-#. [WorldCities](../../Exercises/Introductory/2013-08-12-DTK-World-Cities.html)
-#. [Seatbelts](../../Exercises/Introductory/2013-08-12-DTK-Seatbelts.html)
-#. [msleep](../../Exercises/Introductory/2013-08-12-DTK-msleep.html)
 
