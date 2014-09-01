@@ -11,3 +11,8 @@ body {
         margin:12pt;
         float: left;
       }
+      .displayAsFigure{
+        background-color: ghostwhite;
+        padding:12pt;
+      }
+      

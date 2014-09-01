@@ -75,8 +75,8 @@ What sets the order of the categorical variable in the scale for the vertical va
 Here is an excerpt from the baby-name data in `"DCF::BabyNames"`.
 
 ```{r echo=FALSE,results="asis"}
-data(babyNames)
-xtable( babyNames[round(seq(700003,1000000,length=8)),] )
+data(BabyNames)
+xtable( BabyNames[round(seq(700003,1000000,length=8)),] )
 ```
 
 For each of the following, say whether the variable is quantitative or categorical:
