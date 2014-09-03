@@ -13,111 +13,63 @@ startProblem("DCF-Assignment2")
 
 ## Week 2 Drill
 
+### Problem 1
 
-### Multiple Choice
+The graphic below presents forecasts of the probabilities of winning US Senate elections in Nov. 2014.  The forecasts are made based on polls up through the end of August 2014.
+Individual results from several different polling organization are shownSeveral diff The graphic is an excerpt from the [full graphic](http://www.nytimes.com/newsgraphics/2014/senate-model/comparisons.html), which shows predictions for all 36 senate seats up for election in 2014.  The numbers or words give the forecast probability of one party's candidate --- Democrat or Republican --- winning. Source: [New York Times](http://www.nytimes.com/newsgraphics/2014/senate-model/comparisons.html)
 
-There are three (simple) steps to creating a multiple-choice problem in *ScoreR*:
+![Forecast probabilities of the outcomes of US Senate elections for 2014.](Images/SenateForecast.png)
 
-1. Initialization of the question
-2. Creation of the individual items, typically embedded in *markdown* statements
-3. Termination of the question.
+#### 1. 
 
-Initialization is done with the `newMC()` function.
+What variables define the frame in this graphic?
 
-```{r}
-f = newMC(totalPts=5,name="minus1") # Ordinarily, make this silent
-```
 
-The function name, in this case `f`, is arbitrary.  You will use that name to create the individual items with statements like `I(f(TRUE))` and I(f(FALSE))`, which will be embedded in text.  For instance:
-
-Which of these is equal to $-1$?  
-`r I(f(FALSE))` The value of $a x^2 + b x - c$ for all $a$, $b$, and $c$  
-`r I(f(TRUE))`  $e^{i\pi}$  
-`r I(f(FALSE))` $\ln(0)$  
-`r I(f(FALSE))` There's no such thing as a negative number, just a negative attitude.
+`r f = newMC(totalPts=5,name="senateFrame")` 
+`r I(f(FALSE))` Probability and State.
+`r I(f(TRUE))`  State and Polling Organization.
+`r I(f(FALSE))` Democrats and Republicans. 
+`r I(f(FALSE))` Just State
+`r I(f(FALSE))` Just Probability
 `r I(f(finish=TRUE))`
 
-After the items have been defined, terminate the question by calling the function with the argument `finish=TRUE`
-```{r eval=FALSE} 
-I(f(finish=TRUE))
-```
-You may well want to use inline knitr notation --- that's up to you.
+<aside class="answer">
+The vertical position represents the state.  The horizontal position reflects the polling organization.
+</answer> 
 
-### Select from a set
+#### 2. 
 
-What's the value of $\pi$?
-```{r}
-piQuestion3 = selectSet(name="piValue3",totalPts=4,
-                        "2.71727"=FALSE,
-                        "3.0"=FALSE,
-                        "3.14159"=TRUE,
-                        "6.28318"=FALSE)
-```
+What is the glyph and its graphical attributes?
 
-* Let's try that again ... `r I(piQuestion3)`
-
-
-### Free Text
-
-The `freeText()` function in `ScoreR` implements free-text entry.  It's very, very simple to add a free-text question to a problem.  Just
-
-`r I(textItem(name="question-topic",rows=2,totalPts=10))`
-
-The name, of course, should be unique within the problem.  The optional arguments `rows` and `cols` sets the size of the text entry box.  On many browsers, this block can be resized by the user, so a small box is useful in for adding in extended text.
-
-
-### Second Part
-
-A perennial problem when writing scientific reports is figuring out
-how many significant digits to report.  It's naïve to 
-copy all the digits from one's calculator or computer
-output; the data generally do not justify such
-precision. 
-
-Once you have a confidence interval, however, you do not need to guess
-how many significant digits are appropriate.  The standard error
-provides good guidance.  Here is a rule of thumb: keep two significant
-digits of the margin of error and round the point estimate to the same
-precision.  
-
-For example, suppose you have a confidence interval of $1.7862 \pm
-0.3624$ with 95% confidence.  Keeping the first two significant
-digits of the margin of error gives $0.36$.  We'll keep the point
-estimate to the same number of digits, giving altogether $1.79 \pm
-0.36$.
-
-Another example: suppose the confidence interval is $6548.23 \pm
-1321$.  Keeping the first two digits of the margin of error gives
-$1300$, with a corresponding margin of error of $6500 \pm 1300$.
-
-* Suppose the computer output is $0.03234232 \pm 0.01837232$.
-
-```{r include=FALSE}
-f=newMC(totalPts=1, name="confidence.interval")
-```
-Using this rule of thumb, what should you report in as the
-confidence interval?      
-`r I(f(FALSE))` $0.3234 \pm 0.01837$     
-`r I(f(FALSE))` $0.3234 \pm 0.0183$     
-`r I(f(FALSE))` $0.0323 \pm 0.0184$    
-`r I(f(FALSE))` $0.0323 \pm 0.018$     
-`r I(f(TRUE))` $0.032 \pm 0.018$     
-`r I(f(FALSE))` $0.032 \pm 0.01$     
-`r I(f(FALSE))` $0.03 \pm 0.01$   
+`r f = newMC(totalPts=5,name="senateGlyph")` 
+`r I(f(FALSE))` Glyph: names of the states. Graphical attribute: font.
+`r I(f(TRUE))`  Glyph: names of the polling organization. Graphical attribute: the organization's logo.
+`r I(f(FALSE))` Glyph: Rectangle. Graphical attribute: color.
+`r I(f(FALSE))` Glyph: Rectangle. Graphical attribute: color and text.
 `r I(f(finish=TRUE))`
 
+#### 3. 
 
-* Now suppose the computer output were $99.63742573 \pm 1.48924367$.
+Which of these is a guide for the indicated graphical attribute? (Select all that apply.)
 
-```{r include=FALSE}
-g=newMC(totalPts=1, name="confidence.interval.2")
-```
-What should you report as the confidence interval?     
-`r I(g(FALSE))` $100 \pm 1$     
-`r I(g(FALSE))` $99 \pm 1.5$     
-`r I(g(TRUE))` $99.6 \pm 1.5$     
-`r I(g(FALSE))` $99.64 \pm 1.49$     
-`r I(g(FALSE))` $99.647 \pm 1.489$ 
-`r I(g(finish=TRUE))`
+* `r selectSet(name="senateGuideState", totalPts=1, "TRUE"=TRUE, "FALSE"=FALSE)` Vertical scale: Name of state.
+* `r selectSet(name="senateGuideCandidate", totalPts=1, "TRUE"=FALSE, "FALSE"=TRUE)` Vertical scale: Name of candidate.
+* `r selectSet(name="senateGuidePollV", totalPts=1, "TRUE"=FALSE, "FALSE"=TRUE)` Vertical scale: Name of polling organization.
+* `r selectSet(name="senateGuideColor1", totalPts=1, "TRUE"=FALSE, "FALSE"=TRUE)` Vertical scale: color band.
+* `r selectSet(name="senateGuideColor2", totalPts=2, "TRUE"=TRUE, "FALSE"=FALSE)` Color: color band.
+
+
+#### 4. 
+
+What sets the order of the categorical variable in the scale for the vertical variable?
+
+`r selectSet(name="senateOrder",totalPts=4,
+    "State"=FALSE,
+    "Poll"=FALSE,
+    "Roth poll probability for the Democratic candidate."=FALSE,
+    "NYT poll probability for the Democratic candidate."=TRUE,
+    "Date of the poll."=FALSE)`
+
+  
 
 `r I(endProblem())`
