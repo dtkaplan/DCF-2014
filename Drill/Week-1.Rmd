@@ -13,64 +13,9 @@ startProblem("DCF-Assignment1")
 
 ## Week 1 Drill
 
-### Problem 1
 
-The graphic below presents forecasts of the probabilities of winning US Senate elections in Nov. 2014.  The forecasts are made based on polls up through the end of August 2014.
-Individual results from several different polling organization are shownSeveral diff The graphic is an excerpt from the [full graphic](http://www.nytimes.com/newsgraphics/2014/senate-model/comparisons.html), which shows predictions for all 36 senate seats up for election in 2014.  The numbers or words give the forecast probability of one party's candidate --- Democrat or Republican --- winning. Source: [New York Times](http://www.nytimes.com/newsgraphics/2014/senate-model/comparisons.html)
-
-![Forecast probabilities of the outcomes of US Senate elections for 2014.](Images/SenateForecast.png)
-
-#### 1. 
-
-What variables define the frame in this graphic?
-
-
-`r f = newMC(totalPts=5,name="senateFrame")` 
-`r I(f(FALSE))` Probability and State.
-`r I(f(TRUE))`  State and Polling Organization.
-`r I(f(FALSE))` Democrats and Republicans. 
-`r I(f(FALSE))` Just State
-`r I(f(FALSE))` Just Probability
-`r I(f(finish=TRUE))`
-
-<aside class="answer">
-The vertical position represents the state.  The horizontal position reflects the polling organization.
-</answer> 
-
-#### 2. 
-
-What is the glyph and its graphical attributes?
-
-`r f = newMC(totalPts=5,name="senateGlyph")` 
-`r I(f(FALSE))` Glyph: names of the states. Graphical attribute: font.
-`r I(f(TRUE))`  Glyph: names of the polling organization. Graphical attribute: the organization's logo.
-`r I(f(FALSE))` Glyph: Rectangle. Graphical attribute: color.
-`r I(f(FALSE))` Glyph: Rectangle. Graphical attribute: color and text.
-`r I(f(finish=TRUE))`
-
-#### 3. 
-
-Which of these is a guide for the indicated graphical attribute? (Select all that apply.)
-
-* `r selectSet(name="senateGuideState", totalPts=1, "TRUE"=TRUE, "FALSE"=FALSE)` Vertical scale: Name of state.
-* `r selectSet(name="senateGuideCandidate", totalPts=1, "TRUE"=FALSE, "FALSE"=TRUE)` Vertical scale: Name of candidate.
-* `r selectSet(name="senateGuidePollV", totalPts=1, "TRUE"=FALSE, "FALSE"=TRUE)` Vertical scale: Name of polling organization.
-* `r selectSet(name="senateGuideColor1", totalPts=1, "TRUE"=FALSE, "FALSE"=TRUE)` Vertical scale: color band.
-* `r selectSet(name="senateGuideColor2", totalPts=2, "TRUE"=TRUE, "FALSE"=FALSE)` Color: color band.
-
-
-#### 4. 
-
-What sets the order of the categorical variable in the scale for the vertical variable?
-
-`r selectSet(name="senateOrder",totalPts=4,
-    "State"=FALSE,
-    "Poll"=FALSE,
-    "Roth poll probability for the Democratic candidate."=FALSE,
-    "NYT poll probability for the Democratic candidate."=TRUE,
-    "Date of the poll."=FALSE)`
     
-### Problem 2
+### Problem 1
 
 Here is an excerpt from the baby-name data in `"DCF::BabyNames"`.
 
@@ -103,22 +48,195 @@ For each of the following, say whether the variable is quantitative or categoric
     "It's not a variable."=FALSE)`
   
   
-### Problem 3  
+### Problem 2  
   
 ```{r child="../Exercises/Introductory/2013-08-12-DTK-View-String.Rmd"}
 ```
 
-### Problem 4
+### Problem 3
 
 ```{r child="../Exercises/Introductory/2013-08-12-DTK-World-Cities.Rmd"}
 ```
 
-### Problem 5
+### Problem 4
 
 ```{r child="../Exercises/Introductory/2013-08-12-DTK-msleep.Rmd"}
 ```
 
-### Problem 6
+### Problem 5
 
 ```{r child="../Exercises/Introductory/2013-08-12-DTK-Seatbelts.Rmd"}
 ```
+
+### Problem 6
+
+Say what content is associated each of the following filename extensions. 
+
+`.csv` `r selectSet(name="csvExtension",totalPts=1,
+    "Formatted document content"=FALSE,
+    "Photograph"=FALSE,
+    "Non-photo image"=FALSE,
+    "Specification of the contents of a document"=FALSE,
+    "Spreadsheet or data table contents"=TRUE,
+    "R data and/or other objects"=FALSE,
+    "A what-you-see-is-what-you-get document"=FALSE)`
+
+`.Rmd` `r selectSet(name="rmdExtension",totalPts=1,
+    "Formatted document for display in a browser"=FALSE,
+    "Photograph"=FALSE,
+    "Non-photo image"=FALSE,
+    "Specification of the contents of a document"=TRUE,
+    "Spreadsheet or data table contents"=FALSE,
+    "Plain, unformatted text"=FALSE,
+    "R data and/or other objects"=FALSE,
+    "A what-you-see-is-what-you-get document"=FALSE)`
+
+`.jpg` `r selectSet(name="jpgExtension",totalPts=1,
+    "Formatted document for display in a browser"=FALSE,
+    "Photograph"=TRUE,
+    "Non-photo image"=FALSE,
+    "Plain, unformatted text"=FALSE,
+    "Specification of the contents of a document"=FALSE,
+    "Spreadsheet or data table contents"=FALSE,
+    "R data and/or other objects"=FALSE,
+    "A what-you-see-is-what-you-get document"=FALSE)`
+
+`.Rdata` `r selectSet(name="rdaExtension",totalPts=1,
+    "Formatted document for display in a browser"=FALSE,
+    "Photograph"=FALSE,
+    "Non-photo image"=FALSE,
+    "Specification of the contents of a document"=FALSE,
+    "Spreadsheet or data table contents"=FALSE,
+    "Plain, unformatted text"=FALSE,
+    "R data and/or other objects"=TRUE,
+    "A what-you-see-is-what-you-get document"=FALSE)`
+
+`.docx` `r selectSet(name="docxExtension",totalPts=1,
+    "Formatted document for display in a browser"=FALSE,
+    "Photograph"=FALSE,
+    "Non-photo image"=FALSE,
+    "Specification of the contents of a document"=FALSE,
+    "Spreadsheet or data table contents"=FALSE,
+    "R data and/or other objects"=FALSE,
+    "A what-you-see-is-what-you-get document"=TRUE)`
+
+`.html` `r selectSet(name="htmlExtension",totalPts=1,
+    "Plain, unformatted text"=FALSE,
+    "Formatted document for display in a browser"=FALSE,
+    "Photograph"=FALSE,
+    "Non-photo image"=FALSE,
+    "Specification of the contents of a document"=FALSE,
+    "Spreadsheet or data table contents"=FALSE,
+    "R data and/or other objects"=FALSE,
+    "A what-you-see-is-what-you-get document"=FALSE)`
+
+`.ppt` `r selectSet(name="pptExtension",totalPts=1,
+    "Formatted document for display in a browser"=FALSE,
+     "Plain, unformatted text"=FALSE,
+    "Photograph"=FALSE,
+    "Non-photo image"=FALSE,
+    "Specification of the contents of a document"=FALSE,
+    "Spreadsheet or data table contents"=FALSE,
+    "R data and/or other objects"=FALSE,
+    "A what-you-see-is-what-you-get document"=TRUE)`
+
+`.png` `r selectSet(name="pngExtension",totalPts=1,
+    "Formatted document for display in a browser"=FALSE,
+    "Photograph"=FALSE,
+    "Non-photo image"=TRUE,
+    "Specification of the contents of a document"=FALSE,
+    "Plain, unformatted text"=FALSE,
+    "Spreadsheet or data table contents"=FALSE,
+    "R data and/or other objects"=FALSE,
+    "A what-you-see-is-what-you-get document"=FALSE)`
+    
+`.txt` `r selectSet(name="txtExtension",totalPts=1,
+    "Formatted document for display in a browser"=FALSE,
+    "Photograph"=FALSE,
+    "Non-photo image"=FALSE,
+    "Specification of the contents of a document"=FALSE,
+    "Plain, unformatted text"=TRUE,
+    "Spreadsheet or data table contents"=FALSE,
+    "R data and/or other objects"=FALSE,
+    "A what-you-see-is-what-you-get document"=FALSE)`
+
+`.xls` `r selectSet(name="xlsExtension",totalPts=1,
+    "Formatted document for display in a browser"=FALSE,
+    "Photograph"=FALSE,
+    "Non-photo image"=FALSE,
+    "Specification of the contents of a document"=FALSE,
+    "Plain, unformatted text"=FALSE,
+    "Spreadsheet or data table contents"=TRUE,
+    "R data and/or other objects"=FALSE,
+    "A what-you-see-is-what-you-get document"=FALSE)`
+
+### Problem 7
+
+What is the path name of the files in this directory?
+
+![Directory contents](Images/filePath.png)
+
+`r I(textItem("filePath"))`
+
+### Problem 8
+
+Which characters can be used in an object name?
+
+### Problem 9
+
+Here are a few characters: 
+    .  ,  ;  _  -  ^  [space] (  )
+
+Which of those characters can be used in the name of an R object? `r I(textItem("objectCharacters"))`
+
+Which of those characters can be used in a quoted character string?
+
+`r I(textItem("stringCharacters"))`
+
+### Problem 10
+
+The `date()` function returns an indication of the current time and date.
+
+* What arguments does `date()` take? How did you find out?
+* What *kind* of object is the result from `date()`.
+
+`r I(textItem("date"))`
+
+### Problem 11
+
+For each of the following assignment statements, say what is the mistake.
+
+* `ralph <- sqrt 10` `r selectSet(name="mistakeArgs",totalPts=1,
+   "No mistake"=FALSE,
+   "No assignment operator"=FALSE,
+   "Unmatched quotes in character string"=FALSE,
+   "Improper syntax for function argument"=FALSE,
+   "Invalid object name")`
+   
+* `ralph2 <-- "Hello to you!"` `r selectSet(name="mistakeOperator",totalPts=1,
+   "No mistake"=FALSE,
+   "No assignment operator"=FALSE,
+   "Unmatched quotes in character string"=FALSE,
+   "Improper syntax for function argument"=FALSE,
+   "Invalid object name")`
+
+* `3ralph <- "Hello to you!"` `r selectSet(name="mistakeName",totalPts=1,
+   "No mistake"=FALSE,
+   "No assignment operator"=FALSE,
+   "Unmatched quotes in character string"=FALSE,
+   "Improper syntax for function argument"=FALSE,
+   "Invalid object name")`
+
+* `ralph4 <- "Hello to you!` `r selectSet(name="mistakeQuotes",totalPts=1, 
+   "No mistake"=FALSE,
+   "No assignment operator"=FALSE,
+   "Unmatched quotes in character string"=FALSE,
+   "Improper syntax for function argument"=FALSE,
+   "Invalid object name")`
+
+* `ralph5 <- date()` `r selectSet(name="mistakeNone",totalPts=1,
+   "No mistake"=FALSE,
+   "No assignment operator"=FALSE,
+   "Unmatched quotes in character string"=FALSE,
+   "Improper syntax for function argument"=FALSE,
+   "Invalid object name")`
