@@ -187,9 +187,9 @@ Which characters can be used in an object name?
 Here are a few characters: 
     .  ,  ;  _  -  ^  [space] (  )
 
-Which of those characters can be used in the name of an R object? `r I(textItem("objectCharacters"))`
+* Which of those characters can be used in the name of an R object? `r I(textItem("objectCharacters"))`
 
-Which of those characters can be used in a quoted character string?
+* Which of those characters can be used in a quoted character string?
 
 `r I(textItem("stringCharacters"))`
 
@@ -240,3 +240,15 @@ For each of the following assignment statements, say what is the mistake.
    "Unmatched quotes in character string"=FALSE,
    "Improper syntax for function argument"=FALSE,
    "Invalid object name")`
+   
+### Problem 12
+
+These questions should be easy to answer if you use the appropriate commands to load, view, or get documentation on the datasets.
+
+* How many variables are there in `CountryData`? 
+* What does the variable `tfat` measure in the `NHANES` data table?
+* How many cases are there in `WorldCities`?
+* What's the third variable in `BabyNames`?
+* What are the codes for the levels of the categorical variable `party` in the `registeredVoters` data table, and what does each code stand for?
+
+`r I(textItem("DataAndHelp"))`
