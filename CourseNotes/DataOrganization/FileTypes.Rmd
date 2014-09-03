@@ -77,7 +77,7 @@ You are probably used to seeing folders and the files they contain organized lik
 
 ![Folders contained within folders, as shown by a file browser on OS-X.](fileTreeDisplay.png)
 
-The file *path* is the set of successive folders that bring you to the file.^[To push the family metaphor, you are identified by your first name.  The path would tell you which specific nuclear family you belong to, perhaps in the form of your address, like this: *USA/Saint Paul/55105/703 Lincoln Avenue*.]
+The file *path* is the set of successive folders that bring you to the file.^[To run on with the family metaphor ...  You are identified within a household by your first name.  The path would tell you which specific nuclear family you belong to, perhaps in the form of your address, like this: *USA/Saint Paul/55105/703 Lincoln Avenue*.]
 
 There is a standard format for file paths.  An example: `/Users/kaplan/Downloads/0021_001.pdf`.  Here the filename is `0021_001`, the filename extension is `.pdf`, and the file itself is in the `Downloads` folder contained in the `kaplan` folder, which is in turn contained in the `Users` folder.  The starting `/` means "on this computer".
 
