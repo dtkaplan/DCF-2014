@@ -14,7 +14,9 @@ opts_chunk$set( comment = NA )
 
 This tutorial will get you started using R commands and introduce you to basic concepts involving commands.
 
-At first these concepts will seem abstract and confusing.  After an hour or so of using R, you will develop a more solid understanding.
+As you read this document, try out the commands shown.  You don't need to go beyond these simple commands yet.
+
+
 
 ### Commands and the Console
 
@@ -64,9 +66,25 @@ We're going to use several packages.  The `DCF` package contains data for the Da
 ```{r}
 library( DCF )
 ```
-Usually you will give this command at the start of a session.  
+Usually you will give this command at the start of a session.
 
-The `NHANES` package^[`NHANES` was originally created for the Data & Computing Fundamentals course, but is now distributed through the official R archive network so that it can be used more widely.] contains (as of this writing) just one data table, which is also called `NHANES`.   
+The `NHANES` package^[`NHANES` was originally created for the Data & Computing Fundamentals course, but is now distributed through the official R archive network so that it can be used more widely.] contains (as of this writing) just one data table, which is also called `NHANES`.
+
+##### Did something go wrong?
+
+In response to the above command, you might get a response from R like this:
+    
+        Error in library(DCF) : there is no package called ‘DCF’
+
+If this happens, it means only that your R account is not up to date with the `DCF` package.  To fix things, use these commands (cut and paste them verbatim from this document into your R console.)
+    
+```{r eval=FALSE}
+install.packages( "devtools" )
+devtools::install_github( "dtkaplan/DCFdevel" )
+```
+
+Then try again with `library(DCF)`.
+
 
 
 
@@ -85,20 +103,20 @@ To bring a particular data table into R, use the `data()` function with the name
 data( "NHANES" )
 ```
 
-This will bring a copy of the data into the session environment.  If the data do not appear in the Data section of Environment tab, and instead appear as a `<Promise>` under Values, you can force them to do so with this command:
-```{r results="hide"}
-NHANES
+This will bring a copy of the data into the session environment.  To take a peak at the data, use
+```{r results="hide",eval=FALSE}
+View( NHANES )
 ```
-
-![environment with NHANES](NHANES-environment.png)
-
-At this point, all you can see is the very short description of the data table: `r nrow(NHANES)` rows and `r length(NHANES)`.
-
-You can look at the data table more closely by clicking on the small spreadsheet icon: ![spreadsheet icon](spreadsheet-icon.png).
 
 ![NHANES data](NHANES-table.png)
 
+
+
 Another way to get information about the data is to click on the expand icon ![expand icon](summary-icon.png) next to the NHANES listing in the environment tab.
+
+![environment with NHANES](NHANES-environment.png)
+
+You can look at the data table more closely by clicking on the small spreadsheet icon: ![spreadsheet icon](spreadsheet-icon.png).
 
 Finally, for data tables contained in a package, you can get a narrative description using the `help()` command:
 

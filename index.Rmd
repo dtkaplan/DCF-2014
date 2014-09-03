@@ -13,11 +13,8 @@ NO MEETING ON Wed. 26 November, day before Thanksgiving.
 
 ## To do
 
-* In DCFdevel, redefine `summarize()` and `summarise()` so that the basic functions have `na.rm=TRUE`????
-* Change world cities population from integer to numeric.
+* In DCF, redefine `summarize()` and `summarise()` so that the basic functions have `na.rm=TRUE`????
 * Change NaN in NHANES to NA
-* Give NHANES a new name so as not to conflict with `mosiac`.
-* Change all data in DCF to follow Capital dataframe name, lower-case variable name.
 * BabyNamesYearly should be changed to just baby names.
 
 
