@@ -61,6 +61,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 
 <p>This tutorial will get you started using R commands and introduce you to basic concepts involving commands.</p>
+<p>At first these concepts will seem abstract and confusing. After an hour or so of using R, you will develop a more solid understanding.</p>
 <div id="commands-and-the-console" class="section level3">
 <h3>Commands and the Console</h3>
 <p>To start, you will enter R commands into the <em>console</em>. Let’s go …</p>
@@ -91,9 +92,10 @@ sqrt(2)
 <div id="loading-packages" class="section level3">
 <h3>Loading Packages</h3>
 <p>R has grown in use rapidly, in part because it’s easy to add new software and new capabilities to R. Such additions are called <em>packages</em>. Indeed, some of the central functionality of R is provided by packages.</p>
-<p>We’re going to use several packages. In particular, the <code>DCFdevel</code> package contains data for the Data &amp; Computing Fundamentals course. In order to make these data accessible, you have to <em>load</em> the package. The command is:</p>
+<p>We’re going to use several packages. The <code>DCFdevel</code> package contains data for the Data &amp; Computing Fundamentals course. In order to make these data accessible, you have to <em>load</em> the package. The command is:</p>
 <pre class="r"><code>library( DCFdevel )</code></pre>
 <p>Usually you will give this command at the start of a session.</p>
+<p>The <code>NHANES</code> package<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> contains (as of this writing) just one data table, which is also called <code>NHANES</code>.</p>
 </div>
 <div id="data-and-objects" class="section level3">
 <h3>Data and Objects</h3>
@@ -130,7 +132,9 @@ sqrt(2)
 <p>Almost all of the examples above have this form: a function name followed by parentheses.</p>
 <pre class="r"><code>sqrt( 2 )
 library( &quot;DCFdevel&quot; )
+library( &quot;NHANES&quot; )
 data( package=&quot;DCFdevel&quot; )
+data( package=&quot;NHANES&quot;)
 data( &quot;NHANES&quot; )
 help( &quot;NHANES&quot; )</code></pre>
 <p>The one exception was this command:</p>
@@ -152,7 +156,16 @@ package=&quot;DCFdevel&quot;
 <p>An object is a packet of information. Just about everything you’ll be using in R is an object. There are many different sorts of objects, just like there are many sorts of things in the world.</p>
 <p>It helps to distinguish between the packet and the information itself. The information contained in the object is called its <em>value</em>.</p>
 <p>Here are some of the objects that appear in the examples above:</p>
-<p>Name | Value | Kind of thing ———|————————|————— | 2 | a number sqrt | computer commands | a function | “DCFdevel” | a string of characters NHANES | data | data table | “NHANES” | a string of characters</p>
+<pre>
+Name     | Value                  | Kind of thing   
+---------|------------------------|---------------
+         |  2                     | a number
+sqrt     | computer commands      | a function
+         | &quot;DCFdevel&quot;             | a string of characters
+NHANES   | data                   | data table
+         | &quot;NHANES&quot;               | a string of characters
+</pre>
+
 <p>Most of the objects you will use have names, e.g. <code>NHANES</code> or <code>sqrt</code>. Sometimes you will use objects that don’t have a name, for instance the number 2 or the quoted set of characters <code>&quot;DCFdevel&quot;</code>.</p>
 <p>It will take a while for you to get used to the difference between an object and the <em>name</em> of an object. Object names are never in quotes and they never begin with a digit. When quotes are used, it is to identify characters as a string. Strings are used for labels, or to identify something outside of R (e.g. a web location or a file name).</p>
 </div>
@@ -176,6 +189,12 @@ package=&quot;DCFdevel&quot;
 <h2>Review</h2>
 <p>The following terms should be meaningful to you from this reading:</p>
 <p>package, function, command, argument, assignment, object, object name, data table, named argument, quoted character string</p>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><code>NHANES</code> was originally created for the Data &amp; Computing Fundamentals course, but is now distributed through the official R archive network so that it can be used more widely.<a href="#fnref1">↩</a></p></li>
+</ol>
 </div>
 
 

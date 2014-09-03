@@ -14,7 +14,10 @@ opts_chunk$set( comment = NA )
 
 This tutorial will get you started using R commands and introduce you to basic concepts involving commands.
 
+At first these concepts will seem abstract and confusing.  After an hour or so of using R, you will develop a more solid understanding.
+
 ### Commands and the Console
+
 To start, you will enter R commands into the *console*.  Let's go ...
 
 Find the console pane in RStudio and the prompt, `>`.
@@ -57,11 +60,15 @@ As you use R, you will be creating objects in the session environment.
 
 R has grown in use rapidly, in part because it's easy to add new software and new capabilities to R.  Such additions are called *packages*.  Indeed, some of the central functionality of R is provided by packages.
 
-We're going to use several packages.  In particular, the `DCFdevel` package contains data for the Data & Computing Fundamentals course.  In order to make these data accessible, you have to *load* the package.  The command is:
+We're going to use several packages.  The `DCFdevel` package contains data for the Data & Computing Fundamentals course.  In order to make these data accessible, you have to *load* the package.  The command is:
 ```{r}
 library( DCFdevel )
 ```
 Usually you will give this command at the start of a session.  
+
+The `NHANES` package^[`NHANES` was originally created for the Data & Computing Fundamentals course, but is now distributed through the official R archive network so that it can be used more widely.] contains (as of this writing) just one data table, which is also called `NHANES`.   
+
+
 
 ### Data and Objects
 
@@ -123,7 +130,9 @@ Almost all of the examples above have this form: a function name followed by par
 ```{r results='hide'}
 sqrt( 2 )
 library( "DCFdevel" )
+library( "NHANES" )
 data( package="DCFdevel" )
+data( package="NHANES")
 data( "NHANES" )
 help( "NHANES" )
 ```
@@ -156,14 +165,15 @@ It helps to distinguish between the packet and the information itself.  The info
 
 Here are some of the objects that appear in the examples above:
 
-
-Name     | Value                  | Kind of thing
+<pre>
+Name     | Value                  | Kind of thing   
 ---------|------------------------|---------------
          |  2                     | a number
 sqrt     | computer commands      | a function
          | "DCFdevel"             | a string of characters
 NHANES   | data                   | data table
          | "NHANES"               | a string of characters
+</pre>
 
 Most of the objects you will use have names, e.g. `NHANES` or `sqrt`.  Sometimes you will use objects that don't have a name, for instance the number 2 or the quoted set of characters `"DCFdevel"`.
 
