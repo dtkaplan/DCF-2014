@@ -13,7 +13,7 @@ status: in development
 ---
 
 ```{r include=FALSE}
-require(DCFdevel)
+require(DCF)
 require(tidyr)
 require(igraph)
 ```

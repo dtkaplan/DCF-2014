@@ -8,7 +8,7 @@ output: html_document
 ```{r}
 require(dplyr)
 require(tidyr)
-require(DCFdevel)
+require(DCF)
 require(lubridate)
 ```
 

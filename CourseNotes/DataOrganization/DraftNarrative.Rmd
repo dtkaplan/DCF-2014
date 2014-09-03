@@ -143,7 +143,7 @@ Note that even if the individual identifier in the first column were stripped aw
 
 The "codebook" is a document --- separate from the data table --- that describes various aspects of how the data were collected, what the variables mean and what the different levels of categorical variables refer to.  The word "codebook" comes from the days when data was encoded for the computer in ways that make it hard for a human to read.  
 
-For data provided by R packages, a codebook is available via the `help()` function, e.g., for the `BabyNames` data in the `DCFdevel` package, try:
+For data provided by R packages, a codebook is available via the `help()` function, e.g., for the `BabyNames` data in the `DCF` package, try:
 ```{r eval=FALSE}
 help( BabyNames )
 ```

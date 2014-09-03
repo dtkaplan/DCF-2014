@@ -7,7 +7,7 @@ output: html_document
 <!--  Keep this line and the following ones. -----
       Boilerplate Section
 ```{r include=FALSE,eval=FALSE}
-library( DCFdevel ) # or the package for your course.
+library( DCF ) # or the package for your course.
 includeSourceDocument("This file.Rmd")
 ```
 ---- Keep this line and the preceeding ones. -->

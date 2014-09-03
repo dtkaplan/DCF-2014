@@ -1,12 +1,12 @@
 ---
 output:
   html_document:
-    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
     fig_caption: yes
     toc: yes
 ---
 
-```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
 ```
 
 ```{r include=FALSE}
@@ -180,7 +180,7 @@ From this map of population growth (in % per year), you can see the handful of c
 
 A *network* is a set of connections, called *edges*, between elements, called *vertices*. A vertex corresponds to a case. The network describes which vertices are connected to other vertices. 
 
-The `NCI60` data set (in the DCFdevel package) is about the genetics of cancer.  The data set looks at more than 40,000 probes for the expression of genes, in each of 60 cancer cell lines. In the network here, a vertex is a given cell line --- a sample of cells from one person with a particularly kind of cancer.
+The `NCI60` data set (in the `DCF` package) is about the genetics of cancer.  The data set looks at more than 40,000 probes for the expression of genes, in each of 60 cancer cell lines. In the network here, a vertex is a given cell line --- a sample of cells from one person with a particularly kind of cancer.
 
 To measure the connections between cell lines, the correlation coefficient for probe expression in every pair of cell lines was calculated.  Each pair's correlation coefficient indicates the strength of connection between the two cell lines in that pair. Here, the 200 largest correlations are shown.
 

@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r include=FALSE}
-require(DCFdevel)
+require(DCF)
 require(dplyr)
 require(ggplot2)
 require(knitr)

@@ -1,12 +1,12 @@
 ---
 output:
   html_document:
-    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
     fig_caption: yes
     toc: yes
 ---
 
-```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
 ```
 
 # Data Verbs
@@ -37,12 +37,10 @@ The `summarise()` data verb^[Also known by the American spelling, `summarize()`]
 
 
 
-To illustrate the uses of `summarise()`, consider the `WorldCities` data table (in the `DCFdevel` package). 
+To illustrate the uses of `summarise()`, consider the `WorldCities` data table (in the `DCF` package). 
 ```{r}
-data( WorldCities,package="DCFdevel" )
+data( WorldCities, package="DCF" )
 names( WorldCities )
-# DELETE THIS LINE BELOW AFTER FIXING THE DCF PACKAGE dataframe
-WorldCities <- mutate(WorldCities, Population=as.numeric(Population))
 ```
 This consists of 23,018 of the most populous cities in the world.
 
@@ -55,9 +53,9 @@ WorldCities %>%
 Perhaps you want to know the total population in these cities, or the average population per city or the smallest city in the table.
 ```{r}
 WorldCities %>%
-  summarise( averPop=mean(Population),
-             totalPop=sum(Population),
-             smallest=min(Population) )
+  summarise( averPop=mean(population),
+             totalPop=sum(population),
+             smallest=min(population) )
 ```
 
 EXERCISE:
@@ -84,7 +82,7 @@ The `group_by()` data verb sets things up so that other data verbs will perform 
 
 ```{r}
 WorldCities %>% 
-  group_by( Country ) %>%
+  group_by( country ) %>%
   summarise( count=n() ) %>% head
 ```
 
@@ -113,9 +111,10 @@ SIMPLE, SIMPLE: levels of categorical variables, e.g. 'alive' versus 'Alive' in 
 
 
 #### Four
+
 Use `==` and `mean()` to find the proportion of cases at a given level, e.g. what fraction of smokers have died.  Here's an example of the syntax you'll need, using `sex` instead of `smoker`.
 ```{r}
-data(NHANESDCF, package="DCFdevel")  # CHANGE THIS LINE TO data(NHANES)
+data(NHANES, package="DCF") 
 NHANES %>% group_by( sex ) %>%  
   summarise( living=mean( death=='alive', na.rm=TRUE ))
 ```
@@ -162,26 +161,26 @@ To illustrate, consider the NHANES data containing body shape, health, and morta
 data(NHANESDCF)
 ```
 
-One of the variables is `HDL` --- [HDL cholesterol](http://www.mayoclinic.org/diseases-conditions/high-blood-cholesterol/in-depth/hdl-cholesterol/art-20046388). (HDL is the "good" kind of cholesterol, as opposed to LDL cholesterol, which is reported in the `LDL` variable).
+One of the variables is `hdl` --- [HDL cholesterol](http://www.mayoclinic.org/diseases-conditions/high-blood-cholesterol/in-depth/hdl-cholesterol/art-20046388). (HDL is the "good" kind of cholesterol, as opposed to LDL cholesterol, which is reported in the `LDL` variable).
 
 Suppose you want to know a typical HDL level. "Typical" is with respect to the values for all the cases, not just the value for a single case.  Since all the cases are being combined, `summarize()` is appropriate.
 
 ```{r eval=FALSE}
 NHANES %>% 
   group_by( sex ) %>%
-  summarise( typical=mean( HDL, na.rm=TRUE ), 
+  summarise( typical=mean( hdl, na.rm=TRUE ), 
              shortest=min( height, na.rm=TRUE ),
              n=n() )
 ```
 
 ```{r}
-NHANES %>% summarise( typical=mean( HDL, na.rm=TRUE ) )
+NHANES %>% summarise( typical=mean( hdl, na.rm=TRUE ) )
 ```
 
 Or, perhaps you want the typical HDL, the shortest height, and the number of cases.
 ```{r}
 NHANES %>% 
-  summarise( typical=mean( HDL, na.rm=TRUE ), 
+  summarise( typical=mean( hdl, na.rm=TRUE ), 
                       shortest=min( height, na.rm=TRUE ),
                       count=n() )
 ```
@@ -189,7 +188,7 @@ NHANES %>%
 
 * Each of the numerical calculations has been instructed to ignore missing data.  Without this, the missing data shapes the result:
     ```{r}
-NHANES %>% summarise( typical=mean( HDL ), 
+NHANES %>% summarise( typical=mean( hdl ), 
                       shortest=min( height ))
 ```
 * The `n()` function doesn't need to be passed a variable.  All of the variables in a data table have the same number of cases.
@@ -202,7 +201,7 @@ The `group_by()` data verb sets things up so that other data verbs will perform 
 ```{r}
 NHANES %>% 
   group_by( sex ) %>%
-  summarise( typical=mean( HDL, na.rm=TRUE ), 
+  summarise( typical=mean( hdl, na.rm=TRUE ), 
              shortest=min( height, na.rm=TRUE ),
              n=n() )
 ```
@@ -212,7 +211,7 @@ Using `group_by()` along with `summarize()` and `n()`, provides a basis for coun
 ```{r}
 NHANES %>% 
   group_by( sex, smoker ) %>%
-  summarize( n=n() )
+  summarise( n=n() )
 ```
 
 ## EXERCISES:
@@ -224,29 +223,29 @@ What does this do?
 ```{r results='hide'}
 NHANES %>% 
   group_by( sex, smoker ) %>%
-  summarize( n=n() )
+  summarise( n=n() )
 ```
 
 ### Two
 
 
-Maybe in this section, mean BP for smokers and non-smokers.
+Maybe in this section, mean weight for diabetic and not.
 
 ```{r}
-group_by(NHANES, sex, diabetic) %>% 
-  summarize(bp=mean(systolic-diastolic,na.rm=TRUE),n=n(),
-                                              se=sd(systolic-diastolic, na.rm=TRUE)/sqrt(n)) -> foo 
-ggplot(foo, aes(x=sex, group=diabetic, color=diabetic,y=bp,width=.5))  + geom_bar(alpha=.3,aes(fill=diabetic),position='dodge',stat='identity') + geom_errorbar(aes(ymax=bp+2*se,ymin=bp-2*se,),position='dodge')  + ylim(0,80)
+foo <- group_by(NHANES, sex, diabetic) %>% 
+  summarise(wt=mean(weight,na.rm=TRUE),n=n(),
+            se=sd(weight, na.rm=TRUE)/sqrt(n)) 
+ggplot(foo, aes(x=sex, group=diabetic,y=wt,width=.5))  + geom_bar(alpha=.5,position='dodge',stat='identity',aes(fill=diabetic)) + geom_errorbar(aes(ymax=wt+2*se,ymin=wt-2*se,),position='dodge')  + ylim(0,80) + guides(fill=FALSE)
 ```
 
 For errorbars and such, you need to use `position=position_dodge(width=.5)` to separate the groups equally.
 
 ```{r}
-ggplot(foo, aes(group=sex, x=diabetic, y=bp,width=.5))  + 
+ggplot(foo, aes(group=sex, x=diabetic, y=wt,width=.5))  + 
 #  geom_bar(alpha=.3,aes(fill=sex),position='dodge',stat='identity') + 
-  geom_errorbar(aes(ymax=bp+2*se,ymin=bp-2*se,color=sex),
+  geom_errorbar(aes(ymax=wt+2*se,ymin=wt-2*se,color=sex),
                 position=position_dodge(width=0.3),weight=3,size=2,width=.2)  + 
-  ylim(0,80) + ylab("Pulse Pressure (mmHg)") + 
+  ylim(0,80) + ylab("Weight") + 
   xlab("Diabetes status")
 ```
 
@@ -337,20 +336,20 @@ In aggregating data, you will be combining cases.  Think of aggregating as creat
 
 In transforming data, you will be treating each and every case individually.
 
-Suppose you want to find the "pulse pressure" for each of the individual people in the NHANES data.  Pulse pressure is the difference between systolic and diastolic pressures. [Note 1] (Blood pressure is usually reported as two numbers, say, "105 over 70." Systolic is the top number and diastolic is the bottom number) You can calculate it this way:
+Suppose you want to try out a replacement for the body mass index (`bmi`).  You think a better index might be the waist circumference divided by height. 
 
 ```{r}
-pulse <- with( NHANES, systolic-diastolic )
+myIndex <- with( NHANES, waist/height )
 ```
 
 This subtraction is a transform.  It produces a result for each case in NHANES, all `r nrow(NHANES)` of them.
 ```{r}
-summary( pulse )
+summary( myIndex )
 ```
 
-In contrast, suppose you want to know the median diastolic pressure.  That's an aggregation.  It converts the whole set of cases into a single number.
+In contrast, suppose you want to know the median waist circumference.  That's an aggregation.  It converts the whole set of cases into a single number.
 ```{r}
-with( NHANES, median(diastolic))
+with( NHANES, median(waist))
 ```
 
 There are many possible transforms and many different aggregations. Here are a few:
@@ -370,16 +369,16 @@ To support this style, you'll be using specific functions: `mutate()`, `summariz
 
 To perform a transform, use the `mutate()` function.  The first argument is a data frame.  Additional arguments specify the transform to be calculated.  Like this:
 ```{r}
-output <- mutate( NHANES, pulse=systolic-diastolic )
+output <- mutate( NHANES, myIndex=waist/height )
 ```
-In this operation, a new variable has been created called `pulse`.  The output copies over the input data frame as well, so `output` will have all the variables originally in `NHANES` along with `pulse`:
+In this operation, a new variable has been created called `myIndex`.  The output copies over the input data frame as well, so `output` will have all the variables originally in `NHANES` along with `myIndex`:
 ```{r}
 names(output)
 ```
 
 A very common style with a transform is to use the output of `mutate()` to redefine the input data frame, as with:
 ```{r}
-NHANES <- mutate( NHANES, pulse=systolic-diastolic )
+NHANES <- mutate( NHANES, myIndex=waist/height )
 ```
 
 Sometimes, you will use a transform to modify an existing variable.  For instance, the `followup` variable in `NHANES` gives --- for those people who died soon after the study --- the number of months from the initial measurements until the subject died. Perhaps you want this in years rather than months.
@@ -389,9 +388,9 @@ NHANES <- mutate( NHANES, followup=followup/12 )
 
 ### Aggregation
 
-To carry out an aggregation, use the `summarize()` function.  
+To carry out an aggregation, use the `summarise()` function.  
 ```{r}
-summarize( NHANES, typicalAge=median(age, na.rm=TRUE) )
+summarise( NHANES, typicalAge=median(age, na.rm=TRUE) )
 ```
 
 The output of `summarize()` is a data frame, albeit a very short data frame in this situation.
@@ -403,7 +402,9 @@ NHANES <- mutate( NHANES, hgtDiff=height-mean(height) )
 
 QUESTION:  Why are these two quantities so different?
 ```{r}
-summarize( NHANES, mean(height), mean(hgtDiff))
+summarise( NHANES, 
+           mean( height, na.rm=TRUE ), 
+           mean( hgtDiff, na.rm=TRUE ) )
 ```
 
 ## Grouping
@@ -416,7 +417,7 @@ Grouping cases doesn't in itself do anything.  Instead, grouping sets things up 
 
 ```{r}
 NHANES <- group_by( NHANES, sex )
-summarize( NHANES, typicalAge=median(age, na.rm=TRUE) )
+summarise( NHANES, typicalAge=median(age, na.rm=TRUE) )
 ```
 
 Doing a transform on a grouped variable allows you, if you want, to use aggregate quantities for that group.  For instance, the groups of males and females have different mean heights.  Here's how you would calculate the difference of an individual from his or her group's mean.
@@ -424,14 +425,14 @@ Doing a transform on a grouped variable allows you, if you want, to use aggregat
 ```{r}
 NHANES <- group_by( NHANES, sex )
 NHANES <- mutate( NHANES, dheight=height-mean(height) )
-summarize( NHANES, sd(dheight) )
+summarise( NHANES, sd(dheight) )
 ```
 
 
 ### NOTE: For proportion ...
 
 ```{r}
-group_by(NHANES, sex,smoker) %>% summarize(pd=mean(diabetic=='diabetic',na.rm=TRUE),sz=n(),se=sqrt(pd*(1-pd)/sqrt(sz)))
+group_by(NHANES, sex,smoker) %>% summarise(pd=mean(diabetic=='diabetic',na.rm=TRUE),sz=n(),se=sqrt(pd*(1-pd)/sqrt(sz)))
 ```
 
 
@@ -452,20 +453,20 @@ Reassignment of the output to the input data frame may make sense for a transfor
 
 ## Example: Blood pressure and diabetes
 
-The NHANES data gives ... for 31000 people.  Suppose you are interested in the question, does pulse pressure differ for diabetics and non-diabetics.
+The NHANES data gives ... for 31000 people.  Suppose you are interested in the question, does waist to height ratio differ between diabetics and non-diabetics.
 
 
 ```{r}
 group_by(NHANES, sex, diabetic) %>% 
-  summarize(bp=mean(systolic-diastolic,na.rm=TRUE),n=n(),
-                                              se=sd(systolic-diastolic, na.rm=TRUE)/sqrt(n)) -> foo 
-ggplot(foo, aes(x=sex, group=diabetic, color=diabetic,y=bp,width=.5))  + geom_bar(alpha=.3,aes(fill=diabetic),position='dodge',stat='identity') + geom_errorbar(aes(ymax=bp+2*se,ymin=bp-2*se,),position='dodge',weight=3,size=2)  + ylim(0,80)
+  summarise(myIndex=mean(waist/height,na.rm=TRUE),n=n(),
+            se=sd(waist/height, na.rm=TRUE)/sqrt(n)) -> foo 
+ggplot(foo, aes(x=sex, group=diabetic, color=diabetic,y=myIndex,width=.5))  + geom_bar(alpha=.3,aes(fill=diabetic),position='dodge',stat='identity') + geom_errorbar(aes(ymax=myIndex+2*se,ymin=myIndex-2*se,),position='dodge',weight=3,size=2)  + ylim(0,80)
 ```
 
 Perhaps a better plot would be:
 
-```{r}
-ggplot(NHANES, aes(x=sex, y=systolic-diastolic, fill=diabetic)) + geom_boxplot(notch=TRUE)
+```{r eval=FALSE}
+ggplot(NHANES, aes(x=sex, y=myIndex, fill=diabetic)) + geom_boxplot(notch=TRUE)
 ```
 
 NB.  For some reason, geom_box() doesn't use group.  But color works.
@@ -479,9 +480,9 @@ What could you improve about this graphic if your point is to show that pulse pr
 
 ```{r}
 group_by(NHANES, sex, diabetic) %>% 
-  summarize(bp=mean(systolic-diastolic,na.rm=TRUE),n=n(),
-                                              se=sd(systolic-diastolic, na.rm=TRUE)/sqrt(n)) -> foo 
-ggplot(foo, aes(group=sex, x=diabetic, y=bp,width=.5))  + geom_bar(alpha=.3,aes(fill=sex),position='dodge',stat='identity') + geom_errorbar(aes(ymax=bp+2*se,ymin=bp-2*se,),position='dodge',weight=3,size=2)  + ylim(0,80) + ylab("Pulse Pressure (mmHg)") + 
+  summarise(mn=mean(myIndex,na.rm=TRUE),n=n(),
+                                              se=sd(myIndex, na.rm=TRUE)/sqrt(n)) -> foo 
+ggplot(foo, aes(group=sex, x=diabetic, y=mn,width=.5))  + geom_bar(alpha=.3,aes(fill=sex),position='dodge',stat='identity') + geom_errorbar(aes(ymax=mn+2*se,ymin=mn-2*se,),position='dodge',weight=3,size=2)  + ylim(0,80) + ylab("Waist to Height Ratio (cm/m)") + 
   xlab("Diabetes status")
 ```
 

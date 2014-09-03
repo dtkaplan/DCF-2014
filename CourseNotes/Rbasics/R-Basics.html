@@ -92,8 +92,8 @@ sqrt(2)
 <div id="loading-packages" class="section level3">
 <h3>Loading Packages</h3>
 <p>R has grown in use rapidly, in part because it’s easy to add new software and new capabilities to R. Such additions are called <em>packages</em>. Indeed, some of the central functionality of R is provided by packages.</p>
-<p>We’re going to use several packages. The <code>DCFdevel</code> package contains data for the Data &amp; Computing Fundamentals course. In order to make these data accessible, you have to <em>load</em> the package. The command is:</p>
-<pre class="r"><code>library( DCFdevel )</code></pre>
+<p>We’re going to use several packages. The <code>DCF</code> package contains data for the Data &amp; Computing Fundamentals course. In order to make these data accessible, you have to <em>load</em> the package. The command is:</p>
+<pre class="r"><code>library( DCF )</code></pre>
 <p>Usually you will give this command at the start of a session.</p>
 <p>The <code>NHANES</code> package<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> contains (as of this writing) just one data table, which is also called <code>NHANES</code>.</p>
 </div>
@@ -101,7 +101,7 @@ sqrt(2)
 <h3>Data and Objects</h3>
 <p>The data you work with will generally be organized into <em>data tables</em>. To work on data in R, you need to bring the data into your R session. There are many ways to do this. The simplest, and the one we will use in this introduction, is via the <code>data()</code> function.</p>
 <p>You can list the data in a package with this command:</p>
-<pre class="r"><code>data( package = &quot;DCFdevel&quot; )</code></pre>
+<pre class="r"><code>data( package = &quot;DCF&quot; )</code></pre>
 <p>Give the command.</p>
 <p>To bring a particular data table into R, use the <code>data()</code> function with the name of the data table, as in:</p>
 <pre class="r"><code>data( &quot;NHANES&quot; )</code></pre>
@@ -131,9 +131,9 @@ sqrt(2)
 <p>The sentence grammar of R is straightforward. Follow the <em>name</em> of the function with a pair of parentheses. Inside the parentheses, you put the input on which the operation is to be preferred.</p>
 <p>Almost all of the examples above have this form: a function name followed by parentheses.</p>
 <pre class="r"><code>sqrt( 2 )
-library( &quot;DCFdevel&quot; )
+library( &quot;DCF&quot; )
 library( &quot;NHANES&quot; )
-data( package=&quot;DCFdevel&quot; )
+data( package=&quot;DCF&quot; )
 data( package=&quot;NHANES&quot;)
 data( &quot;NHANES&quot; )
 help( &quot;NHANES&quot; )</code></pre>
@@ -145,10 +145,10 @@ help( &quot;NHANES&quot; )</code></pre>
 <h4>Arguments</h4>
 <p>A specific word is used to refer to the inputs handed to functions: <strong>arguments</strong>. (Why? It’s a tradition from mathematics.) Here are some of the arguments in the above examples:</p>
 <pre class="r"><code>2
-&quot;DCFdevel&quot;
-package=&quot;DCFdevel&quot;
+&quot;DCF&quot;
+package=&quot;DCF&quot;
 &quot;NHANES&quot;</code></pre>
-<p>The third example, <code>package=&quot;DCFdevel&quot;</code> is called a <em>named argument</em>. Named arguments are a way to signal clearly what role the argument is to play.</p>
+<p>The third example, <code>package=&quot;DCF&quot;</code> is called a <em>named argument</em>. Named arguments are a way to signal clearly what role the argument is to play.</p>
 <p>When there is more than one argument to a function, put them all in the same set of parentheses with a comma between the different arguments.</p>
 </div>
 <div id="objects" class="section level4">
@@ -161,12 +161,12 @@ Name     | Value                  | Kind of thing
 ---------|------------------------|---------------
          |  2                     | a number
 sqrt     | computer commands      | a function
-         | &quot;DCFdevel&quot;             | a string of characters
+         | &quot;DCF&quot;             | a string of characters
 NHANES   | data                   | data table
          | &quot;NHANES&quot;               | a string of characters
 </pre>
 
-<p>Most of the objects you will use have names, e.g. <code>NHANES</code> or <code>sqrt</code>. Sometimes you will use objects that don’t have a name, for instance the number 2 or the quoted set of characters <code>&quot;DCFdevel&quot;</code>.</p>
+<p>Most of the objects you will use have names, e.g. <code>NHANES</code> or <code>sqrt</code>. Sometimes you will use objects that don’t have a name, for instance the number 2 or the quoted set of characters <code>&quot;DCF&quot;</code>.</p>
 <p>It will take a while for you to get used to the difference between an object and the <em>name</em> of an object. Object names are never in quotes and they never begin with a digit. When quotes are used, it is to identify characters as a string. Strings are used for labels, or to identify something outside of R (e.g. a web location or a file name).</p>
 </div>
 </div>

@@ -7,7 +7,7 @@ output: html_document
 
 ```{r include=FALSE}
 require(knitr)
-require(DCFdevel)
+require(DCF)
 require(NHANES)
 opts_chunk$set( comment = NA )
 ```
@@ -60,9 +60,9 @@ As you use R, you will be creating objects in the session environment.
 
 R has grown in use rapidly, in part because it's easy to add new software and new capabilities to R.  Such additions are called *packages*.  Indeed, some of the central functionality of R is provided by packages.
 
-We're going to use several packages.  The `DCFdevel` package contains data for the Data & Computing Fundamentals course.  In order to make these data accessible, you have to *load* the package.  The command is:
+We're going to use several packages.  The `DCF` package contains data for the Data & Computing Fundamentals course.  In order to make these data accessible, you have to *load* the package.  The command is:
 ```{r}
-library( DCFdevel )
+library( DCF )
 ```
 Usually you will give this command at the start of a session.  
 
@@ -76,7 +76,7 @@ The data you work with will generally be organized into *data tables*. To work o
 
 You can list the data in a package with this command:
 ```{r}
-data( package = "DCFdevel" )
+data( package = "DCF" )
 ```
 Give the command.
 
@@ -129,9 +129,9 @@ The sentence grammar of R is straightforward. Follow the *name* of the function 
 Almost all of the examples above have this form: a function name followed by parentheses.
 ```{r results='hide'}
 sqrt( 2 )
-library( "DCFdevel" )
+library( "DCF" )
 library( "NHANES" )
-data( package="DCFdevel" )
+data( package="DCF" )
 data( package="NHANES")
 data( "NHANES" )
 help( "NHANES" )
@@ -148,12 +148,12 @@ When you use the name of an object as a command, R will produce as output the va
 A specific word is used to refer to the inputs handed to functions: **arguments**.  (Why?  It's a tradition from mathematics.)  Here are some of the arguments in the above examples:
 ```{r results='hide'}
 2
-"DCFdevel"
-package="DCFdevel"
+"DCF"
+package="DCF"
 "NHANES"
 ```
 
-The third example, `package="DCFdevel"` is called a *named argument*.  Named arguments are a way to signal clearly what role the argument is to play.
+The third example, `package="DCF"` is called a *named argument*.  Named arguments are a way to signal clearly what role the argument is to play.
 
 When there is more than one argument to a function, put them all in the same set of parentheses with a comma between the different arguments. 
 
@@ -170,12 +170,12 @@ Name     | Value                  | Kind of thing
 ---------|------------------------|---------------
          |  2                     | a number
 sqrt     | computer commands      | a function
-         | "DCFdevel"             | a string of characters
+         | "DCF"             | a string of characters
 NHANES   | data                   | data table
          | "NHANES"               | a string of characters
 </pre>
 
-Most of the objects you will use have names, e.g. `NHANES` or `sqrt`.  Sometimes you will use objects that don't have a name, for instance the number 2 or the quoted set of characters `"DCFdevel"`.
+Most of the objects you will use have names, e.g. `NHANES` or `sqrt`.  Sometimes you will use objects that don't have a name, for instance the number 2 or the quoted set of characters `"DCF"`.
 
 
 

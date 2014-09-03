@@ -1,12 +1,12 @@
 ---
 output:
   html_document:
-    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
     fig_caption: yes
     toc: yes
 ---
 
-```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
 ```
 
 
@@ -160,7 +160,7 @@ You've seen four general components of data graphics:
 These concepts apply to data graphics generally.  Here are some examples based on a data table derived from the NHANES data. 
 
 ```{r echo=FALSE}
-data(NHANESDCF,package="DCFdevel")
+data(NHANES)
 ```
 
 Recall that in NHANES each case is an individual person.  Here's a small part of the data table:
@@ -168,7 +168,7 @@ Recall that in NHANES each case is an individual person.  Here's a small part of
 ```{r echo=FALSE, results='asis'}
 set.seed(63493)
 nNHANES <- nrow(NHANES)
-smallNHANES <- na.omit(select(NHANES,age,sex,smoker,death,weight,BMI,diabetic))
+smallNHANES <- na.omit(select(NHANES,age,sex,smoker,death,weight,bmi,diabetic))
 xtable( sample_n( smallNHANES, size=6 ) )
 ```
 
@@ -286,10 +286,11 @@ geom_point(size=2, aes(color=`Smoking Status`)) +
 Still another glyph: a bar showing the difference in survival between smokers and non-smokers.  The horizontal position of the bar is set by the age group.  The top of the bar is set by the non-smoker survival rate, the bottom by the smoker survival rate.
 
 ```{r echo=FALSE}
-FracAliveSmoke %>% select(ageGroup,smoker,fracAlive) %>% 
-spread(smoker,fracAlive) %>% na.omit %>%
-ggplot( aes(x=ageGroup,y=smoker)) + ylab("Fraction Surviving") +
-  geom_errorbar(size=2,width=.2,aes(ymax=nonsmoker,ymin=smoker))
+FracAliveSmoke %>% 
+  select(ageGroup,smoker,fracAlive) %>% 
+  spread(smoker,fracAlive) %>% na.omit %>%
+ggplot( aes(x=ageGroup)) + ylab("Fraction Surviving") +
+  geom_errorbar(size=2,width=.2,aes(ymax=no,ymin=yes))
 ```
 
 ## Images for Glyphs:

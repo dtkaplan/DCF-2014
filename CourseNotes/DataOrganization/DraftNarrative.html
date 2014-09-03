@@ -74,7 +74,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <p>These notes focus on an organization of data that is simple yet very widely used, what’s sometimes called “tidy data.”<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> At the heart of tidy data is the <strong>data table</strong>. Here’s an example: a listing from the US Social Security Administration of the yearly births in the US along with the name given to the baby.</p>
 <div class="displayAsFigure">
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  1 13:37:52 2014 -->
+<!-- Wed Sep  3 08:18:36 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 name
@@ -185,7 +185,7 @@ A very small subset of a data table showing how many babies were given each name
 <p>Indeed, if you wanted to do calculations based on the Minneapolis election data, you would first want to put it in a tidy form, like this:</p>
 <div class="displayAsFigure">
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  1 13:37:52 2014 -->
+<!-- Wed Sep  3 08:18:36 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 Ward
@@ -370,7 +370,7 @@ A graphical depiction of voter turnout in the different wards.
 <p>As already said, a row of a tidy data table refers to a case. To this point, you may have little reason to prefer the word “case” to “row.”</p>
 <p>In working with data, keep in mind what a case stands for in the real world. Sometimes the meaning is obvious. For instance, here eight cases from a (tidy) data table showing each in the Minneapolis mayoral election in 2013. (The voters were directed to mark their ballot with the first three choices of candidates, in order. This is part of a procedure called <a href="http://vote.minneapolismn.gov/rcv/">rank choice voting</a>.)</p>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  1 13:37:52 2014 -->
+<!-- Wed Sep  3 08:18:37 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 Precinct
@@ -480,7 +480,7 @@ W-7
 <p>Here’s a small part of a data table about results from a 10-mile running race held each year in Washington, D.C.</p>
 <div class="displayAsFigure">
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  1 13:37:53 2014 -->
+<!-- Wed Sep  3 08:18:37 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 name.yob
@@ -673,7 +673,7 @@ An excerpt of runners’ performance over the years in a 10-mile race.
 <div id="the-codebook" class="section level2">
 <h2>The Codebook</h2>
 <p>The “codebook” is a document — separate from the data table — that describes various aspects of how the data were collected, what the variables mean and what the different levels of categorical variables refer to. The word “codebook” comes from the days when data was encoded for the computer in ways that make it hard for a human to read.</p>
-<p>For data provided by R packages, a codebook is available via the <code>help()</code> function, e.g., for the <code>BabyNames</code> data in the <code>DCFdevel</code> package, try:</p>
+<p>For data provided by R packages, a codebook is available via the <code>help()</code> function, e.g., for the <code>BabyNames</code> data in the <code>DCF</code> package, try:</p>
 <pre class="r"><code>help( BabyNames )</code></pre>
 <p>For the runners data, the codebook would tell you that the meaning of the <code>gun</code> variable is the time from when the start gun went off to when the runner crosses the finish line and that the unit of measurement is “minutes.” It would also state the obvious: that <code>age</code> is the person’s age in years and <code>sex</code> has two levels, male and female, represented by M and F.<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a></p>
 <p>An example of a complicated codebook of the sort sometimes found in the tabulation of government or social science data, is <a href="http://www.icpsr.umich.edu/cgi-bin/file?comp=none&amp;study=27643&amp;ds=1&amp;file_id=1008871&amp;path=NACJD">this document</a> describing data from the Uniform Crime Reporting Data from the US Department of Justice. You generally need a lot of knowledge about the specific field to make sense of such things.</p>
