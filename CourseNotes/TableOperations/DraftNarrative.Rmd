@@ -1,6 +1,85 @@
 ---
-title: "Draft Narrative"
-output: html_document
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
+    fig_caption: yes
+    toc: yes
 ---
 
-In this document, place draft narrative for this section of the notes. 
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
+```
+
+For `mutate()`, perhaps contrast it with `summarise()`.
+
+
+## Transforms and Aggregations
+
+An important distinction to make in using data is between **transforming** and **aggregating**.  
+
+In aggregating data, you will be combining cases.  Think of aggregating as creating a new kind of case.
+
+In transforming data, you will be treating each and every case individually.
+
+Suppose you want to try out a replacement for the body mass index (`bmi`).  You think a better index might be the waist circumference divided by height. 
+
+```{r}
+myIndex <- with( NHANES, waist/height )
+```
+
+This subtraction is a transform.  It produces a result for each case in NHANES, all `r nrow(NHANES)` of them.
+```{r}
+summary( myIndex )
+```
+
+In contrast, suppose you want to know the median waist circumference.  That's an aggregation.  It converts the whole set of cases into a single number.
+```{r}
+with( NHANES, median(waist))
+```
+
+There are many possible transforms and many different aggregations. Here are a few:
+
+* **Transforms**: arithmetic operations (`+`, `-`, `*`, `/`, `^`), `sqrt()`, `log()`, and so on.
+* **Aggregations**: `mean()`, `median()`, `sum()`, `range()`, `sd()`, `IQR()` and so on.
+
+Remember: a transformation keeps each case as it is, while an aggregation produces a new sort of case.  In `NHANES` or transformations of it, the case is an individual person.  In an aggregation of `NHANES` the case is "all the people together."
+
+## What you give should be what you get
+
+As you've seen, data are organized into data frames.  A useful style in computing is to arrange computations so that the input is a data frame and the output is also a data frame.  When things are set up this way, you can easily use the output of one computation as the input to another.  For instance, you may want to transform variables before plotting them.
+
+To support this style, you'll be using specific functions: `mutate()`, `summarize()`, `group_by()` and so on.  If you have used R before, these functions may be unfamiliar.  And, of course, if you have never used R, the functions are new to you.  
+
+### Transforms
+
+To perform a transform, use the `mutate()` function.  The first argument is a data frame.  Additional arguments specify the transform to be calculated.  Like this:
+```{r}
+output <- mutate( NHANES, myIndex=waist/height )
+```
+In this operation, a new variable has been created called `myIndex`.  The output copies over the input data frame as well, so `output` will have all the variables originally in `NHANES` along with `myIndex`:
+```{r}
+names(output)
+```
+
+A very common style with a transform is to use the output of `mutate()` to redefine the input data frame, as with:
+```{r}
+NHANES <- mutate( NHANES, myIndex=waist/height )
+```
+
+Sometimes, you will use a transform to modify an existing variable.  For instance, the `followup` variable in `NHANES` gives --- for those people who died soon after the study --- the number of months from the initial measurements until the subject died. Perhaps you want this in years rather than months.
+```{r}
+NHANES <- mutate( NHANES, followup=followup/12 )
+```
+
+### Aggregation
+
+To carry out an aggregation, use the `summarise()` function.  
+```{r}
+summarise( NHANES, typicalAge=median(age, na.rm=TRUE) )
+```
+
+The output of `summarize()` is a data frame, albeit a very short data frame in this situation.
+
+Sometimes, you will want to use an aggregate quantity as part of a transformation.  Suppose, for instance, that you want to know how much each person differs in height from the mean.
+```{r}
+NHANES <- mutate( NHANES, hgtDiff=height-mean(height) )
+```

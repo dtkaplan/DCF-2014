@@ -63,9 +63,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <li><a href="#creating-or-updating-a-data-frame">Creating or Updating a Data Frame</a></li>
 <li><a href="#chains-of-operations">Chains of Operations</a></li>
 <li><a href="#assigning-variables">Assigning variables</a></li>
-<li><a href="#exercises">EXERCISES</a></li>
 </ul></li>
-<li><a href="#rstudio-menu-and-keyboard-shortcuts">RStudio Menu and Keyboard Shortcuts</a></li>
 </ul>
 </div>
 
@@ -87,7 +85,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <li>How assignment allows values to be stored and referred to by name.</li>
 <li>How the output of one function can become the input to another.</li>
 </ul>
-<p>You are <strong>not</strong> expected at this point to be able to write R expressions. You’ll have plenty of opportunity to do that once you’ve learned to read R expressions.</p>
+<p>You are <strong>not</strong> expected at this point to be able to <em>write</em> R expressions. You’ll have plenty of opportunity to do that once you’ve learned to <em>read</em> R expressions.</p>
 <p>If you are already experienced with writing statements in R, please read this footnote.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> If not, just move on.</p>
 </div>
 <div id="expressions" class="section level2">
@@ -98,7 +96,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <li>A syntax for combining the functions, data tables, and variables together so that you can create new, custom operations.</li>
 </ul>
 <p>For these notes, you will need only a small set of functions, about 30 altogether. It won’t be too hard to memorize their names and what they do.</p>
-<p>You should take note of an important distinction about the arguments to the various functions. (Remember that “argument” is synonymous with “input.” Functions take one or more inputs and produce an output. The output is sometimes called the “return value” of the function.)</p>
+<p>You should take note of an important distinction about the arguments to the various functions. (Remember that “argument” is synonymous with “input.” Functions take one<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> or more inputs and produce an output. The output is sometimes called the “return value” of the function.)</p>
 <ul>
 <li>Some functions take as one of their inputs a data table. There might be other inputs as well.</li>
 <li>Some functions do not take a data table, but a variable from a data table.</li>
@@ -114,8 +112,8 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <div id="r-commands" class="section level2">
 <h2>R Commands</h2>
 <p>Here are some of the functions you will often use:</p>
-<p><strong>Dataframes as an argument</strong>: <code>str()</code>,<code>head()</code>, <code>summarise()</code>, <code>group_by()</code>, <code>ggplot()</code>, <code>makeChart()</code>, <code>filter()</code>, <code>select()</code>, <code>sample_n()</code>, <code>join()</code>.</p>
-<p><strong>Variables as an argument</strong>: <code>mean()</code>, <code>max()</code>, <code>sqrt()</code>, <code>IQR()</code>, <code>+</code>, <code>==</code>, <code>&gt;</code>, and so on.</p>
+<p><em>Functions that take <strong>dataframes</strong> as an argument</em>: <code>str()</code>,<code>head()</code>, <code>summarise()</code>, <code>group_by()</code>, <code>ggplot()</code>, <code>makeChart()</code>, <code>filter()</code>, <code>select()</code>, <code>sample_n()</code>, <code>join()</code>.</p>
+<p><em>Functions that take <strong>variables</strong> as an argument</em>: <code>mean()</code>, <code>max()</code>, <code>sqrt()</code>, <code>IQR()</code>, <code>+</code>, <code>==</code>, <code>&gt;</code>, and so on.</p>
 <p>Note that functions names are always followed by a pair of parentheses. When the function is being used as part of a command, the arguments to the function go inside the parentheses.</p>
 <p><strong>Miscellaneous functions</strong>: The functions that take a quoted character string as an argument: <code>data()</code>, <code>xlab()</code>, <code>ggtitle()</code>, etc.</p>
 </div>
@@ -167,7 +165,7 @@ nrow( MyResult )</code></pre>
 <p>It’s common to use the output of one function as the input to another. This was done in the previous example. The output of <code>group_by( BabyNames )</code> was used as an input to <code>summarise()</code>. There are two basic styles to do this:</p>
 <ol style="list-style-type: decimal">
 <li>Name the intermediate result (e.g., <code>BabiesBySex</code>) and use that result by name in the next computation.</li>
-<li>Use a chaining<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> syntax.</li>
+<li>Use a chaining<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a> syntax.</li>
 </ol>
 <p>You’ve seen the name-the-intermediate style above. Here’s what that same computation looks like using the chaining syntax:</p>
 <pre class="r"><code>BabyNames %&gt;%
@@ -178,8 +176,8 @@ nrow( MyResult )</code></pre>
   sex     total
 1   F 165280729
 2   M 168137041</code></pre>
-<p>This means, “Give <code>BabyNames</code> as the first argument to <code>group_by()</code> and give that result as the first argument to <code>summarize()</code>. The arguments within the parentheses, <code>( sex )</code> or <code>( total=sum( count ))</code> get pushed into second position when the function is evaluated.<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a></p>
-<p>A matter of punctuation … It’s <strong>absolutely essential</strong> that when you start a new line in a command, the last item on that line be <code>%&gt;%</code>.<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a></p>
+<p>This means, “Give <code>BabyNames</code> as the first argument to <code>group_by()</code> and give that result as the first argument to <code>summarize()</code>. The arguments within the parentheses, <code>( sex )</code> or <code>( total=sum( count ))</code> get pushed into second position when the function is evaluated.<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a></p>
+<p>A matter of punctuation … It’s <strong>absolutely essential</strong> that when you start a new line in a command, the last item on that line be <code>%&gt;%</code>.<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a></p>
 <p>You can assign the output of a chained expression to a new object. The recommended punctuation for this is:</p>
 <pre class="r"><code>MyResult &lt;- 
   BabyNames %&gt;%
@@ -214,7 +212,7 @@ ggplot( Princes, aes(x=year,y=yearlyTotal) ) +
 </div>
 <div id="create-a-new-variable." class="section level4">
 <h4>Create a new variable.</h4>
-<p>Functions such as <code>summarise()</code> and <code>mutate()</code> can create new variables. In every case, you specify both the <em>name</em> of the new variable and the value you want it to take. The syntax is <em>name</em> <code>=</code> <em>value</em>.</p>
+<p>Functions such as <code>summarise()</code> and <code>mutate()</code> can create new variables.<a href="#fn6" class="footnoteRef" id="fnref6"><sup>6</sup></a> In every case, you specify both the <em>name</em> of the new variable and the value you want it to take. The syntax is <em>name</em> <code>=</code> <em>value</em>.</p>
 <p>Example:</p>
 <pre class="r"><code>summarise( BabiesBySex, total=sum( count ) )</code></pre>
 <p>Here, a new variable called <code>total</code> is being created. When creating new variables, you can use anything you think appropriate as the name of the variable or variables to be created. It must be a legitimate variable name: starting with a character and containing only characters or digits or <code>.</code> or <code>_</code>. A recommended style is that the names you choose for variables be short and mnemonic of what the variable contains.</p>
@@ -229,52 +227,16 @@ ggplot( Princes, aes(x=year,y=yearlyTotal) ) +
 <p>Here, <code>x</code> is the name of an argument to the function <code>aes()</code>. The expression, <code>x=year</code> means that the <code>x</code> input will be the values of the <code>year</code> variable. Similarly, <code>geom_vline()</code> has a large number of potential arguments, including <code>xintercept</code>, <code>alpha</code>, <code>linetype</code>, <code>color</code>, etc. The expression <code>xintercept=1978</code> says to set the <code>xintercept</code> argument to the value 1978.</p>
 </div>
 </div>
-<div id="exercises" class="section level3">
-<h3>EXERCISES</h3>
-<p>For each of the functions, indicate whether it operates on a variable or a data table. <code>mean()</code>, <code>sum()</code>, <code>str()</code>, <code>group_by()</code></p>
-<p>DO MULTIPLE CHOICE EXAMPLES</p>
-<p>In the following statements, say which names refer to data tables and which ones refer to variables. In order to make it a bit of a challenge, the statements don’t necessarily respect the convention that names of data tables start with a capital letter and names of variables start with a lower-case letter.</p>
-<p>DO MULTIPLE CHOICE EXAMPLES</p>
-<p>Here are several chains of functions. For each of the functions listed, say whether there is an implicit input coming from the chaining <code>%&gt;%</code>.</p>
-<pre class="r"><code>Princes &lt;-
-  BabyNames %&gt;%
-  filter( name==&quot;Prince&quot; ) %&gt;%
-  group_by( year, sex ) %&gt;%
-  summarise( yearlyTotal=sum( count ) )</code></pre>
-<ul>
-<li><code>filter()</code>: Implicit input: yes or no</li>
-<li><code>summarise()</code>: Implicit input: yes or no</li>
-<li><code>sum()</code>, Implicit input: yes or no In an expression like</li>
-</ul>
-<pre><code>summarize( BabyNames, )
-</code></pre>
-<p>In the previous examples, you’ve seen some phrases like <code>yearlyTotal=sum( count )</code> or <code>color=sex</code>. These involve the <code>=</code> sign, which is used to give a name to a variable.</p>
-<p>Add a new variable PRINCE containing “Prince.” Add a new variable containing “increase over previous year.”</p>
-<p>EXERCISES FROM NETTA:</p>
-<p>You can copy the commands shown in the notes, modifying them to address the question at hand.</p>
-<p>Functions that work on a data table.</p>
-<p>Functions that work on a variable within a data table.</p>
-</div>
-</div>
-<div id="rstudio-menu-and-keyboard-shortcuts" class="section level2">
-<h2>RStudio Menu and Keyboard Shortcuts</h2>
-<p><code>str()</code>, <code>names()</code>, <code>head()</code>, <code>sample_n()</code>,</p>
-<p>Using TAB in RStudio. (For video also.)</p>
-<p>putting things together: <code>c()</code>,</p>
-<p><code>mean()</code>, <code>sum()</code>, and so on.</p>
-<p>Meaning of <code>NA</code></p>
-<p>Example of <code>mean( , na.rm=TRUE )</code>. Difference with <code>NaN</code>.</p>
-<p><code>==</code> and other comparison operators. How <code>sum()</code> and <code>mean()</code> work to produce counts and proportions.</p>
-<p>SAVE transformation functions (e.g. <code>rank()</code>, <code>ntiles()</code>, <code>row_number()</code> ) until mutate.</p>
-<p>what NULL means</p>
 </div>
 <div class="footnotes">
 <hr />
 <ol>
 <li id="fn1"><p>Chances are, the expressions you will see in these notes will look little or nothing like the commands that you are used to writing. The expressions here are written in what might be called a “dialect” or “accent” of R. This dialect emphasizes functions and functions that work with data frames. (The more general term, “data table” is used here.) A small set of functions is emphasized that will be unfamiliar: <code>group_by()</code>, <code>summarise()</code>, <code>filter()</code> and so on. These have been designed carefully by Hadley Whickham and his collaborators to give a smooth, consistent interface between the data scientist and the computer. In addition, you will see extensive use of <em>chaining</em>, a way of connecting the inputs and outputs of function. This involves the <code>%&gt;%</code> function. To give an example, the mathematical expression <span class="math">\(\cos( \sqrt{x} )\)</span> would traditionally be written in R as <code>cos( sqrt( x ) )</code>, with the output of <code>sqrt()</code> being passed as the input to <code>cos()</code>. In the chaining style, this would be written <code>x %&gt;% sqrt() %&gt;% cos()</code>. You can decide for yourself whether you prefer the traditional or chaining style for the kinds of operations introduced in these notes. You can use either. Finally, you will see <em>only</em> the <code>&lt;-</code> notation used for assignment. There’s nothing wrong with using <code>=</code>, but this is saved for the arguments to functions rather than storage.<a href="#fnref1">↩</a></p></li>
-<li id="fn2"><p>Computer scientists call this “piping.”<a href="#fnref2">↩</a></p></li>
-<li id="fn3"><p>This is called “infix” notation. Something like it is used when doing arithmetic in R. For example, <code>3 + 2</code> is a perfectly good expression: add 3 to 2. In fact, <code>&quot;+&quot;</code> is the name of the function. <code>3 + 2</code> gets translated by R into a function-parentheses expression, <code>&quot;+&quot;(3,2)</code>. So the value to the left of <code>+</code> becomes the first argument of of the <code>&quot;+&quot;()</code> function, and the argument to the right of <code>+</code> gets pushed into the second argument’s slot. Try <code>&quot;-&quot;(4,5)</code>.<a href="#fnref3">↩</a></p></li>
-<li id="fn4"><p>Otherwise, R will think your command is complete and will treat the next line as a new command.<a href="#fnref4">↩</a></p></li>
+<li id="fn2"><p>Actually, functions take zero or more arguments. Some functions, like <code>date()</code>, don’t take any arguments at all.<a href="#fnref2">↩</a></p></li>
+<li id="fn3"><p>Computer scientists call this “piping.”<a href="#fnref3">↩</a></p></li>
+<li id="fn4"><p>This is called “infix” notation. Something like it is used when doing arithmetic in R. For example, <code>3 + 2</code> is a perfectly good expression: add 3 to 2. In fact, <code>&quot;+&quot;</code> is the name of the function. <code>3 + 2</code> gets translated by R into a function-parentheses expression, <code>&quot;+&quot;(3,2)</code>. So the value to the left of <code>+</code> becomes the first argument of of the <code>&quot;+&quot;()</code> function, and the argument to the right of <code>+</code> gets pushed into the second argument’s slot. Try <code>&quot;-&quot;(4,5)</code>.<a href="#fnref4">↩</a></p></li>
+<li id="fn5"><p>Otherwise, R will think your command is complete and will treat the next line as a new command.<a href="#fnref5">↩</a></p></li>
+<li id="fn6"><p>Programmers in many languages other than R, often refer to objects as variables. But remember, a variable is a column of a data table. The data table itself is an “object.” <code>summarize()</code> and <code>mutate()</code> produce an output that is a data table, but they create new variables that go into the data table.<a href="#fnref6">↩</a></p></li>
 </ol>
 </div>
 

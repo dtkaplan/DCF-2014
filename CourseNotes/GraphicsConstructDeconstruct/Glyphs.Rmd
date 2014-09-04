@@ -131,22 +131,7 @@ CountryData %>% ggplot(aes(y=migr, x=unemployment)) +
 
 With the appropriate scaling, the countries are spread out in an approachable way.  You have a hope of making an inference about the relationship among these variables.  For instance, use the graph to judge the validity of this hypothesis: "Low inflation countries tend to have more outward migration than high inflation countries." The answer may not be obvious, but at least the question is approachable.
 
-### EXERCISE
 
-#### One
-
-TRY VARYING the assignment of variables to graphical attributes using `mPlot()`.  Show the graph you find the most informative.
-
-#### Two
-
-Get inflation and unemployment data using `CIAdata()`.  Is there a relationship between the two?  Find a variable that indicates the economic strata of the countries.  Does this change the picture?  Make the graph you find most compelling and describe your conclusions based on this graph.
-
-#### Three
-
-*For JOIN*.  Use the latitude and longitude of each country to plot the economic/health data on a map.
-
-### End of exercise
- 
  
 ## Components of Data Graphics
 
@@ -259,60 +244,5 @@ geom_bar(stat='identity',position="dodge") +
 ```
 
 A graphical attribute of bar color has been added.  The color is set by the "Smoking Status" variable.   A guide to the relatonship between Smoking Status and color has been added. 
-
-### EXERCISE
-
-GIVE THE SMOKER DATA
-
-Make a graph from the smoker data that looks like the following.  (Hint: What variables are represented by which graphical attributes.) ACTUALLY: Ask them in a drill which variable is mapped to which graphical attribute.
-
-```{r echo=FALSE}
-FracAliveSmoke %>% na.omit() %>% mutate( `Smoking Status`=smoker) %>% 
-ggplot(aes(y=fracAlive, x=`Smoking Status` ,fill=ageGroup))+
-geom_bar(stat='identity',position="dodge") + 
-  ylab("Fraction Alive at end of Follow-Up") +
-  xlab("Age") + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=16))
-```
-
-Here's the same data, but with the glyph changed from a zero-based bar to a dot with position and color attributes:
-```{r echo=FALSE}
-FracAliveSmoke %>% na.omit() %>% mutate( `Smoking Status`=smoker) %>% 
-ggplot(aes(x=ageGroup, y=fracAlive ,fill=`Smoking Status`))+
-geom_point(size=2, aes(color=`Smoking Status`)) + 
-  ylab("Fraction Alive at end of Follow-Up") +
-  xlab("Age") + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=16))
-```
-
-Still another glyph: a bar showing the difference in survival between smokers and non-smokers.  The horizontal position of the bar is set by the age group.  The top of the bar is set by the non-smoker survival rate, the bottom by the smoker survival rate.
-
-```{r echo=FALSE}
-FracAliveSmoke %>% 
-  select(ageGroup,smoker,fracAlive) %>% 
-  spread(smoker,fracAlive) %>% na.omit %>%
-ggplot( aes(x=ageGroup)) + ylab("Fraction Surviving") +
-  geom_errorbar(size=2,width=.2,aes(ymax=no,ymin=yes))
-```
-
-## Images for Glyphs:
-
-<file:///Users/kaplan/KaplanFiles/MOSAIC/CVC/Summer2014/Notes/GraphicsBasics/graphics-basics.html#4>
-
-## Position (NOT YET)
-
-Stacked, Dodged, ...
-
-Make the survival by age and smoker a STACKED bar plot.  Why is this silly?
-
-```{r echo=FALSE}
-FracAliveSmoke %>% na.omit() %>% mutate( `Smoking Status`=smoker) %>% 
-ggplot(aes(y=fracAlive, x=`ageGroup` ,fill=`Smoking Status`))+
-geom_bar(stat='identity',position="stack") + 
-  ylab("Fraction Alive at end of Follow-Up") +
-  xlab("Age") + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=16))
-```
-
-DO WEIGHT AGAINST AGE GROUP WITH position DODGE.
-
-Also show the box-whisker plot overlayed
 
 

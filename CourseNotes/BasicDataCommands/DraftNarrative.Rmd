@@ -13,7 +13,7 @@ output:
 
 In English grammar, a verb is a word that expresses an action.^[And, to be more complete, a state of being.  But that isn't relevant here.] In working with data, a verb is a function that transfigures a data table in some specified way.
 
-The word "transfigure" is used intentionally.  A data verb turns a data table into a new data table. The new data table may have the same kinds of cases as the original, or it may have different kinds of cases.  For instance, data verbs can be used to transfigure a data table with cases about individual people (each living in a country) into a data table where the cases are countries.
+The word "transfigure" is used intentionally.  A data verb turns a data table into a new data table. The new data table may have the same kinds of cases as the original or it may have different kinds of cases.  For instance, data verbs can be used to transfigure a data table with cases about individual people (each living in a country) into a data table where the cases are countries.
 
 The basic data verbs you will study in these notes^[Other data verbs are `filter()`, `mutate()`, `arrange()`, `join()`, `gather()`, and `spread()`] are:
 
@@ -24,7 +24,7 @@ Keep these things in mind about data-verb functions:
 
 * The data-verb function **always** takes a data table as an input.
 * The data-verb function takes other arguments that specify the details of the transfiguration.
-* The data-verb function **never** changes the input data table. Instead it returns a new data table.  You can use assignment to store that table.  (If you assign the output to the same name as the input, the new value will overwrite the old.)
+* The data-verb function **never** changes the input data table. Instead it returns a new data table.  You can use assignment to store that table.  (A frequently used style assigns the output to the same name as the input.  This changes the data table, but only after it's already been used for input.)
 * Since data-verb functions take a data table as input and produce a data table as a return value, it's natural to construct complex transfigurations by *chaining* a sequence of verbs together.
 
 ## Summarise
@@ -58,14 +58,6 @@ WorldCities %>%
              smallest=min(population) )
 ```
 
-EXERCISE:
-
-Find the location of 
-
-* the most northern and most southern city.  The city closest to 
-* the equator.
-
-END OF EXERCISE.
 
 The average city on the list has about 110,000 people.  The total population of people living in these cities is about 2.6 billion --- a bit more than one-third of the world population.  The smallest city has --- this seems strange! --- zero people; not really a city at all.
 
@@ -94,64 +86,9 @@ Note that the functions used within `summarise()` --- `n()`, `max()`, `sum()`, e
 
 ## Is That All?
 
-`Summarise()` is a team player; it works best in combination with other data verbs.  Once you learn those data verbs, particularly `filter()` and `mutate()`, you'll be able to carry out many more operations.  The richness of the data-verb system comes from the ways the different verbs can be combined together.  With just `group_by()` and `summarize()` you will be very limited.
+`Summarise()`^[The function is `summarise()` with a lower-case `s` at the start.  But English grammar calls for starting a sentence with a capital letter. You should use `summarise()` in your calculations.] is a team player; it works best in combination with other data verbs.  Once you learn those data verbs, particularly `filter()` and `mutate()`, you'll be able to carry out many more operations.  The richness of the data-verb system comes from the ways the different verbs can be combined together.  With just `group_by()` and `summarize()` you will be very limited.
 
 
-### EXERCISE
-
-#### One
-
-SIMPLE, SIMPLE: `NA` is a fact of life.  Using `na.rm=TRUE` when the result of a computation is `NA`.  Explaining what `NA` means.  `is.na()`.
-
-#### Two
-
-SIMPLE, SIMPLE: levels of categorical variables, e.g. 'alive' versus 'Alive' in `NHANES`.
-
-
-
-
-#### Four
-
-Use `==` and `mean()` to find the proportion of cases at a given level, e.g. what fraction of smokers have died.  Here's an example of the syntax you'll need, using `sex` instead of `smoker`.
-```{r}
-data(NHANES, package="DCF") 
-NHANES %>% group_by( sex ) %>%  
-  summarise( living=mean( death=='alive', na.rm=TRUE ))
-```
-
-Add in: Look carefully at the quantity being given to `mean()`.  The variable name is `death`.  Since it's a variable name, there are no quotes around it.  The `==` tests of equality.  The quoted string, `"alive"`, is one of the levels of the categorical variable `death`.  Altogether, `mean( death=="alive" )` means "the proportion of cases still alive."^[Admittedly, it's a bit odd to have a variable named `death` that can have a value `"alive"`. In the NHANES data, `death` indicates whether or not the person died, and whether the death (if any) was from cardiovascular causes.]
-
-
-Then break down by smoker, etc. as the exercise.  Don't show them this, but ask them to draw conclusions: which group is more likely to be alive.
-
-```{r}
-NHANES %>% group_by(smoker) %>% 
-  summarise( count=n(), 
-             living=mean(death=="alive", na.rm=TRUE) )
-NHANES %>% group_by(sex, smoker) %>%
-  summarise( living=mean(death=="alive", na.rm=TRUE) )
-```
-
-Then, ask them to break it down by people over 60 and people under 60.
-
-```{r}
-NHANES %>% group_by(age<=60,sex, smoker) %>%
-  summarise( living=mean(death=="alive", na.rm=TRUE) )
-```
-
-Among the young males, which group is more likely to be alive: smokers or non-smokers.  How about among older males?  Young females? Older females?
-
-Explain something about Simpson's paradox.
-
-Another EXERCISE ...
-
-Make a stacked bar chart of proportions for each of the smoking, sex, age groups.  Use this to illustrate the different kinds of plots.
-
-Another EXERCISE ...
-
-Using `ntile()` to convert quantitative to categorical.  List some of the other converters, e.g., `cut()`.
-
-### END OF EXERCISE
 
 ### An example
 
@@ -186,7 +123,7 @@ NHANES %>%
 ```
 
 
-* Each of the numerical calculations has been instructed to ignore missing data.  Without this, the missing data shapes the result:
+* Each of the numerical calculations has been instructed to ignore missing data. (That's what the `na.rm=TRUE` argument is doing.)  Here's what happens without `na.rm=TRUE` --- the missing data shapes the result.
     ```{r}
 NHANES %>% summarise( typical=mean( hdl ), 
                       shortest=min( height ))
@@ -214,300 +151,5 @@ NHANES %>%
   summarise( n=n() )
 ```
 
-## EXERCISES:
 
 
-### One
-
-What does this do?
-```{r results='hide'}
-NHANES %>% 
-  group_by( sex, smoker ) %>%
-  summarise( n=n() )
-```
-
-### Two
-
-
-Maybe in this section, mean weight for diabetic and not.
-
-```{r}
-foo <- group_by(NHANES, sex, diabetic) %>% 
-  summarise(wt=mean(weight,na.rm=TRUE),n=n(),
-            se=sd(weight, na.rm=TRUE)/sqrt(n)) 
-ggplot(foo, aes(x=sex, group=diabetic,y=wt,width=.5))  + geom_bar(alpha=.5,position='dodge',stat='identity',aes(fill=diabetic)) + geom_errorbar(aes(ymax=wt+2*se,ymin=wt-2*se,),position='dodge')  + ylim(0,80) + guides(fill=FALSE)
-```
-
-For errorbars and such, you need to use `position=position_dodge(width=.5)` to separate the groups equally.
-
-```{r}
-ggplot(foo, aes(group=sex, x=diabetic, y=wt,width=.5))  + 
-#  geom_bar(alpha=.3,aes(fill=sex),position='dodge',stat='identity') + 
-  geom_errorbar(aes(ymax=wt+2*se,ymin=wt-2*se,color=sex),
-                position=position_dodge(width=0.3),weight=3,size=2,width=.2)  + 
-  ylim(0,80) + ylab("Weight") + 
-  xlab("Diabetes status")
-```
-
-
-QUESTIONS TO ASK:
-* What variables are here?
-* What cases are here in the glyph-ready data?
-* Which variable is represented by color?
-* Which variable sets th position of the subgroup w.r.t. the overall group?
-* The length of the error bars reflects a quantity called the "standard error".  
-
-Make graphs to compare diabetics to non-diabetics in each group, and to compare males to females in each group.
-
-Perhaps jazz it up with age-group.
-
-## What fraction are diabetic in the various age groups
-
-```{r eval=FALSE}
-mutate(NHANES, AgeGroup=ntils(age,n=10,format='left')) %>% 
-  group_by(sex,AgeGroup) %>%
-  summarize(dfrac=mean(diabetic=='diabetic',na.rm=TRUE),
-            se=sqrt(dfrac*(1-dfrac)/length(diabetic)) )-> hoo
-ggplot(hoo, aes(x=AgeGroup,y=dfrac,group=sex)) + geom_bar(alpha=.3,aes(fill=sex,color=sex),position='dodge',stat='identity',width=4) + geom_errorbar(aes(ymax=dfrac+se,ymin=dfrac-se,color=sex),position='dodge')
-```
-
-### Proportion with summarize:
-
-The point here is that once you've reduced the data to a tally of each group, you want to keep those cases, so you want a mutate().  But even in `mutate()`, aggregation operators work over the whole group.
-
-The last grouping variable gets eliminated each time you use `mutate()` or `summarize()`.
-
-```{r}
-group_by(NHANES, sex, smoker, diabetic) %>% tally() -> tmp
-# get rid of the NA here
-filter(tmp, diabetic != 'NA' & smoker != 'NA') %>%
-mutate( total=sum(n),frac=n/total) %>% filter( diabetic=='diabetic')
-```
-
-## Create a proportion function
-
-Do I want this?
-
-```{r}
-simple <- function(v) {
-  sum(v,na.rm=TRUE)/length(v)
-}
-proportion <- function(.data,...) {
-  do(.data,data.frame(prop.table(do.call(table,select(.,...)))))
-}
-# example
-# group_by(NHANES,sex,smoker) %>% proportion(diabetic)
-```
-
-## TO DO
-
-* Fix NHANES to turn `NaN` into `NA` in the numerical variables.
-* Set the option `"na.rm"` to `TRUE` when the DCF package is loaded.
-* Have earlier examples with `summary()` of a single variable:
-```
-with( NHANES, summary(height) )
-```
-That will let you show what the variables look like.  Or maybe show a boxplot.
-
-## Returned values, arguments, inputs and outputs
-
-Explain what these are.
-
-Also, assignment.  Use `<-` to distinquish between assignment and named arguments.   `<-` gives the output of a function to a name, or, in other words, "assigns a value to an object named ..."
-
-
-For each sex and smoker group, what fraction has diabetes?
-```{r eval=FALSE}
-group_by(NHANES,sex,smoker) %>% mutate(count=n()) -> tmp
-summarize(tmp, sum(diabetic=='diabetic')/count )
-dcast(group_by(NHANES,sex,smoker) %>% proportion(diabetic),
-      ~diabetic,value.var='Freq')
-tmp <- group_by(NHANES,sex) %>% summarize( k=sum(diabetic=='diabetic') )
-ggplot(tmp, aes(x=sex,y=n,fill=smoker)) + 
-  geom_bar(stat='identity',position='fill')
-```
-
-
-## Transforms and Aggregations
-
-An important distinction to make in using data is between **transforming** and **aggregating**.  
-
-In aggregating data, you will be combining cases.  Think of aggregating as creating a new kind of case.
-
-In transforming data, you will be treating each and every case individually.
-
-Suppose you want to try out a replacement for the body mass index (`bmi`).  You think a better index might be the waist circumference divided by height. 
-
-```{r}
-myIndex <- with( NHANES, waist/height )
-```
-
-This subtraction is a transform.  It produces a result for each case in NHANES, all `r nrow(NHANES)` of them.
-```{r}
-summary( myIndex )
-```
-
-In contrast, suppose you want to know the median waist circumference.  That's an aggregation.  It converts the whole set of cases into a single number.
-```{r}
-with( NHANES, median(waist))
-```
-
-There are many possible transforms and many different aggregations. Here are a few:
-
-* **Transforms**: arithmetic operations (`+`, `-`, `*`, `/`, `^`), `sqrt()`, `log()`, and so on.
-* **Aggregations**: `mean()`, `median()`, `sum()`, `range()`, `sd()`, `IQR()` and so on.
-
-Remember: a transformation keeps each case as it is, while an aggregation produces a new sort of case.  In `NHANES` or transformations of it, the case is an individual person.  In an aggregation of `NHANES` the case is "all the people together."
-
-## What you give should be what you get
-
-As you've seen, data are organized into data frames.  A useful style in computing is to arrange computations so that the input is a data frame and the output is also a data frame.  When things are set up this way, you can easily use the output of one computation as the input to another.  For instance, you may want to transform variables before plotting them.
-
-To support this style, you'll be using specific functions: `mutate()`, `summarize()`, `group_by()` and so on.  If you have used R before, these functions may be unfamiliar.  And, of course, if you have never used R, the functions are new to you.  
-
-### Transforms
-
-To perform a transform, use the `mutate()` function.  The first argument is a data frame.  Additional arguments specify the transform to be calculated.  Like this:
-```{r}
-output <- mutate( NHANES, myIndex=waist/height )
-```
-In this operation, a new variable has been created called `myIndex`.  The output copies over the input data frame as well, so `output` will have all the variables originally in `NHANES` along with `myIndex`:
-```{r}
-names(output)
-```
-
-A very common style with a transform is to use the output of `mutate()` to redefine the input data frame, as with:
-```{r}
-NHANES <- mutate( NHANES, myIndex=waist/height )
-```
-
-Sometimes, you will use a transform to modify an existing variable.  For instance, the `followup` variable in `NHANES` gives --- for those people who died soon after the study --- the number of months from the initial measurements until the subject died. Perhaps you want this in years rather than months.
-```{r}
-NHANES <- mutate( NHANES, followup=followup/12 )
-```
-
-### Aggregation
-
-To carry out an aggregation, use the `summarise()` function.  
-```{r}
-summarise( NHANES, typicalAge=median(age, na.rm=TRUE) )
-```
-
-The output of `summarize()` is a data frame, albeit a very short data frame in this situation.
-
-Sometimes, you will want to use an aggregate quantity as part of a transformation.  Suppose, for instance, that you want to know how much each person differs in height from the mean.
-```{r}
-NHANES <- mutate( NHANES, hgtDiff=height-mean(height) )
-```
-
-QUESTION:  Why are these two quantities so different?
-```{r}
-summarise( NHANES, 
-           mean( height, na.rm=TRUE ), 
-           mean( hgtDiff, na.rm=TRUE ) )
-```
-
-## Grouping
-
-Often, you will be interested in studying **groups** of cases, for instance the males and females in `NHANES` or the smoking diabetics versus non-smoking diabetics. 
-
-In order to do the grouping, you need one or more variables that specify the groups, for instance, `sex`, `diabetic`, and `smoker` in NHANES.  Use the `group_by()` function to specify which variables you want to use.
-
-Grouping cases doesn't in itself do anything.  Instead, grouping sets things up so that `summarize()`, `mutate()`, and some other functions can do things on a group-by-group basis.  Example:
-
-```{r}
-NHANES <- group_by( NHANES, sex )
-summarise( NHANES, typicalAge=median(age, na.rm=TRUE) )
-```
-
-Doing a transform on a grouped variable allows you, if you want, to use aggregate quantities for that group.  For instance, the groups of males and females have different mean heights.  Here's how you would calculate the difference of an individual from his or her group's mean.
-
-```{r}
-NHANES <- group_by( NHANES, sex )
-NHANES <- mutate( NHANES, dheight=height-mean(height) )
-summarise( NHANES, sd(dheight) )
-```
-
-
-### NOTE: For proportion ...
-
-```{r}
-group_by(NHANES, sex,smoker) %>% summarise(pd=mean(diabetic=='diabetic',na.rm=TRUE),sz=n(),se=sqrt(pd*(1-pd)/sqrt(sz)))
-```
-
-
-## How Many?
-
-n() and groupwise n().  n() takes no arguments because it wouldn't matter which variable you used: they all have the same length
-
-
-
-## Style
-
-As mentioned before, re-using a name can make your commands easier to read.
-
-Reassignment of the output to the input data frame may make sense for a transform.  But it is generally a bad idea for an aggregation.  (Explain why.  Hint: What are the cases in the input and output.) [Show a reassignment in a summarize() and say DON'T DO THIS!]
-
-### Pipes
-
-
-## Example: Blood pressure and diabetes
-
-The NHANES data gives ... for 31000 people.  Suppose you are interested in the question, does waist to height ratio differ between diabetics and non-diabetics.
-
-
-```{r}
-group_by(NHANES, sex, diabetic) %>% 
-  summarise(myIndex=mean(waist/height,na.rm=TRUE),n=n(),
-            se=sd(waist/height, na.rm=TRUE)/sqrt(n)) -> foo 
-ggplot(foo, aes(x=sex, group=diabetic, color=diabetic,y=myIndex,width=.5))  + geom_bar(alpha=.3,aes(fill=diabetic),position='dodge',stat='identity') + geom_errorbar(aes(ymax=myIndex+2*se,ymin=myIndex-2*se,),position='dodge',weight=3,size=2)  + ylim(0,80)
-```
-
-Perhaps a better plot would be:
-
-```{r eval=FALSE}
-ggplot(NHANES, aes(x=sex, y=myIndex, fill=diabetic)) + geom_boxplot(notch=TRUE)
-```
-
-NB.  For some reason, geom_box() doesn't use group.  But color works.
-
-
-MAYBE ALWAYS DO A SELECT to highlight the variables being used.
-
-## Exercises
-
-What could you improve about this graphic if your point is to show that pulse pressure differs from diabetics and non-diabetics?  Hint: Missing data is shown in gray, even though it isn't in the legend.
-
-```{r}
-group_by(NHANES, sex, diabetic) %>% 
-  summarise(mn=mean(myIndex,na.rm=TRUE),n=n(),
-                                              se=sd(myIndex, na.rm=TRUE)/sqrt(n)) -> foo 
-ggplot(foo, aes(group=sex, x=diabetic, y=mn,width=.5))  + geom_bar(alpha=.3,aes(fill=sex),position='dodge',stat='identity') + geom_errorbar(aes(ymax=mn+2*se,ymin=mn-2*se,),position='dodge',weight=3,size=2)  + ylim(0,80) + ylab("Waist to Height Ratio (cm/m)") + 
-  xlab("Diabetes status")
-```
-
-
-
-ANS: Group by diabetes status rather than sex.  Kill the NAs.
-
-Add a new variable to `small` that gives the mean height for that person's group.
-
-See [this set of exercises](http://www.public.iastate.edu/~hofmann/stat480/homework/dplyr%20drills.html)
-
-## Still to do
-
-Do a tabulation of the rank-choice data.
-
-Find the variances of the NCI data, by probe.
-
-Cross-tab of NHANES: perhaps cardiac death versus sex or BMI. 
-
-
-## MORE DATA POSSIBILITIES
-
-Move these to the resources file when you have a chance.
-
-
-Storm damage database: http://rpubs.com/deflath/20484
-
-US Housing database: http://www.asdfree.com/2014/06/analyze-american-housing-survey-ahs.html

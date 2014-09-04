@@ -19,3 +19,15 @@ output: html_document
 * Flying bomb stats.  Source: DTK July 2014
 
 ![flying bombs](flying-bombs.png)
+
+## FOR GRAPHICAL DECISIONS
+
+Redo the NHANES mortality as a logistic regression.
+
+
+
+Show fraction alive as a function of sex and smoking status.
+
+Show proportion in each age of the height ntiles.  Stack them. 
+
+

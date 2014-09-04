@@ -170,11 +170,11 @@ Growth$growth <- pmin(Growth$growth,5)
 p <- makeWorldMap( Growth, 'country')
 p + geom_polygon(col="gray",width=.5,aes(fill=growth)) +
   xlab("Longitude") + ylab("Latitude") + ggtitle("Population Growth (% per year)") + 
-  scale_fill_continuous( low = "lightblue", high = "red", space = "Lab",
+  scale_fill_continuous( low = "green", high = "red", space = "Lab",
   na.value = "grey50", guide = "colourbar") 
 ```
 
-From this map of population growth (in % per year), you can see the handful of countries with negative growth (that is, population decline) such as Russia and Poland.  The countries in Africa, with the exception of South Africa and Namibia, have fast population growth.  (A rate of 5% per year means that the population will double every 14 years.)
+From this map of population growth (in % per year), you can see the handful of countries with negative growth (that is, population decline) such as Russia and Poland.  The countries in Africa, with the exception of South Africa and Namibia, have fast population growth.  (A rate of 5% per year means that the population will double every 14 years.)  There is just one country with a large decline: Syria, just to the right of the center of the map.
 
 ### Networks
 
@@ -215,107 +215,4 @@ Every vertex, that is, every cell line, is depicted as a dot.  The dot's color a
 
 The network shows that the melanoma cell lines (ME) are closely related to each other and not so much to other cell lines.  The same is true for colon cancer cell lines (CO) and for central nervous system (CN) cell lines.
 
-## Making Data Graphics: Introduction
 
-Steps:
-
-1. Choose a modality: scatter(), density(), barplot(), network()
-2. Choose the variable that corresponds to each aspect of the plot.
-3. Cut and paste the command into your report.
-
-These functions just construct graphics.  The data already need to be in a form where there is a variable for each aspect being used, e.g. an x- and y-variable for a scatter plot.
-
-
-
-
-### FOR GRAPHICAL DECISIONS
-
-Redo the NHANES mortality as a logistic regression.
-
-
-
-Show fraction alive as a function of sex and smoking status.
-
-Show proportion in each age of the height ntiles.  Stack them. 
-
-
-### EXERCISE
-
-Show these graphs and ask them to explain what they show.
-
-### EXERCISE
-
-
-FOR GRAMMAR SECTION: Density plots draw on cases collectively.
-
-#### EXERCISE
-
-Explain what the frequency polygon and the density smoother say about the heights of males and females. 
-
-#### For design choices
-
-Why not a histogram: Displaying two variables.
-
-```{r}
-ggplot(NHANES, aes(x=height)) + 
-    geom_histogram(aes(y = ..count..,color=sex,fill=sex), 
-                   binwidth=0.1) + 
-    xlab("Height (m)") + ylab("Count")
-```
-
-In talking about position/dodging, use this example of a misleading plot.
-
-```{r}
-ggplot(NHANES, aes(x=height)) + 
-    geom_freqpoly(aes(y = ..density.., color=sex), 
-                   binwidth=0.1, fill=NA, position="stack") + 
-    xlab("Height (m)") + ylab("Count")
-```
-
-
-
-Stacking bars or polygons or densities: make sure to fill them in so that the reader can figure out which group is which.  If you want them to overlap, fill them with transluscent color.
-
-
-
-
-##### Density Plots
-
-```{r}
-ggplot(NHANES, aes(x=height)) + 
-    geom_density(aes(y = ..density.., color=sex), 
-                   binwidth=0.1, fill=NA) + 
-    xlab("Height (m)") + ylab("Count")
-```
-
-#### Design Decisions
-
-Dealing with very large datasets:
-
-* Transparency in scatter plots.
-* Use densities rather than cases.
-
-#### MOVE TO "Design Decisions"
-
-In principle, the variables could be assigned to the other axes, but typically there is some purpose behind the use of a scatter plot, for instance to show how height varies with age.  It's conventional to put the *response variable* on the y-axis and the *explanatory variable* on the x-axis.  Other terms for "explanatory variable" include "independent variable" or "causal variable."  The "response variable" is also known as the "dependent variable", "result," or "effect." 
-
-
-Often, the size, shape, or color of the "dots" is used to show the value of another variable.  For instance:
-
-```{r echo=FALSE}
-pheight + geom_point(aes(color=sex))
-```
-
-### For an exercise:
-
-What does this graph tell you about pregnancy?
-
-ggplot(data=NHANES, aes(x=pregnant, y=age)) + geom_violin()  + theme(legend.position="none") + labs(title="") 
-
-ggplot(data=NHANES, aes(x=pregnant, y=age)) + geom_violin()  + aes(colour=sex) + facet_wrap(~smoker, ncol=4) + theme(legend.position="none") + labs(title="") + coord_flip() 
-
-### Exercise:
-
-Make a graph to indicate whether smokers are systematically lower in weight than non-smokers.
-
-ggplot(data=NHANES, aes(x=smoker, y=BMI)) + geom_violin()  + theme(legend.position="none") + labs(title="")
