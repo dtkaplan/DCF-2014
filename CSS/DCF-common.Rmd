@@ -3,7 +3,9 @@
 -->
 
 <!-- UNCOMMENT THE NEXT LINE FOR PRODUCTION -->
+<!--
 <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
+-->
 
 ```{r include=FALSE}
 require(mosaic)
