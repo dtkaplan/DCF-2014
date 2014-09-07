@@ -20,6 +20,56 @@ Find the location of
 
 END OF EXERCISE.
 
+### Make this Graphic
+
+But they need to do it with mScatter.  Mention that `geom_line()` can replace `geom_point()` and tell about `geom_hline(x=...)`.
+
+For instance, here is how to to look at how many babies named "Judy" or "Judith" were born in each year, arranged from the largest year to the smallest.
+
+```{r}
+BabyNames %>% 
+  filter( name %in% c("Judy", "Judith") ) %>%
+  arrange( count ) %>%
+  head( )
+```
+
+
+
+
+```{r}
+BabyNames %>% 
+  filter( name %in% c("Judy", "Judith") ) %>%
+  arrange( desc( count ) ) %>%
+  head( )
+```
+
+Keep in mind that arranging is useful mainly when you want to display the data table directly.  If you are doing graphics, the arrangement by the frame variables happens automatically.  For instance, here's a graph comparing the popularity of "Judy" and "Judith" over the years.
+
+```{r echo=FALSE}
+BabyNames %>% 
+  filter( name %in% c("Judy","Judith"), sex=="F") %>%
+  ggplot( aes(x=year,y=count)) + geom_line( aes(color=name)) + 
+  geom_vline( x=1934 ) + geom_vline(x=1939) + 
+  geom_vline(x=1969) + xlim(1920,2010)
+```
+
+The names Judy and Judith peaked in the 1940s and fell dramatically by 1970. This parallels the life of the famous singer Judy Garland.  Born Frances Gumm, and performing in her early years as part of the Gumm Sisters, she changed her name to Judy in 1934, became a celebrity in 1939 with the release of the movie "The Wizard of Oz," and died tragically in 1969.  These years are marked in the graphic.
+
+
+
+
+In the `CountryData`, find 
+
+* the fraction of the population that uses the Internet
+* the ratio of area to road length.  Also, the ratio of the  area to road length squared. 
+* scatterplot of health spending versus military spending
+* scatterplot of GDP per capita versus population density.
+
+Filter: Pick out the results for China, England, France, Germany, Russia 
+
+Join and filter: Pick out the results for the G20 countries.
+
+Join exercise: Give a set of synonyms for countries: two columns: standard and other.  Join the synonym set "other" with the source, read off the standard.
 
 ### EXERCISE
 
@@ -297,6 +347,26 @@ Find the variances of the NCI data, by probe.
 Cross-tab of NHANES: perhaps cardiac death versus sex or BMI. 
 
 
+### Quiz
+
+Here are the first letters of the names of several data verbs. (Repeated letters are for different verbs.) Complete the name and say briefly what the verb does.
+
+* A
+* G
+* J
+* M
+* F
+* S
+* S
+
+Here are two data tables.  The left is the input to a data verb, the right is the output.  Identify the operation and write down the details of the operation.
+
+Example:  Do select ...
+
+
+
+
+
 ## MORE DATA POSSIBILITIES
 
 Move these to the resources file when you have a chance.
@@ -413,3 +483,8 @@ What should you report as the confidence interval?
 `r I(g(finish=TRUE))`
 
 `r I(endProblem())`
+
+
+
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```

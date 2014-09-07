@@ -3,7 +3,7 @@ output:
   html_document:
     css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
     fig_caption: yes
-    toc: yes
+    toc: no
 ---
 
 ```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
@@ -151,5 +151,8 @@ NHANES %>%
   summarise( n=n() )
 ```
 
+
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```
 
 

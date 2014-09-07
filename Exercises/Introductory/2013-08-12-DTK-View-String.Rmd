@@ -1,7 +1,6 @@
 ---
-title: "Strings and Object Names"
-author: "DTK"
-date: "August 12, 2014"
+probAuthor: "DTK"
+probDate: "August 12, 2014"
 output: html_document
 description: Strings versus object names
 tags: 

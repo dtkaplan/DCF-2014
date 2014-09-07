@@ -106,7 +106,11 @@ In the previous examples, you've seen some phrases like `yearlyTotal=sum( count 
 
 Add a new variable PRINCE containing "Prince."  Add a new variable containing "increase over previous year."
 
-EXERCISES FROM NETTA:
+EXERCISES FROM NETTA: names over time.
+
+Give a sequence of statements.  Describe in words that these statements will do.
+
+Give a mock data table and some statements.  Sketch out the results of the statements.
 
 You can copy the commands shown in the notes, modifying them to address the question at hand.
 
@@ -309,3 +313,7 @@ Also show the box-whisker plot overlayed
   
 
 `r I(endProblem())`
+
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```
+

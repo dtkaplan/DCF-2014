@@ -1,7 +1,7 @@
 ---
-title: "Basic R Commands"
-author: "DTK"
-date: "August 12, 2014"
+probTitle: "Basic R Commands"
+probAuthor: "DTK"
+probDate: "August 12, 2014"
 output: html_document
 description: identifying cases and variables
 tags: 

@@ -252,3 +252,7 @@ These questions should be easy to answer if you use the appropriate commands to 
 * What are the codes for the levels of the categorical variable `party` in the `registeredVoters` data table, and what does each code stand for?
 
 `r I(textItem("DataAndHelp"))`
+
+```{r child="../CSS/DisqusTemplate.Rmd"}
+```
+

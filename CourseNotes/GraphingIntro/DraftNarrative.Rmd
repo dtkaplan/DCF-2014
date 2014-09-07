@@ -207,6 +207,11 @@ This presentation emphasizes different aspects of the data than the side-by-side
 
 * Networks: Minneapolis Mayor
 
+## Expressions
+
+The functions `mScatter()`, `mBar()`, etc. are interfaces between you and the graphing software.  They were written to make it easy to explore different formats of graphics.  The easiness, however, comes at a cost.  The functions do not give you very detailed control and produce onlya small set of graphics.
+
+PRESS THE BUTTON and get the expression.  You can copy this expression into an R chunk in an Rmd document.  Make sure that your document also contains the commands for making the data table that's being plotted.
 
 
 Steps:

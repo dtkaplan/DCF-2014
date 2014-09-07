@@ -3,7 +3,7 @@ output:
   html_document:
     css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
     fig_caption: yes
-    toc: yes
+    toc: no
 ---
 
 ```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
@@ -214,5 +214,8 @@ ggplot(EE, aes(x=x,y=y)) +
 Every vertex, that is, every cell line, is depicted as a dot.  The dot's color and label gives the type of cancer involved.  These are Ovarian, Colon, Central Nervous System, Melanoma, Renal, Breast, and Lung cancers. 
 
 The network shows that the melanoma cell lines (ME) are closely related to each other and not so much to other cell lines.  The same is true for colon cancer cell lines (CO) and for central nervous system (CN) cell lines.
+
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```
 
 

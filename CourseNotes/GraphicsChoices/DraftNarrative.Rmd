@@ -30,4 +30,10 @@ Show fraction alive as a function of sex and smoking status.
 
 Show proportion in each age of the height ntiles.  Stack them. 
 
+(Some color palettes](xhttp://learnr.wordpress.com/2009/04/15/ggplot2-qualitative-colour-palettes/)
+
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```
+
+
 

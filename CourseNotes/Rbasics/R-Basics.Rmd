@@ -1,9 +1,17 @@
 ---
 title: "Starting with R"
-author: "Daniel Kaplan"
-date: "August 11, 2014"
-output: html_document
+probAuthor: "Daniel Kaplan"
+probDate: "August 11, 2014"
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
+    fig_caption: yes
+    toc: no
 ---
+
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
+```
+
 
 ```{r include=FALSE}
 require(knitr)
@@ -24,15 +32,15 @@ To start, you will enter R commands into the *console*.  Let's go ...
 
 Find the console pane in RStudio and the prompt, `>`.
 
-![cursor](cursor.png)
+![The command prompt `>` in the console window.](cursor.png)
 
 Click the cursor in the console pane so that anything you type shows up there.  Type this simple command: 
 
-![cursor2](cursor-2.png)
+![Entering a command expression at the prompt](cursor-2.png)
 
 After you press *enter*, ![enter](enter-icon.png), R will *execute* your command and print out a response:
 
-![cursor2](cursor-3.png)
+![Executing the command and the returned value (in black).](cursor-3.png)
 
 Notice that after the response, there is another prompt.  You're ready to go again!
 
@@ -54,7 +62,9 @@ A new session is begun every time you start RStudio.  The session is terminated 
 
 When a session is first started, it is in an empty environment.  You can see this in the *Environment* tab:
 
-![picture of empty environment](empty-environment.png)
+![One of the RStudio tabs lists the objects in the "session environment." At the start, the environment is empty.](empty-environment.png)
+
+<div style="clear:both;"></div> <!-- break between caption and text -->
 
 As you use R, you will be creating objects in the session environment.
 
@@ -108,13 +118,17 @@ This will bring a copy of the data into the session environment.  To take a peak
 View( NHANES )
 ```
 
-![NHANES data](NHANES-table.png)
+![The first several cases (rows) and variables (columns) of the `NHANES` data table on body shape and health.](NHANES-table.png)
 
+<div style="clear:both;"></div> <!-- break between caption and text -->
 
 
 Another way to get information about the data is to click on the expand icon ![expand icon](summary-icon.png) next to the NHANES listing in the environment tab.
 
-![environment with NHANES](NHANES-environment.png)
+![The session environment after the NHANES data table has been loaded.](NHANES-environment.png)
+
+<div style="clear:both;"></div> <!-- break between caption and text -->
+
 
 You can look at the data table more closely by clicking on the small spreadsheet icon: ![spreadsheet icon](spreadsheet-icon.png).
 
@@ -183,15 +197,14 @@ It helps to distinguish between the packet and the information itself.  The info
 
 Here are some of the objects that appear in the examples above:
 
-<pre>
 Name     | Value                  | Kind of thing   
 ---------|------------------------|---------------
-         |  2                     | a number
+&nbsp;   |  2                     | a number
 sqrt     | computer commands      | a function
-         | "DCF"             | a string of characters
+&nbsp;   | "DCF"                  | a string of characters
 NHANES   | data                   | data table
-         | "NHANES"               | a string of characters
-</pre>
+&nbsp;   | "NHANES"               | a string of characters
+
 
 Most of the objects you will use have names, e.g. `NHANES` or `sqrt`.  Sometimes you will use objects that don't have a name, for instance the number 2 or the quoted set of characters `"DCF"`.
 
@@ -214,7 +227,10 @@ SmallNHANES <- sample_n( NHANES, size=100 )
 
 Objects with names that you create in the session environment will appear in the Environment tab in RStudio.
 
-![with SmallNHANES](NHANES-small-environment.png)
+![When the `SmallNHANES` object is created, it appears in the environment.](NHANES-small-environment.png)
+
+<div style="clear:both;"></div> <!-- break between caption and text -->
+
 
 There are a few simple rules that apply when creating a name for an object:
 
@@ -228,5 +244,7 @@ The following terms should be meaningful to you from this reading:
 
 package, function, command, argument, assignment, object, object name, data table, named argument, quoted character string
 
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```
 
 

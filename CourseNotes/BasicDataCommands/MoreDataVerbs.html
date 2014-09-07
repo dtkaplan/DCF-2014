@@ -36,7 +36,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </script>
 
 
-<link href="data:text/css,body%20%7B%0A%20%20%20%20%20%20%20%20font%2Dfamily%3A%20%27Lora%27%2C%20serif%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Efigure%20%7B%0A%20%20%20%20%20%20%20%20background%2Dcolor%3Aghostwhite%3B%0A%20%20%20%20%20%20%20%20padding%3A12pt%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Ecaption%7B%0A%20%20%20%20%20%20%20%20font%2Dstyle%3Aitalic%3B%0A%20%20%20%20%20%20%20%20width%3A40%25%3B%0A%20%20%20%20%20%20%20%20margin%3A12pt%3B%0A%20%20%20%20%20%20%20%20float%3A%20left%3B%0A%20%20%20%20%20%20%7D" rel="stylesheet" type="text/css" />
+<link href="data:text/css,body%20%7B%0A%20%20%20%20%20%20%20%20font%2Dfamily%3A%20%27Lora%27%2C%20serif%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Efigure%20%7B%0A%20%20%20%20%20%20%20%20background%2Dcolor%3Aghostwhite%3B%0A%20%20%20%20%20%20%20%20padding%3A12pt%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Ecaption%7B%0A%20%20%20%20%20%20%20%20font%2Dstyle%3Aitalic%3B%0A%20%20%20%20%20%20%20%20width%3A40%25%3B%0A%20%20%20%20%20%20%20%20margin%3A12pt%3B%0A%20%20%20%20%20%20%20%20float%3A%20left%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2EdisplayAsFigure%7B%0A%20%20%20%20%20%20%20%20background%2Dcolor%3A%20ghostwhite%3B%0A%20%20%20%20%20%20%20%20padding%3A12pt%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -53,18 +53,900 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 
 
+<div id="TOC">
+<ul>
+<li><a href="#select">Select</a></li>
+<li><a href="#filter">Filter</a></li>
+<li><a href="#mutate">Mutate</a></li>
+<li><a href="#arrange">Arrange</a></li>
+<li><a href="#some-other-data-verbs">Some other data verbs</a></li>
+<li><a href="#elaboration-data-verb-languages">Elaboration: Data verb languages</a></li>
+</ul>
+</div>
 
 <!--
 % Common elements of a DCF document
 -->
 
 <!-- UNCOMMENT THE NEXT LINE FOR PRODUCTION -->
-<!-- link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora" -->
+<!--
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
+-->
 
 
 
-<p>Mutate, Filter, Arrange? save Join for later.</p>
+
+
+
+<p>You have already seen two data verbs:</p>
+<ul>
+<li><code>summarise()</code></li>
+<li><code>group_by()</code></li>
+</ul>
+<p>Although these are being written in computer notation, it’s also perfectly legitimate to express actions using them as English verbs. For instance: “Group the baby names by sex and year. Then summarize the groups by adding up the total number of births for each group. This will be the result.” That’s English. Here’s the equivalent statement in computer notation:</p>
+<pre class="r"><code>Result &lt;- 
+  BabyNames %&gt;% 
+  group_by( sex, year ) %&gt;%
+  summarise( total=sum( count ) )</code></pre>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Fri Sep  5 13:27:10 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+sex
+</TH> <TH> 
+year
+</TH> <TH> 
+total
+</TH>  </TR>
+  <TR> <TD> 
+M
+</TD> <TD align="right"> 
+1888
+</TD> <TD align="right"> 
+120854
+</TD> </TR>
+  <TR> <TD> 
+F
+</TD> <TD align="right"> 
+1922
+</TD> <TD align="right"> 
+1200890
+</TD> </TR>
+  <TR> <TD> 
+M
+</TD> <TD align="right"> 
+1928
+</TD> <TD align="right"> 
+1107440
+</TD> </TR>
+  <TR> <TD> 
+M
+</TD> <TD align="right"> 
+1978
+</TD> <TD align="right"> 
+1642137
+</TD> </TR>
+  <TR> <TD> 
+F
+</TD> <TD align="right"> 
+1984
+</TD> <TD align="right"> 
+1682879
+</TD> </TR>
+  <TR> <TD> 
+F
+</TD> <TD align="right"> 
+1994
+</TD> <TD align="right"> 
+1784941
+</TD> </TR>
+   </TABLE>
+
+<p>These notes will introduce you to five more data verbs:</p>
+<ul>
+<li><code>select()</code></li>
+<li><code>mutate()</code></li>
+<li><code>filter()</code></li>
+<li><code>arrange()</code></li>
+<li><code>join()</code></li>
+</ul>
+<p>As with <code>group_by()</code> and <code>summarise()</code>, each is a standard English word whose action on data is reflected in the colloquial, everyday meaning. And, like English, intricate and detailed statements can be made by combining the words into expressions.</p>
+<div id="select" class="section level2">
+<h2>Select</h2>
+<p>Selecting from a data table means choosing one or more variables from the table. Reasons to do this:</p>
+<ul>
+<li>Simplify the table you are working on.</li>
+<li>Rename one or more of the variables to make it more convenient to work with.</li>
+</ul>
+<p>The syntax is similar to that of <code>group_by()</code> or <code>summarise()</code>. A data table is provided as input along with the names of the variables you are selecting. The result produced is a new data table with just those variables.</p>
+<p>To illustrate, here’s the first few cases in the <code>BabyNames</code> data table:</p>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Fri Sep  5 13:27:10 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+name
+</TH> <TH> 
+sex
+</TH> <TH> 
+count
+</TH> <TH> 
+year
+</TH>  </TR>
+  <TR> <TD> 
+Mary
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+7065
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Anna
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+2604
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Emma
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+2003
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Elizabeth
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+1939
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Minnie
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+1746
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Margaret
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+1578
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+   </TABLE>
+
+<p>And here is the result of selecting just the <code>name</code> and <code>year</code> variables:</p>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Fri Sep  5 13:27:10 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+name
+</TH> <TH> 
+year
+</TH>  </TR>
+  <TR> <TD> 
+Mary
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Anna
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Emma
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Elizabeth
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Minnie
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Margaret
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+   </TABLE>
+
+<p>If you want to rename a variable, use a named argument, as with <code>when=year</code> in the following:</p>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Fri Sep  5 13:27:10 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+name
+</TH> <TH> 
+when
+</TH>  </TR>
+  <TR> <TD> 
+Mary
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Anna
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Emma
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Elizabeth
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Minnie
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+  <TR> <TD> 
+Margaret
+</TD> <TD align="right"> 
+1880
+</TD> </TR>
+   </TABLE>
+
+</div>
+<div id="filter" class="section level2">
+<h2>Filter</h2>
+<p>To “filter” means to remove unwanted material. The data verb “filter” removes unwanted cases, passing through to the result only those cases that are wanted or needed. Filtering constrasts with selecting. Selecting passes the specified <em>variables</em>; filtering passes the specified cases.</p>
+<p>In selecting, the variables are specified by name, e.g.</p>
+<pre class="r"><code>BabyNames %&gt;% select( year, count )</code></pre>
+<p>With filtering, the cases are specified by one or more criteria or tests. The tests are generally constructed with variables and functions like <code>==</code>, <code>&gt;</code>, <code>&lt;</code>, <code>%in%</code>, and so on. For instance, here’s how you can filter out the boys, producing a result with only the girls’ names:</p>
+<pre class="r"><code>BabyNames %&gt;% filter( sex==&quot;F&quot;) %&gt;%
+  sample_n( size=10 ) %&gt;% xtable()</code></pre>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Fri Sep  5 13:27:45 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+name
+</TH> <TH> 
+sex
+</TH> <TH> 
+count
+</TH> <TH> 
+year
+</TH>  </TR>
+  <TR> <TD> 
+Nellie
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+1206
+</TD> <TD align="right"> 
+1942
+</TD> </TR>
+  <TR> <TD> 
+Leverne
+</TD> <TD> 
+F
+</TD> <TD align="right">   
+8
+</TD> <TD align="right"> 
+1934
+</TD> </TR>
+  <TR> <TD> 
+Agnes
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+1033
+</TD> <TD align="right"> 
+1889
+</TD> </TR>
+  <TR> <TD> 
+Martin
+</TD> <TD> 
+F
+</TD> <TD align="right">   
+7
+</TD> <TD align="right"> 
+1910
+</TD> </TR>
+  <TR> <TD> 
+Silveria
+</TD> <TD> 
+F
+</TD> <TD align="right">   
+6
+</TD> <TD align="right"> 
+1956
+</TD> </TR>
+  <TR> <TD> 
+Zuria
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+22
+</TD> <TD align="right"> 
+2009
+</TD> </TR>
+  <TR> <TD> 
+Yuriana
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+17
+</TD> <TD align="right"> 
+2005
+</TD> </TR>
+  <TR> <TD> 
+Sarabeth
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+15
+</TD> <TD align="right"> 
+1978
+</TD> </TR>
+  <TR> <TD> 
+Angelic
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+88
+</TD> <TD align="right"> 
+1978
+</TD> </TR>
+  <TR> <TD> 
+Sheronda
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+33
+</TD> <TD align="right"> 
+1984
+</TD> </TR>
+   </TABLE>
+
+<p>Here are the cases for either sex for babies born after 1990:</p>
+<pre class="r"><code>BabyNames %&gt;% filter( year &gt; 1990 ) %&gt;% 
+  sample_n( size=10 ) %&gt;% xtable()</code></pre>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Fri Sep  5 13:27:45 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+name
+</TH> <TH> 
+sex
+</TH> <TH> 
+count
+</TH> <TH> 
+year
+</TH>  </TR>
+  <TR> <TD> 
+Laquitta
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+17
+</TD> <TD align="right"> 
+1991
+</TD> </TR>
+  <TR> <TD> 
+Bentzion
+</TD> <TD> 
+M
+</TD> <TD align="right">   
+6
+</TD> <TD align="right"> 
+1999
+</TD> </TR>
+  <TR> <TD> 
+Kensley
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+67
+</TD> <TD align="right"> 
+2003
+</TD> </TR>
+  <TR> <TD> 
+Lindzy
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+12
+</TD> <TD align="right"> 
+2002
+</TD> </TR>
+  <TR> <TD> 
+Hezekiah
+</TD> <TD> 
+M
+</TD> <TD align="right"> 
+225
+</TD> <TD align="right"> 
+2006
+</TD> </TR>
+  <TR> <TD> 
+Patric
+</TD> <TD> 
+M
+</TD> <TD align="right">  
+68
+</TD> <TD align="right"> 
+1995
+</TD> </TR>
+  <TR> <TD> 
+Khamia
+</TD> <TD> 
+F
+</TD> <TD align="right">   
+5
+</TD> <TD align="right"> 
+1997
+</TD> </TR>
+  <TR> <TD> 
+Tadhg
+</TD> <TD> 
+M
+</TD> <TD align="right">   
+6
+</TD> <TD align="right"> 
+1992
+</TD> </TR>
+  <TR> <TD> 
+Malerie
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+32
+</TD> <TD align="right"> 
+2009
+</TD> </TR>
+  <TR> <TD> 
+Gabriella
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+2244
+</TD> <TD align="right"> 
+1995
+</TD> </TR>
+   </TABLE>
+
+<p>Here are the girls born after 1990:</p>
+<pre class="r"><code>BabyNames %&gt;% filter( year &gt; 1990, sex==&quot;F&quot;) %&gt;%
+  sample_n( size=10 ) %&gt;% xtable()</code></pre>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Fri Sep  5 13:27:45 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+name
+</TH> <TH> 
+sex
+</TH> <TH> 
+count
+</TH> <TH> 
+year
+</TH>  </TR>
+  <TR> <TD> 
+Teonia
+</TD> <TD> 
+F
+</TD> <TD align="right">   
+6
+</TD> <TD align="right"> 
+1996
+</TD> </TR>
+  <TR> <TD> 
+Laketta
+</TD> <TD> 
+F
+</TD> <TD align="right">   
+6
+</TD> <TD align="right"> 
+1994
+</TD> </TR>
+  <TR> <TD> 
+Victory
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+34
+</TD> <TD align="right"> 
+2008
+</TD> </TR>
+  <TR> <TD> 
+Quintessa
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+12
+</TD> <TD align="right"> 
+1993
+</TD> </TR>
+  <TR> <TD> 
+Milca
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+10
+</TD> <TD align="right"> 
+2012
+</TD> </TR>
+  <TR> <TD> 
+Tierney
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+140
+</TD> <TD align="right"> 
+1991
+</TD> </TR>
+  <TR> <TD> 
+Karah
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+83
+</TD> <TD align="right"> 
+1994
+</TD> </TR>
+  <TR> <TD> 
+Carleah
+</TD> <TD> 
+F
+</TD> <TD align="right">   
+9
+</TD> <TD align="right"> 
+2013
+</TD> </TR>
+  <TR> <TD> 
+Niome
+</TD> <TD> 
+F
+</TD> <TD align="right">   
+5
+</TD> <TD align="right"> 
+2003
+</TD> </TR>
+  <TR> <TD> 
+Charese
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+10
+</TD> <TD align="right"> 
+1993
+</TD> </TR>
+   </TABLE>
+
+<p>You can specify as many tests as you like. The <code>filter()</code> function will pass through only those cases that pass <em>all</em> the tests.</p>
+<p>Sometimes you may want to set “either-or” criteria, say the babies who are female <em>or</em> born after 1990:</p>
+<pre class="r"><code>BabyNames %&gt;% filter( year&gt;1990 | sex==&quot;F&quot;) </code></pre>
+<p>It’s also possible to test for a variable being any of several different variables. For instance, here are the babies born in any of 1980, 1990, 2000, and 2010:</p>
+<pre class="r"><code>BabyNames %&gt;% 
+  filter( year %in% c(1980, 1990, 2000, 2010)) %&gt;%
+  sample_n( size=12 ) %&gt;% 
+  arrange(year) %&gt;%
+  xtable()</code></pre>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Fri Sep  5 13:28:02 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+name
+</TH> <TH> 
+sex
+</TH> <TH> 
+count
+</TH> <TH> 
+year
+</TH>  </TR>
+  <TR> <TD> 
+Levy
+</TD> <TD> 
+M
+</TD> <TD align="right">  
+25
+</TD> <TD align="right"> 
+1980
+</TD> </TR>
+  <TR> <TD> 
+Kamira
+</TD> <TD> 
+F
+</TD> <TD align="right">   
+6
+</TD> <TD align="right"> 
+1990
+</TD> </TR>
+  <TR> <TD> 
+Corrigan
+</TD> <TD> 
+M
+</TD> <TD align="right">   
+5
+</TD> <TD align="right"> 
+1990
+</TD> </TR>
+  <TR> <TD> 
+Shyla
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+190
+</TD> <TD align="right"> 
+2000
+</TD> </TR>
+  <TR> <TD> 
+Boone
+</TD> <TD> 
+M
+</TD> <TD align="right">  
+33
+</TD> <TD align="right"> 
+2000
+</TD> </TR>
+  <TR> <TD> 
+Kalei
+</TD> <TD> 
+M
+</TD> <TD align="right">   
+7
+</TD> <TD align="right"> 
+2000
+</TD> </TR>
+  <TR> <TD> 
+Jahkeem
+</TD> <TD> 
+M
+</TD> <TD align="right">   
+7
+</TD> <TD align="right"> 
+2000
+</TD> </TR>
+  <TR> <TD> 
+Arly
+</TD> <TD> 
+M
+</TD> <TD align="right">   
+7
+</TD> <TD align="right"> 
+2010
+</TD> </TR>
+  <TR> <TD> 
+Zayde
+</TD> <TD> 
+M
+</TD> <TD align="right">  
+12
+</TD> <TD align="right"> 
+2010
+</TD> </TR>
+  <TR> <TD> 
+Lilli
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+139
+</TD> <TD align="right"> 
+2010
+</TD> </TR>
+  <TR> <TD> 
+Uriyah
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+13
+</TD> <TD align="right"> 
+2010
+</TD> </TR>
+  <TR> <TD> 
+Aliz
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+12
+</TD> <TD align="right"> 
+2010
+</TD> </TR>
+   </TABLE>
+
+
+
+</div>
+<div id="mutate" class="section level2">
+<h2>Mutate</h2>
+<p>The word “mutate” means to change in form or nature. The data verb “mutate” is a bit more specific: to change a variable or add new variables based on the existing ones. The data verb always refers to variables; mutation leaves the cases exactly as they were.</p>
+<p>Often, mutation is used to combine or transform existing variables into a new variable. For instance, the <code>CountryData</code> data table has variables <code>pop</code> and <code>area</code> giving the population and area (in km^2) of each country. Suppose you wanted to know the population <em>density</em>, that is, how many people per unit area. Using mutate, you creating a new variable that is population / area.</p>
+<pre class="r"><code>Result &lt;-
+  CountryData %&gt;%
+  mutate( popDensity=pop/area )</code></pre>
+<p>The resulting data table, named <code>Result</code> here, contains all the original variables as well as the newly created ones.</p>
+<p><code>Result</code> has 77 variables. Rather than show them all, here are just some relevant variables for a few of the countries.</p>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Fri Sep  5 13:28:02 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+country
+</TH> <TH> 
+pop
+</TH> <TH> 
+area
+</TH> <TH> 
+popDensity
+</TH>  </TR>
+  <TR> <TD> 
+Holy See (Vatican City)
+</TD> <TD align="right"> 
+842.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+Inf
+</TD> </TR>
+  <TR> <TD> 
+Cocos (Keeling) Islands
+</TD> <TD align="right"> 
+596.00
+</TD> <TD align="right"> 
+14.00
+</TD> <TD align="right"> 
+42.57
+</TD> </TR>
+  <TR> <TD> 
+Pitcairn Islands
+</TD> <TD align="right"> 
+48.00
+</TD> <TD align="right"> 
+47.00
+</TD> <TD align="right"> 
+1.02
+</TD> </TR>
+  <TR> <TD> 
+Afghanistan
+</TD> <TD align="right">  </TD> <TD align="right">  </TD> <TD align="right">  </TD> </TR>
+  <TR> <TD> 
+Akrotiri
+</TD> <TD align="right">  </TD> <TD align="right"> 
+123.00
+</TD> <TD align="right">  </TD> </TR>
+  <TR> <TD> 
+Albania
+</TD> <TD align="right">  </TD> <TD align="right">  </TD> <TD align="right">  </TD> </TR>
+   </TABLE>
+
+</div>
+<div id="arrange" class="section level2">
+<h2>Arrange</h2>
+<p>Arranging sets the order of cases. It does not change the variables — that’s a job for <code>select()</code>. Similarly, arranging does not filter the cases. Arranging merely sets the order of cases according to some criterion that you specify.</p>
+<p>For instance, here are the first-choices from the Minneapolis mayoral election in 2013 found by counting the ballots:</p>
+<pre class="r"><code>Minneapolis2013 %&gt;%
+  group_by( First ) %&gt;% 
+  summarise( total=n() ) %&gt;%
+  head() %&gt;% xtable()</code></pre>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Fri Sep  5 13:28:02 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+First
+</TH> <TH> 
+total
+</TH>  </TR>
+  <TR> <TD> 
+ABDUL M RAHAMAN “THE ROCK”
+</TD> <TD align="right"> 
+338
+</TD> </TR>
+  <TR> <TD> 
+ALICIA K. BENNETT
+</TD> <TD align="right"> 
+351
+</TD> </TR>
+  <TR> <TD> 
+BETSY HODGES
+</TD> <TD align="right"> 
+28935
+</TD> </TR>
+  <TR> <TD> 
+BILL KAHN
+</TD> <TD align="right">  
+97
+</TD> </TR>
+  <TR> <TD> 
+BOB “AGAIN” CARNEY JR
+</TD> <TD align="right">  
+56
+</TD> </TR>
+  <TR> <TD> 
+BOB FINE
+</TD> <TD align="right"> 
+2094
+</TD> </TR>
+   </TABLE>
+
+<p>The alphabetical order in the above might be good for some purposes. If your goal is to show who won and how they did compared to the other candidates, it’s better to arrange the results by <code>total</code> in descending order.</p>
+<pre class="r"><code>Minneapolis2013 %&gt;%
+  group_by( First ) %&gt;% 
+  summarise( total=n() ) %&gt;%
+  arrange( desc(total) ) %&gt;%
+  head() %&gt;% xtable()</code></pre>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Fri Sep  5 13:28:02 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+First
+</TH> <TH> 
+total
+</TH>  </TR>
+  <TR> <TD> 
+BETSY HODGES
+</TD> <TD align="right"> 
+28935
+</TD> </TR>
+  <TR> <TD> 
+MARK ANDREW
+</TD> <TD align="right"> 
+19584
+</TD> </TR>
+  <TR> <TD> 
+DON SAMUELS
+</TD> <TD align="right"> 
+8335
+</TD> </TR>
+  <TR> <TD> 
+CAM WINTON
+</TD> <TD align="right"> 
+7511
+</TD> </TR>
+  <TR> <TD> 
+JACKIE CHERRYHOMES
+</TD> <TD align="right"> 
+3524
+</TD> </TR>
+  <TR> <TD> 
+BOB FINE
+</TD> <TD align="right"> 
+2094
+</TD> </TR>
+   </TABLE>
+<p>By default, the arrangement goes in ascending order: from lowest to highest. You can also arrange for the order to be descending, with the highest value first.</p>
+<p>Join: minor candidates</p>
+<p>Join:</p>
+<ul>
+<li>select out the G20 countries</li>
+<li>add a variable indicating whether a country is in the G20 — make a map</li>
+</ul>
+<p>Mutate, Filter &amp; Select, Arrange? save Join for later.</p>
 <p>Example with Mutate: Calculation the proportion of smokers who are alive adjusted for sex and age. You’ll need <code>mutate()</code> to add the proportion variable on.</p>
+</div>
+<div id="some-other-data-verbs" class="section level2">
+<h2>Some other data verbs</h2>
+<ul>
+<li><code>sample_n( )</code> chooses random cases from a data table. The number of cases to be sampled is set by the named argument, <code>size=</code>. Among other things, <code>sample_n()</code> is useful for dra</li>
+</ul>
+</div>
+<div id="elaboration-data-verb-languages" class="section level2">
+<h2>Elaboration: Data verb languages</h2>
+<p>The used in these notes is <code>dplyr</code>. A complete list of others would be long, * dplyr - R * data.table - R * SQL - database servers</p>
+<p><code>dplyr</code> will generate SQL.</p>
+</div>
 
 
 </div>

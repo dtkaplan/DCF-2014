@@ -9,13 +9,243 @@ output:
 ```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
 ```
 
+```{r include=FALSE}
+data( BabyNames )
+data( Minneapolis2013 )
+data( CountryData )
+```
+
+
+You have already seen two data verbs:
+
+* `summarise()`
+* `group_by()`
+
+Although these are being written in computer notation, it's also perfectly legitimate to express actions using them as English verbs.  For instance: "Group the baby names by sex and year.  Then summarize the groups by adding up the total number of births for each group. This will be the result."  That's English. Here's the equivalent statement in computer notation:
+
+```{r results='hide'}
+Result <- 
+  BabyNames %>% 
+  group_by( sex, year ) %>%
+  summarise( total=sum( count ) )
+```
+
+```{r echo=FALSE,results='asis'}
+Result %>% sample_n( size=6 ) %>% arrange( year ) %>% xtable()
+```
+
+These notes will introduce you to five more data verbs:
+
+* `select()`
+* `mutate()`
+* `filter()`
+* `arrange()`
+* `join()`
+
+As with `group_by()` and `summarise()`, each is a standard English word whose action on data is reflected in the colloquial, everyday meaning.  And, like English, intricate and detailed statements can be made by combining the words into expressions.
+
+## Select
+
+Selecting from a data table means choosing one or more variables from the table.  Reasons to do this:
+
+* Simplify the table you are working on.
+* Rename one or more of the variables to make it more convenient to work with.
+
+The syntax is similar to that of `group_by()` or `summarise()`.  A data table is provided as input along with the names of the variables you are selecting.  The result produced is a new data table with just those variables.
+
+To illustrate, here's the first few cases in the `BabyNames` data table:
+
+```{r echo=FALSE,results='asis'}
+BabyNames %>% head( ) %>% xtable( )
+```
+
+And here is the result of selecting just the `name` and `year` variables:
+
+```{r results='hide', ref.label='select2'}
+BabyNames %>% select( name, year )
+```
+
+```{r echo=FALSE,results='asis'}
+BabyNames %>% select( name, year ) %>% head() %>% xtable()
+```
+
+If you want to rename a variable, use a named argument, as with `when=year` in the following:
+
+```{r results='hide', ref.label='select3'}
+BabyNames %>% select( name, when=year )
+```
+
+```{r echo=FALSE,results='asis'}
+BabyNames %>% select( name, when=year ) %>% 
+  head() %>% xtable()
+```
+
+## Filter
+
+To "filter" means to remove unwanted material.  The data verb "filter" removes unwanted cases, passing through to the result only those cases that are wanted or needed.  Filtering constrasts with selecting.  Selecting passes the specified *variables*; filtering passes the specified cases.
+
+In selecting, the variables are specified by name, e.g.
+```{r results="hide"}
+BabyNames %>% select( year, count )
+```
+
+With filtering, the cases are specified by one or more criteria or tests.  The tests are generally constructed with variables and functions like `==`, `>`, `<`, `%in%`, and so on.  For instance, here's how you can filter out the boys, producing a result with only the girls' names:
+```{r results='asis'}
+BabyNames %>% filter( sex=="F") %>%
+  sample_n( size=10 ) %>% xtable()
+```
+
+Here are the cases for either sex for babies born after 1990:
+```{r results="asis"}
+BabyNames %>% filter( year > 1990 ) %>% 
+  sample_n( size=10 ) %>% xtable()
+```
+
+Here are the girls born after 1990:
+```{r results='asis'}
+BabyNames %>% filter( year > 1990, sex=="F") %>%
+  sample_n( size=10 ) %>% xtable()
+```
+
+You can specify as many tests as you like.  The `filter()` function will pass through only those cases that pass *all* the tests.
+
+Sometimes you may want to set "either-or" criteria, say the babies who are female *or* born after 1990:
+```{r results='hide'}
+BabyNames %>% filter( year>1990 | sex=="F") 
+```
+
+It's also possible to test for a variable being any of several different variables.  For instance, here are the babies born in any of 1980, 1990, 2000, and 2010:
+
+```{r results='asis'}
+BabyNames %>% 
+  filter( year %in% c(1980, 1990, 2000, 2010)) %>%
+  sample_n( size=12 ) %>% 
+  arrange(year) %>%
+  xtable()
+```
+
+
+
+## Mutate
+
+The word "mutate" means to change in form or nature. The data verb "mutate" is a bit more specific: to change a variable or add new variables based on the existing ones.  The data verb always refers to variables; mutation leaves the cases exactly as they were.
+
+Often, mutation is used to combine or transform existing variables into a new variable. For instance, the `CountryData` data table has variables `pop` and `area` giving the population and area (in km^2) of each country.  Suppose you wanted to know the population *density*, that is, how many people per unit area.  Using mutate, you creating a new variable that is population / area.
+```{r results='asis'}
+Result <-
+  CountryData %>%
+  mutate( popDensity=pop/area ) %>% 
+  na.omit() %>% 
+  sample_n(size=10) %>% xtable()
+```
+
+The resulting data table, named `Result` here, contains all the original variables as well as the newly created ones.    
+
+`Result` has 77 variables.  Rather than show them all, here are just some relevant variables for a few of the countries.
+
+```{r ref.label="popdensity",results='hide'}
+Result %>% select( country, pop, area, popDensity) 
+```
+
+```{r echo=FALSE,results='asis'}
+Result %>% select( country, pop, area, popDensity) %>% arrange(desc(popDensity)) %>% head() %>% xtable( )
+```
+
+## Arrange
+
+Arranging sets the order of cases.  It does not change the variables --- that's a job for `select()`.  Similarly, arranging does not filter the cases.  Arranging merely sets the order of cases according to some criterion that you specify.
+
+For instance, here are the first-choices from the Minneapolis mayoral election in 2013 found by counting the ballots:
+
+```{r results='asis'}
+Minneapolis2013 %>%
+  group_by( First ) %>% 
+  summarise( total=n() ) %>%
+  head() %>% xtable()
+```
+
+The alphabetical order in the above might be good for some purposes.  If your goal is to show who won and how they did compared to the other candidates, it's better to arrange the results by `total` in descending order.
+```{r results='asis'}
+Minneapolis2013 %>%
+  group_by( First ) %>% 
+  summarise( total=n() ) %>%
+  arrange( desc(total) ) %>%
+  head() %>% xtable()
+```
+By default, the arrangement goes in ascending order: from lowest to highest.  You can also arrange for the order to be descending, with the highest value first.
+
+## Join
+
+Each of the data verbs described until now takes one *one* data table as an input.  Join is different.  It's well named: it brings together *two* data tables. Once you can join two data tables, you can join any number of data tables by repeated joins.  Joining is at the heart of combining data from multiple sources.
+
+It's conventional to refer to the two tables as the "left" and "right" tables.  The output of joining the left and right tables is a single table containing *all* of the variables in the two tables.  For instance, suppose you have these two tables:
+
+* Left: cases are procedures performed at medical clinics. The variables: `clinicName`, `postalCode`, `procedure`, `nPatients`.  Each clinic does multiple procedures. `nPatients` gives the number of patients undergoing that procedure in a year.
+* Right: cases are postal codes. Variables reflect the demographics of that postal code: `postalCode`, `population`, `over65`, `under10`
+
+The output of joining the left and right tables will have all the variables: `clinicName`, `postalCode`, `procedure`, `nPatients`, `population`, `over65`, `under10`.  Notice that there is only one variable for `postalCode`, even though that variable appears in both the left and right tables.  Such variables, appearing in both left and right tables, are called "overlap variables."
+
+The overlap variables determine which cases will go into the output table.  In this example, there is just one overlap variable: `postalCode`.   
+
+The diagram below shows the situation.  It shows, for each case in the left and right data table, the value of the overlap variable.  The lines show the matches between the left and right tables. The cases connected by a match are the overlap cases; there are five of them in the diagrams.  Some cases in the left are not matched with any case in the right.  Likewise, some cases in the right are not matched with any in the left.
+
+For each left-right pair of matched cases, the join will include all of the variables from the left table and the right table.  For the unmatched cases, any information that would have come from the other side is listed as missing.
+
+NEED TO SHOW THE WHOLE DATA FRAME.
+
+
+```{r echo=FALSE}
+codes <- sort(round( runif(10,min=10000,max=99999)))
+Left <- data.frame( postalCode=codes[c(1,2,3,2,4,5,6,6,7)],y=9:1,x=1)
+Right <- data.frame( postalCode=codes[c(2,1,1,9,8,4)],y2=9:4,x2=2)
+Connections <- inner_join( Left, Right ) 
+ggplot() + geom_text(data=Left, 
+                      aes(x=x,y=y,label=postalCode)) +
+           geom_text(data=Right, 
+                      aes(x=x2,y=y2,label=postalCode)) + 
+  geom_segment(data=Connections, size=3, alpha=.5, 
+               aes(x=x+.13,y=y,xend=x2-.13,yend=y2))+
+  theme(
+    plot.background = element_blank()
+   ,panel.grid.major = element_blank()
+   ,panel.grid.minor = element_blank()
+   ,panel.border = element_blank()
+  ) +
+  scale_x_discrete(breaks=NULL) +
+  scale_y_discrete(breaks=NULL) + xlab("") + ylab("")
+
+```
+
+Three uses for join.
+
+* Complete
+* Identify
+* Translate
+
+The join is done on a case-by-case basis.  Every case in the left table is compared to every case in the right table.  If there is a match between a left case and a right case --- in this example, if the postal codes are identical --- there will be a resulting case in the output with values for each of the variables drawn from 
+
+
+
+Join works on a case-by-case basis.  That is, each and every case in one table is connected to each and every case in the other table.  
+
+
+Join: minor candidates
+
+Join: 
+
+* select out the G20 countries
+* add a variable indicating whether a country is in the G20 --- make a map
+
+
 Mutate, Filter & Select, Arrange?  save Join for later.
 
 Example with Mutate: Calculation the proportion of smokers who are alive adjusted for sex and age.  You'll need `mutate()` to add the proportion variable on.
 
-More for mutate: rates in CIA country data.
 
 
+## Some other data verbs
+
+* `sample_n( )` chooses random cases from a data table.  The number of cases to be sampled is set by the named argument, `size=`.  Among other things, `sample_n()` is useful for dra
 
 ## Elaboration: Data verb languages
 

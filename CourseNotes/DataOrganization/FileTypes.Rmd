@@ -1,12 +1,12 @@
 ---
 output:
   html_document:
-    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
     fig_caption: yes
-    toc: yes
+    toc: no
 ---
 
-```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
 ```
 
 Video resources: [File paths](), [Embedding files](), [Creating an RMD file]()
@@ -137,3 +137,5 @@ The `DCF` package provides a way to do this easily.  Inside an R chunk in the Rm
     
 Of course, instead of always specifying `"AssignmentTwo.Rmd"`, give the quoted character string containing the path and filename for your Rmd file.  You can construct this easily by using `file.choose()` in the console, and copying the result as the argument of `includeSourceDocuments()` function.  This will embed the named file into your HTML, so that the file will be available directly through the HTML file.
 
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```

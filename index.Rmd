@@ -14,8 +14,7 @@ NO MEETING ON Wed. 26 November, day before Thanksgiving.
 ## To do
 
 * In DCF, redefine `summarize()` and `summarise()` so that the basic functions have `na.rm=TRUE`????
-* Change NaN in NHANES to NA
-* BabyNamesYearly should be changed to just baby names.
+* Go back to original NHANES data, get the blood pressure info, etc, and make a new table, NHANESmore, that can be joined with the mosaicData::NHANES.
 
 
 ## Week 1: Infrastructure

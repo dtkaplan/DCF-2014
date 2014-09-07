@@ -3,7 +3,7 @@ output:
   html_document:
     css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
     fig_caption: yes
-    toc: yes
+    toc: no
 ---
 
 ```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
@@ -200,4 +200,6 @@ ggplot( Princes, aes(x=year,y=yearlyTotal) ) +
 Here, `x` is the name of an argument to the function `aes()`.  The expression, `x=year` means that the `x` input will be the values of the `year` variable.  Similarly, `geom_vline()` has a large number of potential arguments, including `xintercept`, `alpha`, `linetype`, `color`, etc.  The expression `xintercept=1978` says to set the `xintercept` argument to the value 1978.
     
 
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```
 
