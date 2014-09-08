@@ -1,0 +1,271 @@
+---
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
+    fig_caption: yes
+    toc: no
+---
+
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
+```
+
+```{r include=FALSE}
+opts_chunk$set( message=FALSE )
+```
+## Join
+
+Each of the data verbs described until now takes one *one* data table as an input.  Join is different.  It's well named: it brings together *two* data tables. Once you can join two data tables, you can join any number of data tables by repeated joins.  Joining is at the heart of combining data from multiple sources.
+
+It's conventional to refer to the two tables as the "left" and "right" tables.
+
+
+
+```{r datasetup,echo=FALSE}
+set.seed(42)
+codes <- sort(round( runif(10,min=10000,max=99999)))
+Left <- data.frame( clinicName=LETTERS[1:9],
+                    postalCode=codes[c(1,2,3,2,4,5,6,6,7)],
+                    y=9:1,x=1)
+Right <- data.frame( postalCode=codes[c(2,1,1,9,8,4)], over65=round(runif(6,0,100))/100,y2=9:4,x2=2)
+Connections <- inner_join( Left, Right ) 
+JustMatches <- semi_join( Left, Right )
+LL <- select( Left, clinicName, postalCode )
+RR <- select( Right, postalCode, over65 )
+```
+
+To illustrate the differences and similarities between the different kinds of join, suppose you have these two tables:
+
+* Left: cases are medical clinics. The variables: `clinicName`, `postalCode`.  Each clinic does multiple procedures. 
+
+
+```{r echo=FALSE,results='asis'}
+xtable( select(Left, clinicName, postalCode ))
+```
+
+* Right: cases are postal codes. Variables reflect the demographics of that postal code: `postalCode`, `over65`, etc.
+
+```{r echo=FALSE,results='asis'}
+xtable( select( Right, postalCode, over65))
+```
+
+Variables that appear in both the left and right tables are called "overlap variables."  The only overlap variable here is `postalCode`.
+
+The overlap variables determine which cases will go into the output table.  In this example, there is just one overlap variable: `postalCode`.   
+
+The diagram below shows the cases in the left and right tables.  The lines show the matches between left and right. The cases connected by a match are the overlap cases; there are five of them in the diagram.  Cases without a match also appear in both the left and right tables.
+
+```{r exampleplot,echo=FALSE}
+ggplot() + geom_text(data=Left, 
+                      aes(x=x,y=y,label=postalCode)) +
+           geom_text(data=Left, 
+                      aes(x=x-1,y=y,label=clinicName)) +
+           geom_text(data=Right, 
+                      aes(x=x2,y=y2,label=postalCode)) +
+           geom_text(data=Right, 
+                      aes(x=x2+1,y=y2,label=over65)) + 
+           geom_segment(data=Connections, size=3, alpha=.5, 
+               aes(x=x+.13,y=y,xend=x2-.13,yend=y2)) +
+  theme(
+    plot.background = element_blank()
+   ,panel.grid.major = element_blank()
+   ,panel.grid.minor = element_blank()
+   ,panel.border = element_blank()
+  ) +
+  scale_x_continuous(breaks=NULL,limits=c(-.5,3.5)) +
+  scale_y_discrete(breaks=NULL) + xlab("") + ylab("")
+
+```
+
+
+Note that there are three different kinds of cases here:
+
+1. The matching cases that are in both the left and right. These come as pairs: the cases connected by a line in the diagram.
+2. Non-matching ones in the left.
+3. Non-matching ones in the right.
+
+There are different types of join. The type of join specifies whether you want to include in the output the matching cases, the matching pairs, or the non-matching cases.  
+
+#### Inner Join
+
+An *inner join* gives the matching pairs.  Note that clinic A, which had two matches in the right table, appears twice, once for each matching pair in which clinic A is involved.
+
+```{r eval=FALSE}
+merge( LL, RR )
+```
+
+```{r echo=FALSE,results='asis'}
+xtable( merge( LL, RR ) )
+```
+
+#### Outer Join
+
+An *outer join* can include cases where there is no match. You might want to include the unmatched cases from the left table, from the right table, or from both tables. 
+
+##### Unmatched cases from the left table
+
+```{r outerjoin,eval=FALSE}
+merge( LL, RR, all.x=TRUE )
+```
+
+```{r echo=FALSE,results='asis'}
+xtable( merge( LL, RR, all.x=TRUE ) )
+```
+
+##### Unmatched cases from the right table
+
+```{r fromy,eval=FALSE}
+merge( LL, RR, all.y=TRUE )
+```
+
+```{r fromx,echo=FALSE,results='asis'}
+xtable( merge( LL, RR, all.y=TRUE ) )
+```
+
+##### Unmatched cases from both tables
+
+```{r fromboth,eval=FALSE}
+merge( LL, RR, all=TRUE )
+```
+
+```{r echo=FALSE,results='asis'}
+xtable( merge( LL, RR, all=TRUE ) )
+```
+
+### Using Join
+
+Join is useful for many tasks. 
+
+#### Translate 
+
+Translate a value from the left table according to a specification in the right table.  [List of synonyms for countries and an official identifier.  Translate the synonmyms into the official identifier.]
+[Marking candidates as "minor" in Minneapolis Mayor]
+
+For example, in the Minneapolis mayoral election, voters made `r length(unique(Minneapolis2013$First))` different first choices.^[There are the 36 candidates as well as no choice ("undervote") or disallowed multiple choices ("overvote").]  It's ungainly to look at the relationships among all those choices.  A sensible approach is to group the minor candidates together.
+
+Defining a minor candidate to be one who got fewer than 1000 votes, it's possible to create a table identifying the minor candidates:
+
+```{r candidates}
+Totals <- Minneapolis2013 %>%
+  group_by( First ) %>%
+  summarise( nVotes=n() )
+CandidateGroups <- 
+  Totals %>% 
+  mutate( Candidate=ifelse( nVotes>1000, 
+                            as.character(First), 
+                            "Minor") )
+```
+
+```{r echo=FALSE,results='asis',scroller=300}
+xtable(CandidateGroups)
+```
+```{r rowsCandidates}
+nrow(CandidateGroups)
+```
+
+This table gives the translation between the listing in `First` and listing that lumps minor candidates together. There is one case for each candidate. Joining the translation table with the vote table produces a new column, with one case for each ballot and the minor candidates marked as such. 
+
+```{r eval=FALSE}
+merge( Minneapolis2013, CandidateGroups, all.x=TRUE )
+```
+
+```{r echo=FALSE,results='asis',scroller=300}
+merge( Minneapolis2013, CandidateGroups, all.x=TRUE) %>% 
+  head(50) %>% select( Candidate, First, Second) %>%
+  xtable
+```
+
+
+
+
+#### Complete 
+
+Often, information is spread among multiple sources.  Joining can bring this information together.
+
+For instance, here are the population and area variables from `CountryData`.
+
+```{r poparea}
+PopArea <-
+  select( CountryData, country, area, pop)
+```
+```{r eval=FALSE}
+PopArea
+```
+
+```{r poparea3,echo=FALSE,results='asis',scroller=300}
+xtable(PopArea)
+```
+
+From a different source, here are the locations of the various countries:
+
+```{r eval=FALSE}
+CountryCentroids
+```
+
+```{r scrollCentroids,echo=FALSE,results='asis',scroller=300}
+xtable(CountryCentroids)
+```
+
+A join will bring together these two sources.  Before this can be done, the overlap variables must be explicitly stated.   As things stand, there are no variables in common between `CountryCentroids` and `PopArea`.
+
+```{r}
+names( CountryCentroids )
+names( PopArea)
+```
+
+It's `name` and `country` that connects the two tables.  To make this explicit, let's change the variable name from "name" to "country":
+
+```{r together1}
+CountryCentroids <-
+  CountryCentroids %>% 
+  mutate( country=name ) %>%
+  select( -name )
+Together <- merge( PopArea, CountryCentroids )
+```
+
+```{r eval=FALSE}
+Together
+```
+
+```{r echo=FALSE,results='asis',scroller=300}
+xtable(Together)
+```
+
+
+
+#### Filter
+
+You can use the `filter()` function to extract those cases that meet a given criterion.  Sometimes you may have a list of the cases you want.  `merge()` lets you choose the cases you want in that list.
+
+For example, here is a list of the G8 countries.
+```{r filter}
+G8 <- 
+  CountryGroups %>%
+  filter( G8 ) %>%
+  select( country )
+```
+
+```{r eval=FALSE}
+G8
+```
+
+```{r echo=FALSE,results='asis'}
+xtable(G8)
+```
+
+The `G8` table can be used to extract the G8 countries from another table:
+```{r}
+G8Data <- merge( Together, G8 )
+```
+```{r eval=FALSE}
+G8Data
+```
+
+```{r echo=FALSE,results='asis'}
+xtable( G8Data )
+```
+
+
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```
+
+
