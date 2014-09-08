@@ -178,31 +178,58 @@ By default, the arrangement goes in ascending order: from lowest to highest.  Yo
 
 Each of the data verbs described until now takes one *one* data table as an input.  Join is different.  It's well named: it brings together *two* data tables. Once you can join two data tables, you can join any number of data tables by repeated joins.  Joining is at the heart of combining data from multiple sources.
 
-It's conventional to refer to the two tables as the "left" and "right" tables.  The output of joining the left and right tables is a single table containing *all* of the variables in the two tables.  For instance, suppose you have these two tables:
+It's conventional to refer to the two tables as the "left" and "right" tables.
 
-* Left: cases are procedures performed at medical clinics. The variables: `clinicName`, `postalCode`, `procedure`, `nPatients`.  Each clinic does multiple procedures. `nPatients` gives the number of patients undergoing that procedure in a year.
-* Right: cases are postal codes. Variables reflect the demographics of that postal code: `postalCode`, `population`, `over65`, `under10`
+As you'll see, there are several different kinds of join.  These let you accomplish different tasks.  Among these are:
 
-The output of joining the left and right tables will have all the variables: `clinicName`, `postalCode`, `procedure`, `nPatients`, `population`, `over65`, `under10`.  Notice that there is only one variable for `postalCode`, even though that variable appears in both the left and right tables.  Such variables, appearing in both left and right tables, are called "overlap variables."
-
-The overlap variables determine which cases will go into the output table.  In this example, there is just one overlap variable: `postalCode`.   
-
-The diagram below shows the situation.  It shows, for each case in the left and right data table, the value of the overlap variable.  The lines show the matches between the left and right tables. The cases connected by a match are the overlap cases; there are five of them in the diagrams.  Some cases in the left are not matched with any case in the right.  Likewise, some cases in the right are not matched with any in the left.
-
-For each left-right pair of matched cases, the join will include all of the variables from the left table and the right table.  For the unmatched cases, any information that would have come from the other side is listed as missing.
-
-NEED TO SHOW THE WHOLE DATA FRAME.
+* Complete --- Add information about individual cases from the right table to the information that's already in the left table.  [Which countries are in the G8]
+* Identify --- Find those cases in the left table that have a match in the right. [Give back just those countries in the G8]
+* Translate --- Translate a value from the left table according to a specification in the right table.  [List of synonyms for countries and an official identifier.  Translate the synonmyms into the official identifier.]
 
 
 ```{r echo=FALSE}
+set.seed(42)
 codes <- sort(round( runif(10,min=10000,max=99999)))
-Left <- data.frame( postalCode=codes[c(1,2,3,2,4,5,6,6,7)],y=9:1,x=1)
-Right <- data.frame( postalCode=codes[c(2,1,1,9,8,4)],y2=9:4,x2=2)
-Connections <- inner_join( Left, Right ) 
+Left <- data.frame( clinicName=LETTERS[1:9],
+                    postalCode=codes[c(1,2,3,2,4,5,6,6,7)],
+                    y=9:1,x=1)
+Right <- data.frame( postalCode=codes[c(2,1,1,9,8,4)], over65=round(runif(6,0,100))/100,y2=9:4,x2=2)
+LL <- select( Left, clinicName, postalCode )
+RR <- select( Right, postalCode, over65 )
+Connections <- inner_join( LL, RR ) 
+JustMatches <- semi_join( LL, RR )
+```
+
+To illustrate the differences and similarities between the different kinds of join, suppose you have these two tables:
+
+* Left: cases are procedures performed at medical clinics. The variables: `clinicName`, `postalCode`.  Each clinic does multiple procedures. 
+
+
+```{r echo=FALSE,results='asis'}
+xtable( select(Left, clinicName, postalCode ))
+```
+
+* Right: cases are postal codes. Variables reflect the demographics of that postal code: `postalCode`, `over65`, etc.
+
+```{r echo=FALSE,results='asis'}
+xtable( select( Right, postalCode, over65))
+```
+
+Variables taht appear in both the left and right tables are called "overlap variables."  The only overlap variable here is `postalCode`.
+
+The overlap variables determine which cases will go into the output table.  In this example, there is just one overlap variable: `postalCode`.   
+
+The diagram below shows the cases in the left and right tables.  The lines show the matches between left and right. The cases connected by a match are the overlap cases; there are five of them in the diagram.  Cases without a match also appear in both the left and right tables.
+
+```{r echo=FALSE}
 ggplot() + geom_text(data=Left, 
                       aes(x=x,y=y,label=postalCode)) +
+  geom_text(data=Left, 
+                      aes(x=x-1,y=y,label=clinicName)) +
            geom_text(data=Right, 
-                      aes(x=x2,y=y2,label=postalCode)) + 
+                      aes(x=x2,y=y2,label=postalCode)) +
+  geom_text(data=Right, 
+                      aes(x=x2+1,y=y2,label=over65)) + 
   geom_segment(data=Connections, size=3, alpha=.5, 
                aes(x=x+.13,y=y,xend=x2-.13,yend=y2))+
   theme(
@@ -211,16 +238,83 @@ ggplot() + geom_text(data=Left,
    ,panel.grid.minor = element_blank()
    ,panel.border = element_blank()
   ) +
-  scale_x_discrete(breaks=NULL) +
+  scale_x_continuous(breaks=NULL,limits=c(-.5,3.5)) +
   scale_y_discrete(breaks=NULL) + xlab("") + ylab("")
 
 ```
 
+
+Note that there are three different kinds of cases here:
+
+1. The matching cases that are in both the left and right. These come as pairs: the cases connected by a line in the diagram.
+2. Non-matching ones in the left.
+3. Non-matching ones in the right.
+
+There are different types of join. The type of join specifies whether you want to include in the output the matching cases, the matching pairs, or the non-matching cases.  
+
+#### Inner Join
+
+An *inner join* gives the matching pairs.  Note that clinic A, which had two matches in the right table, appears twice, once for each matching pair in which clinic A is involved.
+
+```{r echo=FALSE,results='asis'}
+xtable( inner_join( LL, RR ) )
+```
+
+Inner joins are useful for adding information from another source about the cases in the left table.  As an example, consider the following table (which is a small part of the `CountryData` table).
+
+```{r echo=FALSE}
+CountryLeft <- CountryData[c( 48, 70, 89, 109, 110, 174, 183, 221, 242, 248), 1:3]
+row.names(CountryLeft) <- NULL
+```
+
+```{r echo=FALSE,results='asis'}
+xtable( CountryLeft )
+```
+
+There are many international groups to which countries may belong.  Some famous ones are the G8 and G20 industrialized economies.  Here's part of the `CountryGroups` table that identifies the membership for three different international groups.
+
+```{r echo=FALSE,results='asis'}
+set.seed(129)
+CountryGroups %>% sample_n(size=8) %>% xtable()
+```
+
+```{r}
+merge(CountryLeft, CountryGroups)
+merge(CountryLeft, CountryGroups, all.x=TRUE)
+```
+
+Do straight merge
+
+Do straight merge on filtered G8 countries and G20 countries
+
+#### Left Join
+
+Merge with all.x=TRUE.
+
+A *left join* includes the results of the inner join along with all the non-matching cases from the left table.  For the non-matching cases, the value of the variable from the right table is "missing" data.
+
+```{r echo=FALSE,results='asis'}
+xtable( left_join( LL, RR ) )
+```
+
+An left join can attach the information from the `CountryGroups` table to the geographic/demographic data. 
+
+```{r echo=FALSE, results='hide'}
+left_join( CountryLeft, CountryGroups )
+```
+
+
+#### Semi Join
+
+A *semi join* gives each case in the left table that has a match in the right, but doesn't duplicate cases that appear in more than one matching pair.
+
+```{r echo=FALSE,results='asis'}
+xtable( semi_join( LL, RR ))
+```
+
 Three uses for join.
 
-* Complete
-* Identify
-* Translate
+
 
 The join is done on a case-by-case basis.  Every case in the left table is compared to every case in the right table.  If there is a match between a left case and a right case --- in this example, if the postal codes are identical --- there will be a resulting case in the output with values for each of the variables drawn from 
 
