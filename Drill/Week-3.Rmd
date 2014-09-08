@@ -556,6 +556,7 @@ merge(CountryLeft, CountryGroups, all.x=TRUE)
 merge(CountryLeft, CountryGroups, all.x=TRUE) %>% xtable
 ```
 
+[List of synonyms for countries and an official identifier.  Translate the synonmyms into the official identifier.]
 
 
 ```{r child="../../CSS/DisqusTemplate.Rmd"}

@@ -34,10 +34,15 @@ require(DCF)
 
 ```{r include=FALSE}
 scroller_hook = function(before, options, envir) {
+    width=options$scroller
+    if ( ! width %in% c(300,600)) {
+      warning( "scroller must be either 300 or 600")
+      width=300
+      }
     if (before) {
-        return('<div class="table-scroller300">')
+      return(sprintf('<div class="table-scroller%d">',width))
     } else {
-        return('</div>')
+      return('</div>')
     }
 }
 knit_hooks$set( scroller=scroller_hook ) 

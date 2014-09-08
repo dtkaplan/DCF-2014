@@ -80,7 +80,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <li>Left: cases are medical clinics. The variables: <code>clinicName</code>, <code>postalCode</code>. Each clinic does multiple procedures.</li>
 </ul>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  8 14:40:24 2014 -->
+<!-- Mon Sep  8 14:57:08 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 clinicName
@@ -138,7 +138,7 @@ I
 <li>Right: cases are postal codes. Variables reflect the demographics of that postal code: <code>postalCode</code>, <code>over65</code>, etc.</li>
 </ul>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  8 14:40:24 2014 -->
+<!-- Mon Sep  8 14:57:08 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 postalCode
@@ -193,7 +193,7 @@ over65
 <p>An <em>inner join</em> gives the matching pairs. Note that clinic A, which had two matches in the right table, appears twice, once for each matching pair in which clinic A is involved.</p>
 <pre class="r"><code>merge( LL, RR )</code></pre>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  8 14:40:24 2014 -->
+<!-- Mon Sep  8 14:57:08 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 postalCode
@@ -247,7 +247,7 @@ E
 <h5>Unmatched cases from the left table</h5>
 <pre class="r"><code>merge( LL, RR, all.x=TRUE )</code></pre>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  8 14:40:24 2014 -->
+<!-- Mon Sep  8 14:57:08 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 postalCode
@@ -323,7 +323,7 @@ I
 <h5>Unmatched cases from the right table</h5>
 <pre class="r"><code>merge( LL, RR, all.y=TRUE )</code></pre>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  8 14:40:24 2014 -->
+<!-- Mon Sep  8 14:57:08 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 postalCode
@@ -384,7 +384,7 @@ E
 <h5>Unmatched cases from both tables</h5>
 <pre class="r"><code>merge( LL, RR, all=TRUE )</code></pre>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  8 14:40:24 2014 -->
+<!-- Mon Sep  8 14:57:09 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 postalCode
@@ -472,7 +472,7 @@ I
 <p>Join is useful for many tasks.</p>
 <div id="translate" class="section level4">
 <h4>Translate</h4>
-<p>Translate a value from the left table according to a specification in the right table. [List of synonyms for countries and an official identifier. Translate the synonmyms into the official identifier.][Marking candidates as “minor” in Minneapolis Mayor]</p>
+<p>Sometimes you want to rename or translate the levels of a categorical variable. If there is a large number of levels, it can make sense to store the translation in a data table, or to create it in a data table.</p>
 <p>For example, in the Minneapolis mayoral election, voters made 38 different first choices.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> It’s ungainly to look at the relationships among all those choices. A sensible approach is to group the minor candidates together.</p>
 <p>Defining a minor candidate to be one who got fewer than 1000 votes, it’s possible to create a table identifying the minor candidates:</p>
 <pre class="r"><code>Totals &lt;- Minneapolis2013 %&gt;%
@@ -483,8 +483,8 @@ CandidateGroups &lt;-
   mutate( Candidate=ifelse( nVotes&gt;1000, 
                             as.character(First), 
                             &quot;Minor&quot;) )</code></pre>
-<div class="table-scroller300"><!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  8 14:40:24 2014 -->
+<div class="table-scroller600"><!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Mon Sep  8 14:57:09 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 First
@@ -762,12 +762,13 @@ Minor
    </TABLE>
 </div>
 
+
 <pre class="r"><code>nrow(CandidateGroups)</code></pre>
 <pre><code>[1] 38</code></pre>
 <p>This table gives the translation between the listing in <code>First</code> and listing that lumps minor candidates together. There is one case for each candidate. Joining the translation table with the vote table produces a new column, with one case for each ballot and the minor candidates marked as such.</p>
 <pre class="r"><code>merge( Minneapolis2013, CandidateGroups, all.x=TRUE )</code></pre>
-<div class="table-scroller300"><!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  8 14:40:25 2014 -->
+<div class="table-scroller600"><!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Mon Sep  8 14:57:09 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 Candidate
@@ -1140,8 +1141,8 @@ BETSY HODGES
 <pre class="r"><code>PopArea &lt;-
   select( CountryData, country, area, pop)</code></pre>
 <pre class="r"><code>PopArea</code></pre>
-<div class="table-scroller300"><!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  8 14:40:25 2014 -->
+<div class="table-scroller600"><!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Mon Sep  8 14:57:10 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 country
@@ -2908,7 +2909,7 @@ Zimbabwe
 <p>From a different source, here are the locations of the various countries:</p>
 <pre class="r"><code>CountryCentroids</code></pre>
 <div class="table-scroller300"><!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  8 14:40:26 2014 -->
+<!-- Mon Sep  8 14:57:10 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 name
@@ -5103,8 +5104,8 @@ ZWE
   select( -name )
 Together &lt;- merge( PopArea, CountryCentroids )</code></pre>
 <pre class="r"><code>Together</code></pre>
-<div class="table-scroller300"><!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  8 14:40:26 2014 -->
+<div class="table-scroller600"><!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Mon Sep  8 14:57:10 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 country
@@ -7575,7 +7576,7 @@ ZWE
   select( country )</code></pre>
 <pre class="r"><code>G8</code></pre>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  8 14:40:26 2014 -->
+<!-- Mon Sep  8 14:57:10 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 country
@@ -7610,7 +7611,7 @@ United States
 <pre class="r"><code>G8Data &lt;- merge( Together, G8 )</code></pre>
 <pre class="r"><code>G8Data</code></pre>
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Mon Sep  8 14:40:26 2014 -->
+<!-- Mon Sep  8 14:57:10 2014 -->
 <TABLE border="1">
 <TR> <TH> 
 country

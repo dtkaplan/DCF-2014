@@ -137,8 +137,7 @@ Join is useful for many tasks.
 
 #### Translate 
 
-Translate a value from the left table according to a specification in the right table.  [List of synonyms for countries and an official identifier.  Translate the synonmyms into the official identifier.]
-[Marking candidates as "minor" in Minneapolis Mayor]
+Sometimes you want to rename or translate the levels of a categorical variable.  If there is a large number of levels, it can make sense to store the translation in a data table, or to create it in a data table.
 
 For example, in the Minneapolis mayoral election, voters made `r length(unique(Minneapolis2013$First))` different first choices.^[There are the 36 candidates as well as no choice ("undervote") or disallowed multiple choices ("overvote").]  It's ungainly to look at the relationships among all those choices.  A sensible approach is to group the minor candidates together.
 
@@ -155,9 +154,10 @@ CandidateGroups <-
                             "Minor") )
 ```
 
-```{r echo=FALSE,results='asis',scroller=300}
+```{r echo=FALSE,results='asis',scroller=600}
 xtable(CandidateGroups)
 ```
+
 ```{r rowsCandidates}
 nrow(CandidateGroups)
 ```
@@ -168,7 +168,7 @@ This table gives the translation between the listing in `First` and listing that
 merge( Minneapolis2013, CandidateGroups, all.x=TRUE )
 ```
 
-```{r echo=FALSE,results='asis',scroller=300}
+```{r echo=FALSE,results='asis',scroller=600}
 merge( Minneapolis2013, CandidateGroups, all.x=TRUE) %>% 
   head(50) %>% select( Candidate, First, Second) %>%
   xtable
@@ -191,7 +191,7 @@ PopArea <-
 PopArea
 ```
 
-```{r poparea3,echo=FALSE,results='asis',scroller=300}
+```{r poparea3,echo=FALSE,results='asis',scroller=600}
 xtable(PopArea)
 ```
 
@@ -226,7 +226,7 @@ Together <- merge( PopArea, CountryCentroids )
 Together
 ```
 
-```{r echo=FALSE,results='asis',scroller=300}
+```{r echo=FALSE,results='asis',scroller=600}
 xtable(Together)
 ```
 
@@ -263,6 +263,9 @@ G8Data
 ```{r echo=FALSE,results='asis'}
 xtable( G8Data )
 ```
+
+
+
 
 
 ```{r child="../../CSS/DisqusTemplate.Rmd"}
