@@ -29,3 +29,17 @@ options( width=60,
          xtable.include.rownames=FALSE)
 require(DCF)
 ```
+
+<!-- Change this to add parameters for the scroller -->
+
+```{r include=FALSE}
+scroller_hook = function(before, options, envir) {
+    if (before) {
+        return('<div class="table-scroller300">')
+    } else {
+        return('</div>')
+    }
+}
+knit_hooks$set( scroller=scroller_hook ) 
+```
+

@@ -15,6 +15,9 @@ data( Minneapolis2013 )
 data( CountryData )
 ```
 
+```{r include=FALSE}
+opts_chunk$set( cache=TRUE )
+```
 
 You have already seen two data verbs:
 
@@ -102,9 +105,14 @@ BabyNames %>% filter( year > 1990 ) %>%
 ```
 
 Here are the girls born after 1990:
-```{r results='asis'}
+
+```{r eval=FALSE}
+BabyNames %>% filter( year > 1990, sex=="F")
+```
+
+```{r echo=FALSE,results='asis',scroller=300}
 BabyNames %>% filter( year > 1990, sex=="F") %>%
-  sample_n( size=10 ) %>% xtable()
+  sample_n( size=30 ) %>% xtable()
 ```
 
 You can specify as many tests as you like.  The `filter()` function will pass through only those cases that pass *all* the tests.
@@ -180,11 +188,6 @@ Each of the data verbs described until now takes one *one* data table as an inpu
 
 It's conventional to refer to the two tables as the "left" and "right" tables.
 
-As you'll see, there are several different kinds of join.  These let you accomplish different tasks.  Among these are:
-
-* Complete --- Add information about individual cases from the right table to the information that's already in the left table.  [Which countries are in the G8]
-* Identify --- Find those cases in the left table that have a match in the right. [Give back just those countries in the G8]
-* Translate --- Translate a value from the left table according to a specification in the right table.  [List of synonyms for countries and an official identifier.  Translate the synonmyms into the official identifier.]
 
 
 ```{r echo=FALSE}
@@ -194,10 +197,10 @@ Left <- data.frame( clinicName=LETTERS[1:9],
                     postalCode=codes[c(1,2,3,2,4,5,6,6,7)],
                     y=9:1,x=1)
 Right <- data.frame( postalCode=codes[c(2,1,1,9,8,4)], over65=round(runif(6,0,100))/100,y2=9:4,x2=2)
+Connections <- inner_join( Left, Right ) 
+JustMatches <- semi_join( Left, Right )
 LL <- select( Left, clinicName, postalCode )
 RR <- select( Right, postalCode, over65 )
-Connections <- inner_join( LL, RR ) 
-JustMatches <- semi_join( LL, RR )
 ```
 
 To illustrate the differences and similarities between the different kinds of join, suppose you have these two tables:
@@ -215,7 +218,7 @@ xtable( select(Left, clinicName, postalCode ))
 xtable( select( Right, postalCode, over65))
 ```
 
-Variables taht appear in both the left and right tables are called "overlap variables."  The only overlap variable here is `postalCode`.
+Variables that appear in both the left and right tables are called "overlap variables."  The only overlap variable here is `postalCode`.
 
 The overlap variables determine which cases will go into the output table.  In this example, there is just one overlap variable: `postalCode`.   
 
@@ -224,14 +227,14 @@ The diagram below shows the cases in the left and right tables.  The lines show 
 ```{r echo=FALSE}
 ggplot() + geom_text(data=Left, 
                       aes(x=x,y=y,label=postalCode)) +
-  geom_text(data=Left, 
+           geom_text(data=Left, 
                       aes(x=x-1,y=y,label=clinicName)) +
            geom_text(data=Right, 
                       aes(x=x2,y=y2,label=postalCode)) +
-  geom_text(data=Right, 
+           geom_text(data=Right, 
                       aes(x=x2+1,y=y2,label=over65)) + 
-  geom_segment(data=Connections, size=3, alpha=.5, 
-               aes(x=x+.13,y=y,xend=x2-.13,yend=y2))+
+           geom_segment(data=Connections, size=3, alpha=.5, 
+               aes(x=x+.13,y=y,xend=x2-.13,yend=y2)) +
   theme(
     plot.background = element_blank()
    ,panel.grid.major = element_blank()
@@ -256,84 +259,167 @@ There are different types of join. The type of join specifies whether you want t
 
 An *inner join* gives the matching pairs.  Note that clinic A, which had two matches in the right table, appears twice, once for each matching pair in which clinic A is involved.
 
-```{r echo=FALSE,results='asis'}
-xtable( inner_join( LL, RR ) )
-```
-
-Inner joins are useful for adding information from another source about the cases in the left table.  As an example, consider the following table (which is a small part of the `CountryData` table).
-
-```{r echo=FALSE}
-CountryLeft <- CountryData[c( 48, 70, 89, 109, 110, 174, 183, 221, 242, 248), 1:3]
-row.names(CountryLeft) <- NULL
+```{r eval=FALSE}
+merge( LL, RR )
 ```
 
 ```{r echo=FALSE,results='asis'}
-xtable( CountryLeft )
+xtable( merge( LL, RR ) )
 ```
 
-There are many international groups to which countries may belong.  Some famous ones are the G8 and G20 industrialized economies.  Here's part of the `CountryGroups` table that identifies the membership for three different international groups.
+#### Outer Join
+
+An *outer join* can include cases where there is no match. You might want to include the unmatched cases from the left table, from the right table, or from both tables. 
+
+##### Unmatched cases from the left table
+
+```{r eval=FALSE}
+merge( LL, RR, all.x=TRUE )
+```
 
 ```{r echo=FALSE,results='asis'}
-set.seed(129)
-CountryGroups %>% sample_n(size=8) %>% xtable()
+xtable( merge( LL, RR, all.x=TRUE ) )
 ```
 
-```{r}
-merge(CountryLeft, CountryGroups)
-merge(CountryLeft, CountryGroups, all.x=TRUE)
+##### Unmatched cases from the right table
+
+```{r eval=FALSE}
+merge( LL, RR, all.y=TRUE )
 ```
 
-Do straight merge
+```{r echo=FALSE,results='asis'}
+xtable( merge( LL, RR, all.y=TRUE ) )
+```
 
+
+##### Unmatched cases from both tables
 Do straight merge on filtered G8 countries and G20 countries
 
-#### Left Join
-
-Merge with all.x=TRUE.
-
-A *left join* includes the results of the inner join along with all the non-matching cases from the left table.  For the non-matching cases, the value of the variable from the right table is "missing" data.
+```{r eval=FALSE}
+merge( LL, RR, all=TRUE )
+```
 
 ```{r echo=FALSE,results='asis'}
-xtable( left_join( LL, RR ) )
+xtable( merge( LL, RR, all=TRUE ) )
 ```
 
-An left join can attach the information from the `CountryGroups` table to the geographic/demographic data. 
+### Using Join
 
-```{r echo=FALSE, results='hide'}
-left_join( CountryLeft, CountryGroups )
+Join is useful for many tasks. 
+
+#### Translate 
+
+Translate a value from the left table according to a specification in the right table.  [List of synonyms for countries and an official identifier.  Translate the synonmyms into the official identifier.]
+[Marking candidates as "minor" in Minneapolis Mayor]
+
+For example, in the Minneapolis mayoral election, voters made `r length(unique(Minneapolis2013$First))` different first choices.^[There are the 36 candidates as well as no choice ("undervote") or disallowed multiple choices ("overvote").]  It's ungainly to look at the relationships among all those choices.  A sensible approach is to group the minor candidates together.
+
+Defining a minor candidate to be one who got fewer than 1000 votes, it's possible to create a table identifying the minor candidates:
+
+```{r}
+Totals <- Minneapolis2013 %>%
+  group_by( First ) %>%
+  summarise( nVotes=n() )
+CandidateGroups <- 
+  Totals %>% 
+  mutate( Candidate=ifelse( nVotes>1000, 
+                            as.character(First), 
+                            "Minor") )
+```
+
+```{r echo=FALSE,results='asis',scroller=300}
+xtable(CandidateGroups)
+```
+```{r}
+nrow(CandidateGroups)
+```
+
+This table gives the translation between the listing in `First` and listing that lumps minor candidates together. There is one case for each candidate. Joining the translation table with the vote table produces a new column, with one case for each ballot and the minor candidates marked as such. 
+
+```{r eval=FALSE}
+merge( Minneapolis2013, CandidateGroups, all.x=TRUE )
+```
+
+```{r echo=FALSE,results='asis',scroller=300}
+merge( Minneapolis2013, CandidateGroups, all.x=TRUE) %>% 
+  head(500) %>% select( Candidate, First, Second)
+  xtable
 ```
 
 
-#### Semi Join
 
-A *semi join* gives each case in the left table that has a match in the right, but doesn't duplicate cases that appear in more than one matching pair.
+
+#### Complete 
+
+Often, information is spread among multiple sources.  Joining can bring this information together.
+
+For instance, here are the population and area variables from `CountryData`.
+
+```{r}
+PopArea <-
+  select( CountryData, country, area, pop)
+```
+```{r eval=FALSE}
+PopArea
+```
+
+```{r echo=FALSE,results='asis',scroller=300}
+xtable(PopArea)
+```
+
+From a different source, here are the locations of the various countries:
+
+```{r eval=FALSE}
+CountryCentroids
+```
+
+```{r echo=FALSE,results='asis',scroller=300}
+xtable(CountryCentroids)
+```
+
+A join will bring together these two sources:
+
+```{r}
+Together <- merge( PopArea, CountryCentroids )
+```
+```{r eval=FALSE}
+Together
+```
+```{r echo=FALSE,results='asis',scroller=300}
+xtable(Together)
+```
+
+#### Filter
+
+You can use the `filter()` function to extract those cases that meet a given criterion.  Sometimes you may have a list of the cases you want.  `merge()` lets you choose the cases you want in that list.
+
+For example, here is a list of the G8 countries.
+```{r}
+G8 <- 
+  CountryGroups %>%
+  filter( G8 ) %>%
+  select( country )
+```
+
+```{r eval=FALSE}
+G8
+```
 
 ```{r echo=FALSE,results='asis'}
-xtable( semi_join( LL, RR ))
+xtable(G8)
 ```
 
-Three uses for join.
+The `G8` table can be used to extract the G8 countries from another table:
+```{r}
+G8Data <- merge( Together, G8 )
+```
+```{r eval=FALSE}
+G8Data
+```
 
-
-
-The join is done on a case-by-case basis.  Every case in the left table is compared to every case in the right table.  If there is a match between a left case and a right case --- in this example, if the postal codes are identical --- there will be a resulting case in the output with values for each of the variables drawn from 
-
-
-
-Join works on a case-by-case basis.  That is, each and every case in one table is connected to each and every case in the other table.  
-
-
-Join: minor candidates
-
-Join: 
-
-* select out the G20 countries
-* add a variable indicating whether a country is in the G20 --- make a map
-
-
-Mutate, Filter & Select, Arrange?  save Join for later.
-
-Example with Mutate: Calculation the proportion of smokers who are alive adjusted for sex and age.  You'll need `mutate()` to add the proportion variable on.
+```{r echo=FALSE,results='asis'}
+xtable( G8Data )
+```
 
 
 
@@ -343,9 +429,18 @@ Example with Mutate: Calculation the proportion of smokers who are alive adjuste
 
 ## Elaboration: Data verb languages
 
-The used in these notes is `dplyr`.  A complete list of others would be long, 
+The notation used in these notes is `dplyr`.  Keep in mind that this is just one of several notations.  Some of them are: 
+
 * dplyr - R 
 * data.table - R
 * SQL - database servers
 
+Here is the same expression in these different notations:
+
+* dplyr
+    BabyNames %>% group_by(year,sex) %>% summarise( nNames=n() )
+* SQL
+    "BabyNames" > GROUP_BY("year", "sex") > SUMMARISE(COUNT() AS "nNames")
+* data.table
+    BabyNames[, length(count), by=c("sex","year") ]
 `dplyr` will generate SQL.

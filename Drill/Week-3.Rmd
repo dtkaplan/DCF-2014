@@ -485,6 +485,78 @@ What should you report as the confidence interval?
 `r I(endProblem())`
 
 
+* Filter --- Find those cases in the left table that have a match in the right. [Give back just those countries in the G8]
+
+* Translate --- Translate a value from the left table according to a specification in the right table.  [List of synonyms for countries and an official identifier.  Translate the synonmyms into the official identifier.]
+[Marking candidates as "minor" in Minneapolis Mayor]
+
+
+#### Left Join
+
+Merge with all.x=TRUE.
+
+A *left join* includes the results of the inner join along with all the non-matching cases from the left table.  For the non-matching cases, the value of the variable from the right table is "missing" data.
+
+```{r echo=FALSE,results='asis'}
+xtable( left_join( LL, RR ) )
+```
+
+  As an example, consider the following table (which is a small part of the `CountryData` table).
+
+```{r echo=FALSE}
+CountryLeft <- CountryData[c( 48, 70, 89, 109, 110, 174, 183, 221, 242, 248), 1:3]
+row.names(CountryLeft) <- NULL
+```
+
+```{r echo=FALSE,results='asis',scroller=300}
+xtable( CountryLeft )
+```
+
+An left join can attach the information from the `CountryGroups` table to the geographic/demographic data. 
+
+```{r echo=FALSE, results='hide'}
+left_join( CountryLeft, CountryGroups )
+```
+
+
+
+
+Join: minor candidates
+
+Join: 
+
+* select out the G20 countries
+* add a variable indicating whether a country is in the G20 --- make a map
+
+
+Mutate, Filter & Select, Arrange?  save Join for later.
+
+Example with Mutate: Calculation the proportion of smokers who are alive adjusted for sex and age.  You'll need `mutate()` to add the proportion variable on.
+
+
+
+There are many international groups to which countries may belong.  Some famous ones are the G8 and G20 industrialized economies.  Here's part of the `CountryGroups` table that identifies the membership for three different international groups.
+
+```{r echo=FALSE,results='asis',scroller=300}
+set.seed(129)
+CountryGroups %>% xtable()
+```
+
+```{r eval=FALSE}
+merge(CountryLeft, CountryGroups)
+```
+```{r echo=FALSE,results='asis',scroller=300 }
+merge(CountryLeft, CountryGroups) %>% xtable
+```
+```{r eval=FALSE}
+merge(CountryLeft, CountryGroups, all.x=TRUE)
+```
+
+```{r echo=FALSE,results='asis',scroller=300}
+merge(CountryLeft, CountryGroups, all.x=TRUE) %>% xtable
+```
+
+
 
 ```{r child="../../CSS/DisqusTemplate.Rmd"}
 ```
