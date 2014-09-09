@@ -4,56 +4,103 @@ author: "Data and Computing Fundamentals"
 date: "Macalester College"
 output:
   html_document:
-    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
     fig_caption: yes
-    toc: yes
+    toc: no
 ---
 
-```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```{r child="../CSS/DCF-common.Rmd"}
 ```
 
 
-1. Using the RStudio editor, create an R/Markdown document.  The Rmd document should be named `AssignmentOne.Rmd`. The document you **hand-in** should be named `AssignmentOne.html`.
-    a. Find two **data-oriented** graphics.  Give a URL link to them, or include them in the Rmd document.  Describe briefly the topic the graphics apply to and what is the form of the data underlying the graphics. Taking a picture of a graph in a textbook is perfectly acceptable.  Here are some examples drawn from Wikipedia.
-    
-    Biochemistry | Economics
-    -------------|------------
-    <img src="http://upload.wikimedia.org/wikipedia/commons/7/70/Lineweaver-Burke_plot.svg" width="150px"/> | <img src="http://upload.wikimedia.org/wikipedia/commons/c/cf/Phillips_curve.jpg" width="200px" /> 
-    [Source](http://upload.wikimedia.org/wikipedia/commons/7/70/Lineweaver-Burke_plot.svg) | [Source](http://upload.wikimedia.org/wikipedia/commons/c/cf/Phillips_curve.jpg)
+#### Overview
 
-    b. Find a **schematic** graphic oriented toward science. Include that graphic in your document.  Here are a couple of examples, drawn from Wikipedia:  
+This is your first assignment; its purpose is to get you going with RStudio, the editor, and the production of Rmd/HTML documents.
 
-    Biochemistry | Economics
-    -------------|------------
-    <img src="http://upload.wikimedia.org/wikipedia/commons/b/b0/Michaelis-Menten_saturation_curve_of_an_enzyme_reaction_LARGE.svg" width="150px"/>" | <img src="http://upload.wikimedia.org/wikipedia/commons/7/7a/Supply-and-demand.svg" width="100px" />
-    [source](http://en.wikipedia.org/wiki/Michaelis%E2%80%93Menten_kinetics#mediaviewer/File:Michaelis-Menten_saturation_curve_of_an_enzyme_reaction_LARGE.svg) | [source](http://commons.wikimedia.org/wiki/File:Supply-and-demand.svg#mediaviewer/File:Supply-and-demand.svg)
-   
-2. Read the notes on [*Starting with R*](../CourseNotes/Rbasics/R-Basics.Rmd).
-    a. Do these exercises based on the notes.  Put your answers in the `AssignmentOne.Rmd` file, giving a subsection header (`###`) for each exercise.
-        1. [Names and Strings](../Exercises/Introductory/2013-08-12-DTK-View-String.html)
-        #. [World Cities](../Exercises/Introductory/2013-08-12-DTK-World-Cities.html)
-        #. [Seatbelts](../Exercises/Introductory/2013-08-12-DTK-Seatbelts.html)
-        #. [Sleep Data](../Exercises/Introductory/2013-08-12-DTK-msleep.html)
-#. Read the notes on *[File Types, Data, and Documents](../CourseNotes/DataOrganization/FileTypes.html).*.  Do these exercises:
-    a. Use `file.choose()` in the console to find the full path name of this Rmd file.  Paste the result into the answers you are writing in this document.
-    #. the second ... 
-#. Enter the information on how long you worked in the [time log](https://docs.google.com/forms/d/1lH02nfMVvVmCxyus3TBHQvG58pV-cGDEcTfaBJAIk3k/viewform). [The class's data are viewable [here](https://docs.google.com/spreadsheets/d/1ROnT3PBL_iVguJQPKrGAXncf-wHKzEYHQQtE7c6JYG4/pubhtml).]
+Each of your assignments will lead to the creation of an Rmd file.  You will hand in the HTML that is compiled from the Rmd.
 
-## Exercises on structure of data: 
+To start, in your console pane, give the command to load the `DCF` library:
+```{r}
+library( DCF )
+```
 
-* Non-tidy: <https://dl.dropboxusercontent.com/u/5098197/Math155/ActiveDuty_MaritalStatus.xls>
-* Long and Narrow: Create a sketch of a data table about lab experiments, where the same plants are being studied repeatedly: longitudinal data, e.g. like this:  
+Then select the *FILE/NEW FILE/R Markdown ...* menu item.  Choose "From  Template" and then select the "Assignment 1" listed for the DCF package.  At that point, a new editing window with the template for assignments.
 
-Height of plant
+1. Save that template to the computer file system under the name `AssignmentOne-XXX.Rmd` (where `XXX` are your initials or similar unique identifier for you).  
+#. Modify the author and title names.  
+#. Replace the quoted string `"This file.Rmd"` with the name you saved the template file under.  Make sure that you are using a quoted string and that you get the name exactly right, including capitalization and spacing: `AssignmentOne-XXX.Rmd`  
+
+## Data Oriented Graphics
+
+Find two **data-oriented** graphics.  Using a picture of a graph in a textbook is perfectly acceptable. 
+
+1. Give a URL link to them, or include them in the Rmd document.  
+#. Describe briefly the topic the graphics apply to.
+#. Explain a plausible candidate for and the form of the data underlying the graphics.  
+
+Here are some examples drawn from Wikipedia from biochemistry and economics.  You can choose whatever field is of interest to you.
+ 
+#### Biochemistry
+
+<a href="http://upload.wikimedia.org/wikipedia/commons/7/70/Lineweaver-Burke_plot.svg"><img src="http://upload.wikimedia.org/wikipedia/commons/7/70/Lineweaver-Burke_plot.svg" width="200px"/> </a>
+
+####  Economics
+
+<a href="http://upload.wikimedia.org/wikipedia/commons/c/cf/Phillips_curve.jpg"><img src="http://upload.wikimedia.org/wikipedia/commons/c/cf/Phillips_curve.jpg" width="200px" /></a>
+
+
+## Schematic Graphic
+
+Find a **schematic** graphic oriented toward science. Include that graphic in your document.  Here are a couple of examples, drawn from Wikipedia. (Click on the image to see a full-size version.) 
+
+### Biochemistry
+
+<a href="http://upload.wikimedia.org/wikipedia/commons/b/b0/Michaelis-Menten_saturation_curve_of_an_enzyme_reaction_LARGE.svg">"
+<img src="http://upload.wikimedia.org/wikipedia/commons/b/b0/Michaelis-Menten_saturation_curve_of_an_enzyme_reaction_LARGE.svg" width="200px"/>"</a>
+
+### Economics
+
+<a href="http://upload.wikimedia.org/wikipedia/commons/7/7a/Supply-and-demand.svg">
+<img src="http://upload.wikimedia.org/wikipedia/commons/7/7a/Supply-and-demand.svg" width="200px" /></a>
+
+
+
+## File Types, Data, and Documents
+
+Answer the following based on the notes on *[File Types, Data, and Documents](../CourseNotes/DataOrganization/FileTypes.html)*.
+
+### Path Names
+
+Use `file.choose()` in the console to find the full path name of your assignment-one Rmd file (that is, the one you are editing for this assignment).  Paste the path and file name into this document.
+
+### Untidy Data
+
+Examine [this spreadsheet](https://docs.google.com/spreadsheets/d/1Ow6Cm4z-Z1Yybk3i352msulYCEDOUaOghmo9ALajyHo/edit?usp=sharing) about the family status of people serving in the US armed forces. 
+
+Explain what's "untidy" (in a technical sense) about it.
+
+### Designing a Data Layout
+
+Sketch on a piece of paper the data table format you would use to store data from a lab experiment where the height of some plants are being measured repeatedly over time. (You get to make up the numbers!) One possible layout is like this:
+
 
 Plant | Week 1 | Week 2 | Week 3
 ------|--------|--------|--------
 A     |  17    |  19    |  21
 B     |  14    |  14    |  12
 
-Now imagine that you want to deal with some other situations:
+This layout wouldn't be adequate if the situation were different.  Imagine, for instance
 
-* For some plants, the measurements were made 10 days apart.
+* For some plants, the measurements were made 10 days apart instead of one week apart.
 * You want to include the name of the person doing the height measurement for a given plant in each week.
-* You decide to do some assays for various plant hormones over time.
+* In addition to the plant's height, at most of the measurement times you record a number giving the level of the plant hormone IAA.^[You don't need to worry about what this is.]
+
+Once you're satisfied with your paper sketch, create the data table in a Google spreadsheet. Set the permissions on the Google spreadsheet to make it readable to anyone with the link.  Put the link into your assignment write-up.
+
+Even better, "embed" the spreadsheet in your assignment write-up.
+
+<hr>
+
+```{r child="../CSS/DisqusTemplate.Rmd"}
+```
 
