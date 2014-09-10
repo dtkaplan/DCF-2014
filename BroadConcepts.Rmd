@@ -1,0 +1,20 @@
+
+
+## What is DCF about?
+
+This class is about a small set of concepts that underlie powerful capabilities in the analysis and presentation of data.
+
+1. Data can be thought of in terms of *cases* and *variables*.
+#. Data graphics involve the translation of an *individual* case into a glyph or mark whose visual properties reflect the value of the variables.
+    * When we comprehend a data graphic, we are discerning the relationships among the individual cases.
+    * Statistics and models are ways of reducing cognitive load for understanding data.  Statistics present the *collective* values of the data without having to juggle cognitively the individual cases.  Statistical graphics and statistical models provide such summative information automatically. Statistical models provide a summary in terms of the properties of a mathematical object such as a function.
+    * The distinction between a data graphic and a statistical summary or statistical model is that, in the graphic, our mind does the work of putting together the cases, whereas in a summary or model the calculations do the rough work, leaving us to focus on more important aspects of the cases and their relationships.
+#. When data are in the right format, it is very easy to construct a statistical graphic, summary, or model.  Intelligence is required only to decide what is the best format for the graphic or model, or what kind of summary is needed.
+#. Data often do not arrive in the right format.  Sometimes information spread in different places (as in grouping across cases or combining two tables) and needs to be brought together. Other times, information may be concentrated in one place but needs to be spread out and connected with other information. (Are these the same thing?  Is the question one of putting things side by side so that they can be compared or combined?)
+#. The correct format for data depends on your purpose; there's an endless variety.  However, most formatting problems can be solved with a few simple operations.
+
+Our job is to format data so that we can make sense of it.
+
+Making sense of data.  I like "sense" here.  It suggests how we perceive data, the "aesthetics" of data.
+
+Concepts in physics, chemistry, biology: inertia, energy, force, valence, pH, protein/DNA/RNA, 

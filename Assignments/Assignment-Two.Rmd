@@ -40,3 +40,5 @@ Here's a link to a graphic.  You are to include it in your assignment write-up a
 DECONSTRUCTING EXAMPLES:
 
 See the handout and questions in CVC/Summer2014/Activities/DeconstructingGraphics/
+
+Data entry: See Exercises 2013-09-09-DTK-101.Rmd.

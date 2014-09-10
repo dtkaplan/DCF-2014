@@ -3,6 +3,7 @@ title: "Assignment for Week One"
 author: "Data and Computing Fundamentals"
 date: "Macalester College"
 output:
+  pdf_document: default
   html_document:
     css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
     fig_caption: yes
@@ -46,6 +47,7 @@ Here are some examples drawn from Wikipedia from biochemistry and economics.  Yo
 
 ####  Economics
 
+
 <a href="http://upload.wikimedia.org/wikipedia/commons/c/cf/Phillips_curve.jpg"><img src="http://upload.wikimedia.org/wikipedia/commons/c/cf/Phillips_curve.jpg" width="200px" /></a>
 
 
@@ -73,11 +75,7 @@ Answer the following based on the notes on *[File Types, Data, and Documents](..
 
 Use `file.choose()` in the console to find the full path name of your assignment-one Rmd file (that is, the one you are editing for this assignment).  Paste the path and file name into this document.
 
-### Untidy Data
 
-Examine [this spreadsheet](https://docs.google.com/spreadsheets/d/1Ow6Cm4z-Z1Yybk3i352msulYCEDOUaOghmo9ALajyHo/edit?usp=sharing) about the family status of people serving in the US armed forces. 
-
-Explain what's "untidy" (in a technical sense) about it.
 
 ### Designing a Data Layout
 
@@ -101,6 +99,8 @@ Even better, "embed" the spreadsheet in your assignment write-up.
 
 <hr>
 
+<!--
 ```{r child="../CSS/DisqusTemplate.Rmd"}
 ```
+-->
 

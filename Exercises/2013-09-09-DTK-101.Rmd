@@ -1,0 +1,23 @@
+---
+title: "Designing a data layout"
+author: "DTK"
+date: "Sept. 9, 2014"
+output: html_document
+description: creating a sensible data layout.
+tags: 
+- data  organization
+- wide vs narrow
+layout: DRAFT
+---
+
+
+## Data Entry Problem
+
+Give out the course reviews from 155.  Split people into groups of 4.  Ask them to figure out a plan for organizing the data, describe it in an Rmd document, and enter the data into a Google spreadsheet.  Their purpose: be able to see if 
+
+* individuals differ in their typical response and what the spread is between individuals.
+* answers to individual questions differ?
+* answers are systematically different for people who felt they liked the course or will use the material.
+
+We'll plan how to answer these questions this week, then revise and implement the plan in future weeks.
+
