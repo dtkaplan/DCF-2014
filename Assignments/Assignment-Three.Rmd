@@ -40,6 +40,13 @@ In the `MedicareCharges` data table:
         * lowest proportion
         * highest proportion
         
+* Make a scatterplot map of the locations of the Medicare providers. (Hint: the ZIP code provides this information, if you can translate it into latitude and longitude.)  Overlay this on a choropleth map giving the population of each state.
+
+* Translate the direct recovery groups into these broad categories:
+Heart, Respiratory, Skeletal, BrainCNS, Blood, Circulation, Psychology, Sepsis, Kidney, Endocrine, Digestive, Other. Make a bar chart showing how much is paid by Medicare for each categories.  To help you do the translation, a Google Spreadsheet is available for loading with `fetchGoogle()` at this address:
+<https://docs.google.com/spreadsheet/pub?key=0Am13enSalO74dFFFaGJWdk1IbUo4bVFXLXYzbE1KLXc&single=true&gid=0&output=csv>
+    
+        
         
 ### Zip Codes
 
