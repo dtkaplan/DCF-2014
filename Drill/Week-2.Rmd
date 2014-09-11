@@ -11,12 +11,18 @@ startProblem("DCF-Assignment2")
 ```{r child="../CSS/DCF-common.Rmd"}
 ```
 
+<!--- Control the display of answers -->
+<style>
+  aside.answer {color:white; background-color:blue; display:none;}
+</style>
+
 ## Week 2 Drill
+
+**N.B.** This is not yet complete.
 
 ### Problem 1
 
-The graphic below presents forecasts of the probabilities of winning US Senate elections in Nov. 2014.  The forecasts are made based on polls up through the end of August 2014.
-Individual results from several different polling organization are shownSeveral diff The graphic is an excerpt from the [full graphic](http://www.nytimes.com/newsgraphics/2014/senate-model/comparisons.html), which shows predictions for all 36 senate seats up for election in 2014.  The numbers or words give the forecast probability of one party's candidate --- Democrat or Republican --- winning. Source: [New York Times](http://www.nytimes.com/newsgraphics/2014/senate-model/comparisons.html)
+The graphic below presents forecasts for the US Senate elections in Nov. 2014. The numbers or words give the forecast probability of one party's candidate --- Democrat or Republican --- winning. The forecasts are made based on polls up through the end of August 2014. Individual results from several different polling organization are shown. The graphic is an excerpt from the [full graphic](http://www.nytimes.com/newsgraphics/2014/senate-model/comparisons.html), which shows predictions for all 36 senate seats up for election in 2014.   Source: [New York Times](http://www.nytimes.com/newsgraphics/2014/senate-model/comparisons.html)
 
 ![Forecast probabilities of the outcomes of US Senate elections for 2014.](Images/SenateForecast.png)
 
@@ -72,249 +78,11 @@ What sets the order of the categorical variable in the scale for the vertical va
 
 
 
-### EXERCISES
-
-For each of the functions, indicate whether it operates on a variable or a data table. `mean()`, `sum()`, `str()`, `group_by()`
-
-DO MULTIPLE CHOICE EXAMPLES
-
-
-In the following statements, say which names refer to data tables and which ones refer to variables.  In order to make it a bit of a challenge, the statements don't necessarily respect the convention that names of data tables start with a capital letter and names of variables start with a lower-case letter.
-
-DO MULTIPLE CHOICE EXAMPLES
-
-Here are several chains of functions. For each of the functions listed, say whether there is an implicit input coming from the chaining `%>%`.
-
-```{r}
-Princes <-
-  BabyNames %>%
-  filter( name=="Prince" ) %>%
-  group_by( year, sex ) %>%
-  summarise( yearlyTotal=sum( count ) )
-```
-
-* `filter()`: Implicit input: yes or no
-* `summarise()`: Implicit input: yes or no
-* `sum()`, Implicit input: yes or no
-In an expression like
-
-```
-summarize( BabyNames, )
-
-```
-In the previous examples, you've seen some phrases like `yearlyTotal=sum( count )` or `color=sex`.  These involve the `=` sign, which is used to give a name to a variable.
-
-
-Add a new variable PRINCE containing "Prince."  Add a new variable containing "increase over previous year."
-
-EXERCISES FROM NETTA: names over time.
-
-Give a sequence of statements.  Describe in words that these statements will do.
-
-Give a mock data table and some statements.  Sketch out the results of the statements.
-
-You can copy the commands shown in the notes, modifying them to address the question at hand.
-
-
-
-Functions that work on a data table.
-
-Functions that work on a variable within a data table.
-
-
-## RStudio Menu and Keyboard Shortcuts
-
-
-
-`str()`, `names()`, `head()`, `sample_n()`, 
-
-Using TAB in RStudio.  (For video also.)
-
-
-putting things together: `c()`,  
-
-`mean()`, `sum()`, and so on.
-
-Meaning of `NA` 
-
-Example of `mean( , na.rm=TRUE )`.   Difference with `NaN`.
-
-`==` and other comparison operators.  How `sum()` and `mean()` work to produce counts and proportions.
-
-SAVE transformation functions (e.g. `rank()`, `ntiles()`, `row_number()` ) until mutate.
-
-what NULL means
-
-
-## Graphics
-## FOR GRAPHICAL DECISIONS
-
-
-Show fraction alive as a function of sex and smoking status.
-
-Show proportion in each age of the height ntiles.  Stack them. 
-
-
-
-
-### EXERCISE
-
-Show these graphs and ask them to explain what they show.
-
-### EXERCISE
-
-
-FOR GRAMMAR SECTION: Density plots draw on cases collectively.
-
-#### EXERCISE
-
-Explain what the frequency polygon and the density smoother say about the heights of males and females. 
-
-#### For design choices
-
-Why not a histogram: Displaying two variables.
-
-```{r}
-ggplot(NHANES, aes(x=height)) + 
-    geom_histogram(aes(y = ..count..,color=sex,fill=sex), 
-                   binwidth=0.1) + 
-    xlab("Height (m)") + ylab("Count")
-```
-
-In talking about position/dodging, use this example of a misleading plot.
-
-```{r}
-ggplot(NHANES, aes(x=height)) + 
-    geom_freqpoly(aes(y = ..density.., color=sex), 
-                   binwidth=0.1, fill=NA, position="stack") + 
-    xlab("Height (m)") + ylab("Count")
-```
-
-
-
-Stacking bars or polygons or densities: make sure to fill them in so that the reader can figure out which group is which.  If you want them to overlap, fill them with transluscent color.
-
-
-
-
-##### Density Plots
-
-```{r}
-ggplot(NHANES, aes(x=height)) + 
-    geom_density(aes(y = ..density.., color=sex), 
-                   binwidth=0.1, fill=NA) + 
-    xlab("Height (m)") + ylab("Count")
-```
-
-#### Design Decisions
-
-Dealing with very large datasets:
-
-* Transparency in scatter plots.
-* Use densities rather than cases.
-
-#### MOVE TO "Design Decisions"
-
-In principle, the variables could be assigned to the other axes, but typically there is some purpose behind the use of a scatter plot, for instance to show how height varies with age.  It's conventional to put the *response variable* on the y-axis and the *explanatory variable* on the x-axis.  Other terms for "explanatory variable" include "independent variable" or "causal variable."  The "response variable" is also known as the "dependent variable", "result," or "effect." 
-
-
-Often, the size, shape, or color of the "dots" is used to show the value of another variable.  For instance:
-
-```{r echo=FALSE}
-pheight + geom_point(aes(color=sex))
-```
-
-### For an exercise:
-
-What does this graph tell you about pregnancy?
-
-ggplot(data=NHANES, aes(x=pregnant, y=age)) + geom_violin()  + theme(legend.position="none") + labs(title="") 
-
-ggplot(data=NHANES, aes(x=pregnant, y=age)) + geom_violin()  + aes(colour=sex) + facet_wrap(~smoker, ncol=4) + theme(legend.position="none") + labs(title="") + coord_flip() 
-
-### Exercise:
-
-Make a graph to indicate whether smokers are systematically lower in weight than non-smokers.
-
-ggplot(data=NHANES, aes(x=smoker, y=BMI)) + geom_violin()  + theme(legend.position="none") + labs(title="")
-
-### EXERCISE
-
-#### One
-
-TRY VARYING the assignment of variables to graphical attributes using `mPlot()`.  Show the graph you find the most informative.
-
-#### Two
-
-Get inflation and unemployment data using `CIAdata()`.  Is there a relationship between the two?  Find a variable that indicates the economic strata of the countries.  Does this change the picture?  Make the graph you find most compelling and describe your conclusions based on this graph.
-
-#### Three
-
-*For JOIN*.  Use the latitude and longitude of each country to plot the economic/health data on a map.
-
-### End of exercise
- 
- ### EXERCISE
-
-GIVE THE SMOKER DATA
-
-Make a graph from the smoker data that looks like the following.  (Hint: What variables are represented by which graphical attributes.) ACTUALLY: Ask them in a drill which variable is mapped to which graphical attribute.
-
-```{r echo=FALSE}
-FracAliveSmoke %>% na.omit() %>% mutate( `Smoking Status`=smoker) %>% 
-ggplot(aes(y=fracAlive, x=`Smoking Status` ,fill=ageGroup))+
-geom_bar(stat='identity',position="dodge") + 
-  ylab("Fraction Alive at end of Follow-Up") +
-  xlab("Age") + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=16))
-```
-
-Here's the same data, but with the glyph changed from a zero-based bar to a dot with position and color attributes:
-```{r echo=FALSE}
-FracAliveSmoke %>% na.omit() %>% mutate( `Smoking Status`=smoker) %>% 
-ggplot(aes(x=ageGroup, y=fracAlive ,fill=`Smoking Status`))+
-geom_point(size=2, aes(color=`Smoking Status`)) + 
-  ylab("Fraction Alive at end of Follow-Up") +
-  xlab("Age") + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=16))
-```
-
-Still another glyph: a bar showing the difference in survival between smokers and non-smokers.  The horizontal position of the bar is set by the age group.  The top of the bar is set by the non-smoker survival rate, the bottom by the smoker survival rate.
-
-```{r echo=FALSE}
-FracAliveSmoke %>% 
-  select(ageGroup,smoker,fracAlive) %>% 
-  spread(smoker,fracAlive) %>% na.omit %>%
-ggplot( aes(x=ageGroup)) + ylab("Fraction Surviving") +
-  geom_errorbar(size=2,width=.2,aes(ymax=no,ymin=yes))
-```
-
-## Images for Glyphs:
-
-<file:///Users/kaplan/KaplanFiles/MOSAIC/CVC/Summer2014/Notes/GraphicsBasics/graphics-basics.html#4>
-
-## Position (NOT YET)
-
-Stacked, Dodged, ...
-
-Make the survival by age and smoker a STACKED bar plot.  Why is this silly?
-
-```{r echo=FALSE}
-FracAliveSmoke %>% na.omit() %>% mutate( `Smoking Status`=smoker) %>% 
-ggplot(aes(y=fracAlive, x=`ageGroup` ,fill=`Smoking Status`))+
-geom_bar(stat='identity',position="stack") + 
-  ylab("Fraction Alive at end of Follow-Up") +
-  xlab("Age") + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=16))
-```
-
-DO WEIGHT AGAINST AGE GROUP WITH position DODGE.
-
-Also show the box-whisker plot overlayed
-
-
-
-  
-
 `r I(endProblem())`
 
-```{r child="../../CSS/DisqusTemplate.Rmd"}
+
+Note to myself: See `Week-2-In-Progress.Rmd`.
+
+```{r child="../CSS/DisqusTemplate.Rmd"}
 ```
 
