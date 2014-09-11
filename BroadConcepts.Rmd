@@ -15,6 +15,14 @@ This class is about a small set of concepts that underlie powerful capabilities 
 
 Our job is to format data so that we can make sense of it.
 
-Making sense of data.  I like "sense" here.  It suggests how we perceive data, the "aesthetics" of data.
+Making sense of data.  I like "sense" here.  It suggests how we perceive data, the "aesthetics" of data.  Some things our eyes and intuition are good at: e.g. general pattern in space, comparing a handful of things.  Some things our intuition is not so good at: e.g. assessing precision or uncertainty, comparing a multitude of things.
 
 Concepts in physics, chemistry, biology: inertia, energy, force, valence, pH, protein/DNA/RNA, 
+
+The importance of feedback in getting things right, in reaching our target.  On the computer we see this in the graphical user interfaces, where something happens immediately in response to our actions, e.g. ink is put on the paper, music os started or stopped, etc.  We don't get rapid feedback with computer commands because their effect can't be seen until they are complete.  That is, we have to take some time to put together a sensible command before we can see if it works.
+
+The workflow is an important component of making it easier to get feedback in a timely way.  You need to break things into parts that you can 
+
+* read --- so you get some feedback even if it's not about the technical content
+* put related things near each other, both narrative and computation but also the elements of a sequence.
+* avoiding unnecessary cognitive load: keeping our commands simple and concise so that we can read them.

@@ -71,6 +71,7 @@ What sets the order of the categorical variable in the scale for the vertical va
     "Date of the poll."=FALSE)`
 
 
+
 ### EXERCISES
 
 For each of the functions, indicate whether it operates on a variable or a data table. `mean()`, `sum()`, `str()`, `group_by()`

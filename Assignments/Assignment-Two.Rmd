@@ -4,41 +4,79 @@ author: "Data and Computing Fundamentals"
 date: "Macalester College"
 output:
   html_document:
-    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
     fig_caption: yes
-    toc: yes
+    toc: no
 ---
 
-```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
 ```
 
-* Generate the precinct and ward vote totals from the Mayoral data and other counting questions from CVC/Summer2014/Activities/MinneapolisElectionQuestions.Rmd
+### Simple Plotting
 
-* Total land area and population in each state, from the zip-code data.
+Use the `mScatter()` function to generate a graphic, as follows:
+```{r}
+data( NHANES )
+Small <- sample_n( NHANES, size=1000 ) # for faster plotting
+```{r eval=FALSE}
+DCF::mScatter( Small )
+```
 
-Case studies: Disasters.  Which forms cause the most damage, greatest loss of life, economic loss.
 
-Medicare spending: see the questions at <file:///Users/kaplan/KaplanFiles/DCF-2014/CaseStudies/MedicareSpending/notes.html>
+Set up the mapping from variables to graphical attributes like this:
 
-* Groupwise means and sd.
-* Counts using group_by() and n().  (Group by the levels of the variable to be counted, perhaps including another variable for subdivisions.)
-* Converting counts to proportions. (Divide by sum().)
-    ```{r}
-    KidsFeet %>% group_by( biggerfoot,sex ) %>% 
-    summarise(count=n() )
-    ```
-* Graphics with mPlot(), mBar(), mMap()
+![Attributes set using `DCF::mScatter()`](Images/mScatter-1.png)
 
-* Add a layer to a map, perhaps zip-code population with state boundaries.
+Once you have made the plot, describe briefly the meaning, in everyday human terms, of the pattern displayed in the scatterplot. (You can find the definitions of the variables using `help( NHANES )`.)
 
-* Who votes for whom?  Wade county voters: create cross tabs on registration, etc.  Make bar charts to display patterns.
+```{r eval=FALSE,echo=FALSE}
+# The resulting plot
+ggplot(data=Small,aes(x=age,y=height))+
+  geom_point()+aes(colour=sex)+aes(size=diabetic)
+```
 
-## Deconstructing Graphics
+Include an R chunk in your write-up that generates the graph.
 
-Here's a link to a graphic.  You are to include it in your assignment write-up and then provide the answers.  (Remember, you can right-click on the link to get the URL, then paste that into your Rmd document.)
+### Make this Plot
 
-DECONSTRUCTING EXAMPLES:
+Using the data in `Small`, make this plot with `DCF::mScatter()`:
 
-See the handout and questions in CVC/Summer2014/Activities/DeconstructingGraphics/
+```{r echo=FALSE}
+ggplot(data=Small,aes(x=bmi,y=weight))+
+  geom_point()+aes(colour=smoker)
+```
 
-Data entry: See Exercises 2013-09-09-DTK-101.Rmd.
+Write down the mapping between variables and graphical attributes.
+
+### Counting Votes
+
+Using the `Minneapolis2013` data table, answer these questions:
+
+1. How many cases are there?
+#. Who were the top 5 candidates in the `Second` vote selections.
+#. How many ballots are marked "undervote" in 
+    * `First` choice selections?
+    * `Second` choice selections?
+    * `Third` choice selections?
+#. What are the top 3 combinations of `First` and `Second` vote selections?  (That is, of all the possible ways a voter might have marked his or her first and second choices, which received the highest number of votes?)
+#. Which `Precinct` had the highest number of ballots cast?
+
+### Zip Codes
+
+Using the `ZipGeography` data
+
+Find the total land area and population in each state.
+
+* Make a scatter plot showing the relationship between land area and population for each state. 
+* Make a [choropleth map](http://en.wikipedia.org/wiki/Choropleth_map) showing the population of each state.
+* Make a choropleth map showing the population per unit area of each state.  
+
+Using the `ZipDemography` data
+ 
+* Make a scatter plot showing the relationship, if any, between the number of `Foreignborn` people in a zip code and the number who `SpeakalanguageotherthanEnglishathome5yearsandover`.  (Such long variable names are to be avoided.)
+
+
+Explain what would keep you, at this point, from calculating the fraction of people in each state who have a `Bachelorsdegreeorhigher`.  Say how you would go about constructing such a plot --- but don't actually do it!  Too much work.
+
+
+
