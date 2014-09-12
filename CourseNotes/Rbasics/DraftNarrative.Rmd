@@ -54,7 +54,7 @@ Remember that this is a **convention**, not a rule enforced by the language.  As
 
 Here are some of the functions you will often use:
 
-*Functions that take **dataframes** as an argument*: `str()`,`head()`, `summarise()`, `group_by()`, `ggplot()`, `makeChart()`, `filter()`, `select()`, `sample_n()`, `join()`.
+*Functions that take **dataframes** as an argument*: `str()`,`head()`, `summarise()`, `group_by()`, `ggplot()`, `mScatter()`, `filter()`, `select()`, `sample_n()`, `join()`.
 
 *Functions that take **variables** as an argument*: `mean()`, `max()`, `sqrt()`, `IQR()`, `+`, `==`, `>`, and so on.
 
