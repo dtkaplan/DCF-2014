@@ -164,19 +164,6 @@ At each age, smokers were less likely than non-smokers to have survived to the e
 
 Using a map to plot data helps both to identify particular cases and to show spatial patterns and discrepancy. 
 
-For the present, we'll use two mapping functions from the `mosaic` package.  These produce a world map or a map of US states. You specify the data table from which the mapped quantity is to be drawn, the name of the variable in the table that identifies the country or state, and a variable or expression on a variable that specifies how to choose the color for each country or state.  For instance: 
-
-```{r echo=FALSE,message=FALSE}
-mosaic::mWorldMap( CountryData, 
-                   key="country", 
-                   fill="ntiles( inflation, 5,'interval')" )
-```
-```{r echo=FALSE,message=FALSE}
-ZipGeography %>% 
-  group_by( State ) %>% 
-  summarise( totalPop=sum(Population, na.rm=TRUE) ) %>%
-  mUSMap( key="State", fill="log10(totalPop)")
-```
 
 
 From this map of population growth (in % per year), you can see the handful of countries with negative growth (that is, population decline) such as Russia and Poland.  The countries in Africa, with the exception of South Africa and Namibia, have fast population growth.  (A rate of 5% per year means that the population will double every 14 years.)  There is just one country with a large decline: Syria, just to the right of the center of the map.

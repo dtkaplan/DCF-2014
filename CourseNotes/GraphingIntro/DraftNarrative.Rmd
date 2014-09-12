@@ -199,13 +199,25 @@ ggplot(data=ByPrecinct,aes(x=reorder(Precinct,-total),y=total ,fill=First))+geom
 ```
 This presentation emphasizes different aspects of the data than the side-by-side (or "dodged") barchart.  For instance, it's easy to see how vote totals differed from precinct to precinct and that Cam Winton and Don Samuels had adherents in almost all of the precincts.
 
+## Making Maps
 
+For the present, we'll use two command-oriented mapping functions from the `mosaic` package.  These produce a world map or a map of US states. You specify the data table from which the mapped quantity is to be drawn, the name of the variable in the table that identifies the country or state, and a variable or expression on a variable that specifies how to choose the color for each country or state.  (In contrast to most other functions you will use for DCF, these mapping functions require that the arguments `key` and `fill` be in quotes.  We'll fix that soon, as well as making many more kinds of maps available.) For instance: 
 
-* Bar plots: Minneapolis Mayor
+```{r message=FALSE}
+mosaic::mWorldMap( CountryData, 
+                   key="country", 
+                   fill="ntiles( inflation, 5,'interval')" )
+```
+```{r message=FALSE}
+ZipGeography %>% 
+  group_by( State ) %>% 
+  summarise( totalPop=sum(Population, na.rm=TRUE) ) %>%
+  mUSMap( key="State", fill="log10(totalPop)")
+```
 
-* Maps: CIA data, weather events
+## Networks
 
-* Networks: Minneapolis Mayor
+Drawing networks will be introduced later. 
 
 ## Expressions
 
