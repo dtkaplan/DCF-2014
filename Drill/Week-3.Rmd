@@ -8,6 +8,11 @@ require(ScoreR)
 startProblem("DCF-Assignment3")
 ```
 
+<!--- Control the display of answers -->
+<style>
+  aside.answer {color:white; background-color:blue; display:none;}
+</style>
+
 
 ## Week 3
 

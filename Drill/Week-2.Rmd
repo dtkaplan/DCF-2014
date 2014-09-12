@@ -18,7 +18,6 @@ startProblem("DCF-Assignment2")
 
 ## Week 2 Drill
 
-**N.B.** This is not yet complete.
 
 ### Problem 1
 
@@ -77,11 +76,120 @@ What sets the order of the categorical variable in the scale for the vertical va
     "Date of the poll."=FALSE)`
 
 
+### Problem 2
+
+For each of these computations, say what R function is the most appropriate:
+
+
+1. Count the number of cases in a data table. <aside class="answer">`nrow()`</aside>
+#. List the names of the variables in a data table. <aside class="answer">`names()`</aside>
+#. For data tables in an R package, display the documentation ("codebook") for the data table.<aside class="answer">`help()`</aside>
+#. Load a package into your R session.<aside class="answer">`library()`</aside>
+#. Mark a data table as grouped by one or more categorical variables.<aside class="answer">`group_by()`</aside>
+#. Add up, group-by-group, a quantitative variable in a data table. <aside class="answer">`summarize()`</aside>
+
+###. Problem 3
+
+The data verb functions all take a data table as their first argument and return a data table as their output (The "output" is often called the "value" of the function.)  HOWEVER, the chaining syntax let's the output of one function become the input to the following function, so you don't have to repeat the name of the data frame.  An alternative syntax is to assign the output of one function to a named object, then use the object as the first argument to the next function in the computation.
+
+Each of these statements, but one, will accomplish the same calculation.  Identify the statement that does not match the others.
+
+##### a. 
+
+```{r eval=FALSE}
+BabyNames %>% 
+  group_by( year, sex ) %>% 
+  summarise( totalBirths=sum(count))
+```
+
+##### b. 
+
+```{r eval=FALSE}
+group_by( BabyNames, year, sex) %>% 
+  summarise( totalBirths=sum(count) )
+```
+
+##### c.
+
+```{r}
+group_by( BabyNames, year, sex ) %>%
+  summarise( totalBirths=mean(count) )
+```
+
+##### d. 
+
+```{r eval=FALSE}
+Tmp <- group_by(BabyNames, year, sex) 
+summarise( Tmp, totalBirths=sum(count) )
+```
+
+<aside class="answer">
+Statement (c) is different.  Rather than calculating the total number of births (using `sum()`), it finds the mean number of births across all the cases in each year/sex group.  
+</aside>
+
+
+### Problem 4
+
+Spot the error(s) in these expressions:
+
+##### a.
+
+```{r eval=FALSE}
+BabyNames %>% 
+  group_by(BabyNames, year, sex) %>%
+  summarize(BabyNames, total=sum(count) )
+```
+
+##### b.
+
+```{r eval=FALSE}
+ZipGeography <- 
+  group_by( State ) %>% 
+  summarize( pop=sum(Population) )
+```
+
+##### c.
+
+```{r eval=FALSE}
+Minneapolis2013 %>%
+  group_by( First ) ->
+  summarize( voteReceived=n() )
+```
+
+##### d.
+
+```{r eval=FALSE}
+summarize( votesReceived=n() ) %<% 
+  group_by( First ) <- 
+  Minneapolis2013
+```
+
+##### e.
+
+```{r eval=FALSE}
+BabyNames %>% 
+  group_by( "First" ) %>%
+  summarise( votesReceived=n() )
+```
+
+##### f. 
+
+```{r eval=FALSE}
+Tmp <- group_by(BabyNames, year, sex ) %>% 
+  summarise( Tmp, totalBirths=sum(count))
+```
+
+##### g.
+
+```{r eval=FALSE}
+Tmp <- group_by(BabyNames, year, sex) 
+summarise( BabyNames, totalBirths=sum(count) )
+```
 
 `r I(endProblem())`
 
 
-Note to myself: See `Week-2-In-Progress.Rmd`.
+
 
 ```{r child="../CSS/DisqusTemplate.Rmd"}
 ```

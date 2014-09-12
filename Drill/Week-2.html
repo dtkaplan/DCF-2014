@@ -76,7 +76,6 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 <div id="week-2-drill" class="section level2">
 <h2>Week 2 Drill</h2>
-<p><strong>N.B.</strong> This is not yet complete.</p>
 <div id="problem-1" class="section level3">
 <h3>Problem 1</h3>
 <p>The graphic below presents forecasts for the US Senate elections in Nov. 2014. The numbers or words give the forecast probability of one party’s candidate — Democrat or Republican — winning. The forecasts are made based on polls up through the end of August 2014. Individual results from several different polling organization are shown. The graphic is an excerpt from the <a href="http://www.nytimes.com/newsgraphics/2014/senate-model/comparisons.html">full graphic</a>, which shows predictions for all 36 senate seats up for election in 2014. Source: <a href="http://www.nytimes.com/newsgraphics/2014/senate-model/comparisons.html">New York Times</a></p>
@@ -278,8 +277,126 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 &quot;totalpts&quot;:      4,
 &quot;type&quot;: &quot;Fixed Choice&quot; 
 }">Info for Select Set</option></select></p>
+</div>
+</div>
+<div id="problem-2" class="section level3">
+<h3>Problem 2</h3>
+<p>For each of these computations, say what R function is the most appropriate:</p>
+<ol style="list-style-type: decimal">
+<li>Count the number of cases in a data table.
+<aside class="answer">
+<code>nrow()</code>
+</aside></li>
+<li>List the names of the variables in a data table.
+<aside class="answer">
+<code>names()</code>
+</aside></li>
+<li>For data tables in an R package, display the documentation (“codebook”) for the data table.
+<aside class="answer">
+<code>help()</code>
+</aside></li>
+<li>Load a package into your R session.
+<aside class="answer">
+<code>library()</code>
+</aside></li>
+<li>Mark a data table as grouped by one or more categorical variables.
+<aside class="answer">
+<code>group_by()</code>
+</aside></li>
+<li>Add up, group-by-group, a quantitative variable in a data table.
+<aside class="answer">
+<code>summarize()</code>
+</aside>
+</li>
+</ol>
+<p>###. Problem 3</p>
+<p>The data verb functions all take a data table as their first argument and return a data table as their output (The “output” is often called the “value” of the function.) HOWEVER, the chaining syntax let’s the output of one function become the input to the following function, so you don’t have to repeat the name of the data frame. An alternative syntax is to assign the output of one function to a named object, then use the object as the first argument to the next function in the computation.</p>
+<p>Each of these statements, but one, will accomplish the same calculation. Identify the statement that does not match the others.</p>
+<div id="a." class="section level5">
+<h5>a.</h5>
+<pre class="r"><code>BabyNames %&gt;% 
+  group_by( year, sex ) %&gt;% 
+  summarise( totalBirths=sum(count))</code></pre>
+</div>
+<div id="b." class="section level5">
+<h5>b.</h5>
+<pre class="r"><code>group_by( BabyNames, year, sex) %&gt;% 
+  summarise( totalBirths=sum(count) )</code></pre>
+</div>
+<div id="c." class="section level5">
+<h5>c.</h5>
+<pre class="r"><code>group_by( BabyNames, year, sex ) %&gt;%
+  summarise( totalBirths=mean(count) )</code></pre>
+<pre><code>Source: local data frame [268 x 3]
+Groups: year
+
+   year sex totalBirths
+1  1880   F       96.60
+2  1880   M      104.43
+3  1881   F       98.03
+4  1881   M      101.05
+5  1882   F      104.91
+6  1882   M      103.45
+7  1883   F      106.57
+8  1883   M      101.58
+9  1884   F      110.09
+10 1884   M      101.73
+..  ... ...         ...</code></pre>
+</div>
+<div id="d." class="section level5">
+<h5>d.</h5>
+<pre class="r"><code>Tmp &lt;- group_by(BabyNames, year, sex) 
+summarise( Tmp, totalBirths=sum(count) )</code></pre>
+<aside class="answer">
+Statement (c) is different. Rather than calculating the total number of births (using <code>sum()</code>), it finds the mean number of births across all the cases in each year/sex group.<br />
+</aside>
+
+
+</div>
+</div>
+<div id="problem-4" class="section level3">
+<h3>Problem 4</h3>
+<p>Spot the error(s) in these expressions:</p>
+<div id="a.-1" class="section level5">
+<h5>a.</h5>
+<pre class="r"><code>BabyNames %&gt;% 
+  group_by(BabyNames, year, sex) %&gt;%
+  summarize(BabyNames, total=sum(count) )</code></pre>
+</div>
+<div id="b.-1" class="section level5">
+<h5>b.</h5>
+<pre class="r"><code>ZipGeography &lt;- 
+  group_by( State ) %&gt;% 
+  summarize( pop=sum(Population) )</code></pre>
+</div>
+<div id="c.-1" class="section level5">
+<h5>c.</h5>
+<pre class="r"><code>Minneapolis2013 %&gt;%
+  group_by( First ) -&gt;
+  summarize( voteReceived=n() )</code></pre>
+</div>
+<div id="d.-1" class="section level5">
+<h5>d.</h5>
+<pre class="r"><code>summarize( votesReceived=n() ) %&lt;% 
+  group_by( First ) &lt;- 
+  Minneapolis2013</code></pre>
+</div>
+<div id="e." class="section level5">
+<h5>e.</h5>
+<pre class="r"><code>BabyNames %&gt;% 
+  group_by( &quot;First&quot; ) %&gt;%
+  summarise( votesReceived=n() )</code></pre>
+</div>
+<div id="f." class="section level5">
+<h5>f.</h5>
+<pre class="r"><code>Tmp &lt;- group_by(BabyNames, year, sex ) %&gt;% 
+  summarise( Tmp, totalBirths=sum(count))</code></pre>
+</div>
+<div id="g." class="section level5">
+<h5>g.</h5>
+<pre class="r"><code>Tmp &lt;- group_by(BabyNames, year, sex) 
+summarise( BabyNames, totalBirths=sum(count) )</code></pre>
 <p><select style="visibility: hidden" width="5" name="roster"><option value="[ &quot;senateFrame&quot;, &quot;senateGlyph&quot;, &quot;senateGuideState&quot;, &quot;senateGuideCandidate&quot;, &quot;senateGuidePollV&quot;, &quot;senateGuideColor1&quot;, &quot;senateGuideColor2&quot;, &quot;senateOrder&quot; ]">problem roster</option></select></p>
-<p>Note to myself: See <code>Week-2-In-Progress.Rmd</code>.</p>
 <p>Please use the comment system to make suggestions, point out errors, or to discuss the topic.</p>
 <div id="disqus_thread">
 
