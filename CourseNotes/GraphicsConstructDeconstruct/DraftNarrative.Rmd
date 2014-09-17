@@ -164,6 +164,11 @@ At each age, smokers were less likely than non-smokers to have survived to the e
 
 Using a map to plot data helps both to identify particular cases and to show spatial patterns and discrepancy. 
 
+```{r message=FALSE}
+mosaic::mWorldMap( CountryData, 
+                   key="country", 
+                   fill="growth" )
+```
 
 
 From this map of population growth (in % per year), you can see the handful of countries with negative growth (that is, population decline) such as Russia and Poland.  The countries in Africa, with the exception of South Africa and Namibia, have fast population growth.  (A rate of 5% per year means that the population will double every 14 years.)  There is just one country with a large decline: Syria, just to the right of the center of the map.

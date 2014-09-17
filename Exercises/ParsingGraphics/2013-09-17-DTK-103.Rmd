@@ -1,0 +1,36 @@
+
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
+```
+
+The `ZipGeography` data table in the DCF package gives information about each postal code ("ZIP code") in the US.  Here's an excerpt of the `r nrow(ZipGeography)` cases 
+
+```{r echo=FALSE}
+set.seed(101)
+ZipGeography %>% 
+  filter( State %in% c("Colorado","Minnesota","California","Maryland"),Population>0, LandArea > 0) %>% 
+  sample_n( size=10 ) %>%
+  select( ZIP, State, Population, LandArea ) %>%
+  arrange( State, ZIP )
+```
+
+Here's a graphic showing the mean population of all the ZIP codes in each state.  
+
+```{r echo=FALSE}
+ZipGeography %>%
+  select( ZIP, State, Population, LandArea) %>%
+  group_by( State ) %>% 
+  summarise( 
+    aveZipPopulation=mean(Population, na.rm=TRUE),
+    area=mean(LandArea, na.rm=TRUE)
+    ) %>%
+  mutate( State=reorder(State, aveZipPopulation) ) %>% 
+  ggplot( aes(x=State,y=aveZipPopulation) ) +
+  geom_point( aes(size=area)) +
+  theme(axis.text.x=element_text(angle=60,hjust=1))
+```
+
+1. Are the `ZipGeography` data in glyph-ready form for this graphic?  
+    * If so, explain which variable in `ZipGeography` is being mapped to which graphical attribute.  
+    * If not, explain in words how the `ZipGeography` data might have been transfigured to create a glyph ready data table for this graphic.
+2. The variable mapped to the horizontal axis is, obviously, `State`.  Explain what other variable is being used to set the scale for the horizontal axis, that is, how each level of `State` is mapped to a position on the axis.
+3. What are the three guides in the graphic?
