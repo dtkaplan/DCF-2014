@@ -1,5 +1,16 @@
+---
+output:
+  pdf_document:
+    fig_height: 3
+    fig_width: 4
+  word_document: default
+---
 
 ```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
+```
+
+```{r include=FALSE}
+library(DCF)
 ```
 
 The `ZipGeography` data table in the DCF package gives information about each postal code ("ZIP code") in the US.  Here's an excerpt of the `r nrow(ZipGeography)` cases 
@@ -25,9 +36,11 @@ ZipGeography %>%
     ) %>%
   mutate( State=reorder(State, aveZipPopulation) ) %>% 
   ggplot( aes(x=State,y=aveZipPopulation) ) +
-  geom_point( aes(size=area)) +
-  theme(axis.text.x=element_text(angle=60,hjust=1))
+  geom_point( aes(size=area) ) +
+  theme(axis.text.x=element_text(angle=60,hjust=1)) 
 ```
+
+![Population and areas of ZIP codes.  Average by state.](Images/ZipArea.png)
 
 1. Are the `ZipGeography` data in glyph-ready form for this graphic?  
     * If so, explain which variable in `ZipGeography` is being mapped to which graphical attribute.  

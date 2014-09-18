@@ -3,6 +3,7 @@ title: "Assignment for Week Two"
 author: "Data and Computing Fundamentals"
 date: "Macalester College"
 output:
+  pdf_document: default
   html_document:
     css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
     fig_caption: yes
