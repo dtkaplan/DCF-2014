@@ -3,6 +3,24 @@ title: "Draft Narrative"
 output: html_document
 ---
 
+## Too Much Data?
+
+Redo this plot with the entire NHANES data:
+```{r echo=FALSE}
+Small <- sample_n( NHANES, size=2000 )
+ggplot(data=Small,aes(x=age,y=height))+geom_point()+aes(colour=sex)
+```
+
+Use this to talk about overplotting and `alpha=`.
+
+## Order of categorical variable:
+
+How to set the order of display of a categorical variable by another variable's value.  See the Medicare example in GraphicsCommands.Rmd
+
+## Log Axes
+
+charges for different DRG in MedicareCharges data as in GraphicsCommands.Rmd.  Use log charges to show proportional differences.
+
 ## Churchill War Rooms
 
 * Tons of bombs in World War II. <http://www.peacockworks.com/wp-content/uploads/2012/12/Bombs-in-Weight-Dropped-in-WW2.jpg> 

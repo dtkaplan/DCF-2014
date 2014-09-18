@@ -4,13 +4,64 @@ author: "Data and Computing Fundamentals"
 date: "Macalester College"
 output:
   html_document:
-    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
     fig_caption: yes
     toc: yes
 ---
 
-```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
 ```
+
+
+## Birds at the Ordway Nature Reserve
+
+Here's part of a data table showing how many times birds of each species appear in the `OrdwayBirds` data.  Construct a statement that generates this table.
+
+```{r echo=FALSE}
+OrdwayBirds %>% 
+  group_by( SpeciesName ) %>%
+  summarise( count=n() ) %>% 
+  arrange( desc(count) ) %>% head()
+```
+
+In fact, many of the listings in the `OrdwayBirds` data have mis-spelled species names, the result of errors in entering the data.  Often these are trivial mis-spellings that are easy to correct.  The `OrdwaySpeciesNames` table contains a list of mis-spellings and the corrected spelling.  Here's a part of it:
+
+```{r echo=FALSE}
+Tmp <- OrdwaySpeciesNames[c(66,79,140,160,187),]
+row.names(Tmp) <- NULL
+Tmp
+```
+
+Use `OrdwaySpeciesNames` along with `OrdwayBirds` to produce a corrected count of species.  It will look like this:
+
+```{r echo=FALSE,message=FALSE}
+OrdwayBirds %>% 
+  inner_join(OrdwaySpeciesNames) %>%
+  group_by( SpeciesNameCleaned ) %>%
+  summarise( count=n() ) %>% 
+  arrange( desc(count) ) %>% head()
+```
+
+Finally, create a table, like this, that shows which species are miscounted the most if the mis-spelled species names are used in the count.
+
+```{r echo=FALSE,message=FALSE}
+MisCounted <- 
+  OrdwayBirds %>% 
+  group_by( SpeciesName ) %>%
+  summarise( origCount=n() ) 
+CorrectlyCounted <- 
+  OrdwayBirds %>% 
+  inner_join(OrdwaySpeciesNames) %>%
+  group_by( SpeciesNameCleaned ) %>%
+  summarise( correctedCount=n() ) %>%
+  mutate( SpeciesName=SpeciesNameCleaned ) %>% select(-SpeciesNameCleaned )
+CorrectlyCounted %>% 
+  inner_join(MisCounted) %>%
+  mutate( fractionWrong=(correctedCount-origCount)/correctedCount ) %>%
+  arrange( desc(fractionWrong) ) %>%
+  select( -fractionWrong ) %>% head()
+```
+
 
 ## Review
 

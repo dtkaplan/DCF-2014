@@ -1,0 +1,106 @@
+---
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
+    fig_caption: yes
+    toc: yes
+---
+
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
+```
+
+
+
+## Graphics Expressions
+
+The functions `mScatter()`, `mBar()`, etc. can provide a convenient way to map variables to graphical attributes.  They were written to make it easy and quickly to explore different possibilities for presenting variables graphically.  Behind the scenes, though, `mScatter()`, `mBar()`, etc. construct R-language expressions for defining the graphic.  For many purposes, it's better to write those expressions directly.  Some examples of such purposes
+
+* to generate and document a data graphic using R/Markdown.
+* to add glyph layers to a graphic.
+* to refine labels, colors, etc. 
+
+## Reading GGPlot Commands
+
+The graphing software we use in DCF is a package called `ggplot2`.  This same software is used in professional work.^[Indeed, when you feel proficient with `ggplot2`, it's worthwhile to include that on your résumé.]  As with other software, an important first step is learning to **read** and interpret the commands.  Once you can read, you'll find it easy to **copy and modify** existing commands to customize them to your purpose.
+
+When using interfaces such as `mScatter()`, by pressing the "Show Expression" button, you can look at the resulting `ggplot2` command.  For instance, consider this graphic showing a subset of the `NHANES` data:
+
+```{r echo=FALSE}
+Small <- sample_n( NHANES, size=2000 )
+ggplot(data=Small,aes(x=age,y=height))+geom_point()+aes(colour=sex)
+```
+
+The graphic was originally generated using these expressions:
+```{r eval=FALSE}
+Small <- sample_n( NHANES, 2000 )
+mScatter( Small )
+```
+
+Pressing the "Show Expression" button on the `mScatter()` menu^[This is the menu that appears when you give the expression `mScatter( Small )`. If it's not immediately visible, press the small "gear" icon, ![gear](Images/gear-icon.png), in the plot.] reveals that the underlying `ggplot2` expression is:
+
+```{r results='hide'}
+ggplot( data=Small, aes(x=age,y=height)) + 
+  geom_point() + 
+  aes(colour=sex)
+```
+
+To read and understand this command, consider this explanation:
+
+* The `ggplot()` function signals that a new graphic is being created (as opposed to adding on to an existing graphic). 
+* The `+` symbol is used to "add" a new component to a graphic.
+* Glyphs are created by functions called *geoms*.  Here, the geom for dots is being used.
+* The argument, `data=`, sets the data table that will be used in the graphic.
+* The `aes()` function --- based on the word "aesthetic" --- specifies the mapping from variables to graphical attributes.
+
+The above statement can be translated into English thus:
+
+1. `ggplot( data=Small, aes(x=age,y=height))`:  "Start a new plot based on the data in `Small`.  In that plot, the x-coordinate will represent the variable `age`, while the y-coordinate will be `height`."
+#. `geom_point()`: "Use dots as the glyph ..."
+#. `aes( colour=sex )`: "... and, come to think of it, for any of the glyphs in the graph, sex should be used to set the color."
+
+The different phrases in the R expression are connected with the `+` sign, meaning "do this *and* do that."  If you are putting the phrases on different lines, the `+` **must always** be on the preceeding line.  Doing so tells R that the expression is not yet complete.  Of course, the final phrase should not be followed by `+` because, at the end of that phrase, the entire expression is complete.
+
+Once you can read the expressions, you can figure out how to modify them to produce the graphic you want.  For instance, you can substitute other variables for any or all of `age`, `height`, and `sex`.
+
+## Some Basic Graphics
+
+You don't need to use functions like `mScatter()` at all.  Here are a few templates for different kinds of graphs.  Often, once you have chosen the kind of graph you want to make, modifications are as simple as changing the name of the data table and the variables.
+
+
+## Layers
+
+On occasion, data from more than one data table are graphed together.  For instance, suppose you want a display of one state's hospital providers' charges for different Direct Recovery Groups.  Such a display might look like this:
+
+```{r echo=FALSE}
+data( MedicareCharges )
+data( MedicareProviders)
+ChargesByState <- inner_join( MedicareCharges, MedicareProviders ) %>% 
+  group_by(drg, stateProvider) %>%
+  summarise( aveCharge=mean(aveCharges, na.rm=TRUE ) )
+NJCharges <- ChargesByState %>% 
+  filter( stateProvider=='NJ' ) %>% ungroup() %>% 
+  arrange( aveCharge ) %>% mutate(drg=factor(drg,levels=drg))
+```
+
+```{r echo=FALSE}
+p <- ggplot(data=NJCharges, aes(x=drg,y=aveCharge)) +
+  geom_bar(fill="gray",stat="identity") +
+  ylab("Statewide Average Charges ($)") +
+  xlab("Direct Recovery Group") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+p + ggtitle("Average medicare charges by DRG in New Jersey")
+```
+
+This chart uses bars to give a fair impression of the range in charges for different medical procedures in New Jersey.  
+
+But how do these charges compare to those in other states?  One way to display this is to add another layer showing the individual states.  
+
+```{r echo=FALSE}
+p + geom_point( data=ChargesByState, size=1 ) + 
+  ggtitle("New Jersey compared to other states")
+```
+
+
+See <http://docs.ggplot2.org/current/>
+
+## Labels, etc.
