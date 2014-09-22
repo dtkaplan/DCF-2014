@@ -4,25 +4,29 @@ author: "Data and Computing Fundamentals"
 date: "Macalester College"
 output:
   html_document:
-    css: ~/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-style.css
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
     fig_caption: yes
     toc: yes
 ---
 
-```{r child="/Users/kaplan/KaplanFiles/DCF-2014/ReOrganizedJune10/CSS/DCF-common.Rmd"}
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
 ```
 
 
 ### More on Voting
 
-In the ranked-choice ballot system, once a voter has picked a first choice candidate, there is no advantage in listing that same candidate as second or third choice.
+In the ranked-choice ballot system, once a voter has picked a first choice candidate, there is no advantage in listing that same candidate as second or third choice.  
+
+In answering each of the following, you should include three things:
+
+1. A statement in English (using data verbs!) of your strategy for carry out the calculation.
+2. The implementation of the calculation in R.
+3. The data table that is the result of the calculation.  This will be printed automatically from (2).  You **do not** have to format the result beautifully.  It's sufficient to show the first few lines in the data table appear.  (Remember `head()`).
 
 * How many people chose the same candidate for both `First` and `Second` place?
 * Of the ballots where the `First` and `Second` place choices are the same, what were the top 3 choices?
 * Of the people who selected Ole Savior for `First`, what were the top three `Second` choices?
 
-
-Within each precinct, which ward had the largest number of votes?  (Hint: Make a data table with the number of votes in each `Precinct` `Ward` combination.  Arrange this by `Precinct` and the number of votes.)
 
 ### Medicare Reimbursement
 
@@ -42,11 +46,14 @@ In the `MedicareCharges` data table:
         
 * Make a scatterplot map of the locations of the Medicare providers. (Hint: the ZIP code provides this information, if you can translate it into latitude and longitude.)  Overlay this on a choropleth map giving the population of each state.
 
-* Translate the direct recovery groups into these broad categories:
-Heart, Respiratory, Skeletal, BrainCNS, Blood, Circulation, Psychology, Sepsis, Kidney, Endocrine, Digestive, Other. Make a bar chart showing how much is paid by Medicare for each categories.  To help you do the translation, a Google Spreadsheet is available for loading with `fetchGoogle()` at this address:
-<https://docs.google.com/spreadsheet/pub?key=0Am13enSalO74dFFFaGJWdk1IbUo4bVFXLXYzbE1KLXc&single=true&gid=0&output=csv>
+* Suppose you wanted to display how many people were treated for problems in various body systems: Heart, Respiratory, Skeletal, BrainCNS, Blood, Circulation, Psychology, Sepsis, Kidney, Endocrine, Digestive, Other.  To help, a translation table is available.  You can access it with commands these commands (which create a data table named `DRGtoBodySystem`): 
+```{r eval=FALSE}
+library( mosaic )
+DRGtoBodySystem <-
+  fetchGoogle( "https://docs.google.com/spreadsheet/pub?key=0Am13enSalO74dFFFaGJWdk1IbUo4bVFXLXYzbE1KLXc&single=true&gid=0&output=csv" )
+```
     
-        
+Make a bar chart showing how much is paid by Medicare for each categories. Your report should show both the bar chart and the commands that generate it.
         
 ### Zip Codes
 
@@ -54,52 +61,16 @@ Join the zip code geography and demography:
 
 * Make a bar chart showing, for each state, the count of the population that is under 5 years old, between 5 and 18 years old, between 18 and 65 years old, and over 65.
 * Make another bar chart showing the *proportion* of the state's population that is in each of the age categories. 
-* Call a ZIP code "crowded" when the population is over 50,000.  Make a scatter plot showing the geographic location of the crowded zips.
+* Call a ZIP code "crowded" when the population is over 50,000.  Make a scatter plot showing the geographic location of the crowded zips. 
+* Make a choropleth map of the US showing, for each state, one of the following (your choice).  Hint: you'll have to sum over all the ZIP codes in a state before you can meaningfully find the fraction.
 
-
+* the fraction of housing units (`Totalhousingunits`) that are vacant (`Vacanthousingunits`).  
+* the fraction of the population that is over 65 years old.
+* the fraction of the population with a bachelor's degree (`Bachelorsdegreeorhigher`).
 
 
 Pick out the 10000 zip codes with the highest population.  Make a scatter plot of the latitude versus longitude.  (Hint: `arrange()` and `head()`.)  Use color to represent the fraction of the population that is over 65.
 
-How many zip codes have a `WaterArea` that is more than 50% of the `LandArea`?  Make a scatter plot showing the geographical location of these, with color indicating the population
+How many zip codes have a `WaterArea` that is more than 50% of the `LandArea`?  Make a scatter plot showing the geographical location of these, with color indicating the population.
 
-### Not yet sorted out.
-
-Drill on data verbs:  
-* mutate(), arrange(), filter(), select()
-
-Drill on wide/narrow:  
-* pivot, fold, gather, spread, unite, ...
-* NCI60 --- just the probe data.  Change to narrow format and find the probes with the highest standard deviation of expression across all cell lines.
-
-### Filter
-
-CVC/Summer2014/Activities/Migration.Rmd --- there are all sorts of rank comparisons here involving the maximum, top five, and so on.
-
-Ordway bird seasonality: See <file:///Users/kaplan/KaplanFiles/MOSAIC/CVC/Summer2013/Session3/RelationalData.html#/21>    
-* Pick out the 10 most common bird species.  How does their capture differ by month.
-
-Disasters: Make US maps showing, for different types of disasters, where they happen the most.
-
-Pick out the zip codes you would target for:
-
-* lots of elderly.
-* young people and high income.
-
-### Long and Narrow
-
-Turn the immigration data into narrow, so that you can calculate the pairs that are close to being bilateral.  
-
-### Mutate:
-
-* Rates in the country data, e.g. miles of road per area, 
-* Fraction alive, cardio, other in NHANES
-* ifelse and rounds in the mayoral data: CVC/Summer2014/Activies/MinneapolisMayoralElection.Rmd
-* Where do the elderly live in the US?  Zip-code data: see <file:///Users/kaplan/KaplanFiles/MOSAIC/CVC/Summer2014/Notes/GraphicsBasics/graphics-basics.html#17>
-
-### Graphics:  
-
-* Kids names by sex over the years: Winston, Adolf, the ones from Netta.
-
-* Layers: Dynamite plots
 

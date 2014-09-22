@@ -1,0 +1,12 @@
+---
+title: "Rank"
+output: html_document
+---
+
+### Arrange within group_by()
+
+Or maybe it should be one of the rank functions in filter.
+
+Within each precinct, which ward had the largest number of votes?  (Hint: Make a data table with the number of votes in each `Precinct` `Ward` combination.  Arrange this by `Precinct` and the number of votes.)
+
+

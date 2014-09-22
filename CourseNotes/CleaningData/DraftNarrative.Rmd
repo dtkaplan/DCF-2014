@@ -4,3 +4,10 @@ output: html_document
 ---
 
 In this document, place draft narrative for this section of the notes. 
+
+
+## Some places to scrape?
+
+Storm damage database: http://rpubs.com/deflath/20484
+
+US Housing database: http://www.asdfree.com/2014/06/analyze-american-housing-survey-ahs.html

@@ -21,6 +21,47 @@ How to set the order of display of a categorical variable by another variable's 
 
 charges for different DRG in MedicareCharges data as in GraphicsCommands.Rmd.  Use log charges to show proportional differences.
 
+## Show the data!
+
+* Dynamite plots: why they are bad and how you can do better.
+
+## Example: Blood pressure and diabetes
+
+The NHANES data gives ... for 31000 people.  Suppose you are interested in the question, does waist to height ratio differ between diabetics and non-diabetics.
+
+
+```{r}
+group_by(NHANES, sex, diabetic) %>% 
+  summarise(myIndex=mean(waist/height,na.rm=TRUE),n=n(),
+            se=sd(waist/height, na.rm=TRUE)/sqrt(n)) -> foo 
+ggplot(foo, aes(x=sex, group=diabetic, color=diabetic,y=myIndex,width=.5))  + geom_bar(alpha=.3,aes(fill=diabetic),position='dodge',stat='identity') + geom_errorbar(aes(ymax=myIndex+2*se,ymin=myIndex-2*se,),position='dodge',weight=3,size=2)  + ylim(0,80)
+```
+
+Perhaps a better plot would be:
+
+```{r eval=FALSE}
+ggplot(NHANES, aes(x=sex, y=myIndex, fill=diabetic)) + geom_boxplot(notch=TRUE)
+```
+
+NB.  For some reason, geom_box() doesn't use group.  But color works.
+
+
+MAYBE ALWAYS DO A SELECT to highlight the variables being used.
+
+## Exercises
+
+What could you improve about this graphic if your point is to show that pulse pressure differs from diabetics and non-diabetics?  Hint: Missing data is shown in gray, even though it isn't in the legend.
+
+```{r}
+group_by(NHANES, sex, diabetic) %>% 
+  summarise(mn=mean(myIndex,na.rm=TRUE),n=n(),
+                                              se=sd(myIndex, na.rm=TRUE)/sqrt(n)) -> foo 
+ggplot(foo, aes(group=sex, x=diabetic, y=mn,width=.5))  + geom_bar(alpha=.3,aes(fill=sex),position='dodge',stat='identity') + geom_errorbar(aes(ymax=mn+2*se,ymin=mn-2*se,),position='dodge',weight=3,size=2)  + ylim(0,80) + ylab("Waist to Height Ratio (cm/m)") + 
+  xlab("Diabetes status")
+```
+
+
+
 ## Churchill War Rooms
 
 * Tons of bombs in World War II. <http://www.peacockworks.com/wp-content/uploads/2012/12/Bombs-in-Weight-Dropped-in-WW2.jpg> 

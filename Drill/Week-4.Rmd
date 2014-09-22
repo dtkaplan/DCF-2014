@@ -11,6 +11,428 @@ startProblem("DCF-Assignment4")
 
 ## Week 4
 
+### Diamonds
+
+These questions refer to the `diamonds` data table.  Take a look at the codebook (using `help()`) so that you'll understand the meaning of the tasks.^[Motivated by [this problem set](http://www.public.iastate.edu/~hofmann/stat480/homework/dplyr%20drills.html) based on drills by Garrett Grolemund.
+
+Each of the following tasks can be accomplished by a statement of the form
+```{r eval=FALSE}
+diamonds %>% 
+  verb1( args1 ) %>% 
+  verb2( args2 ) %>% 
+  arrange( args3 ) 
+```
+
+* Display the largest diamond depth observed for each clarity group.
+* What color of diamond is most common for each of the different cuts?
+
+
+#### Four
+
+Use `==` and `mean()` to find the proportion of cases at a given level, e.g. what fraction of smokers have died.  Here's an example of the syntax you'll need, using `sex` instead of `smoker`.
+```{r}
+data(NHANES, package="DCF") 
+NHANES %>% group_by( sex ) %>%  
+  summarise( living=mean( death=='alive', na.rm=TRUE ))
+```
+
+Add in: Look carefully at the quantity being given to `mean()`.  The variable name is `death`.  Since it's a variable name, there are no quotes around it.  The `==` tests of equality.  The quoted string, `"alive"`, is one of the levels of the categorical variable `death`.  Altogether, `mean( death=="alive" )` means "the proportion of cases still alive."^[Admittedly, it's a bit odd to have a variable named `death` that can have a value `"alive"`. In the NHANES data, `death` indicates whether or not the person died, and whether the death (if any) was from cardiovascular causes.]
+
+
+Then break down by smoker, etc. as the exercise.  Don't show them this, but ask them to draw conclusions: which group is more likely to be alive.
+
+```{r}
+NHANES %>% group_by(smoker) %>% 
+  summarise( count=n(), 
+             living=mean(death=="alive", na.rm=TRUE) )
+NHANES %>% group_by(sex, smoker) %>%
+  summarise( living=mean(death=="alive", na.rm=TRUE) )
+```
+
+Then, ask them to break it down by people over 60 and people under 60.
+
+```{r}
+NHANES %>% group_by(age<=60,sex, smoker) %>%
+  summarise( living=mean(death=="alive", na.rm=TRUE) )
+```
+
+Among the young males, which group is more likely to be alive: smokers or non-smokers.  How about among older males?  Young females? Older females?
+
+Explain something about Simpson's paradox.
+
+Another EXERCISE ...
+
+Make a stacked bar chart of proportions for each of the smoking, sex, age groups.  Use this to illustrate the different kinds of plots.
+
+Another EXERCISE ...
+
+Using `ntile()` to convert quantitative to categorical.  List some of the other converters, e.g., `cut()`.
+
+### END OF EXERCISE
+
+## EXERCISES:
+
+
+### One
+
+Explain in English what these commands will do:
+```{r results='hide'}
+NHANES %>% 
+  group_by( sex, smoker ) %>%
+  summarise( n=n() )
+```
+
+### Two
+
+
+Maybe in this section, mean weight for diabetic and not.
+
+```{r}
+foo <- group_by(NHANES, sex, diabetic) %>% 
+  summarise(wt=mean(weight,na.rm=TRUE),n=n(),
+            se=sd(weight, na.rm=TRUE)/sqrt(n)) 
+ggplot(foo, aes(x=sex, group=diabetic,y=wt,width=.5))  + geom_bar(alpha=.5,position='dodge',stat='identity',aes(fill=diabetic)) + geom_errorbar(aes(ymax=wt+2*se,ymin=wt-2*se,),position='dodge')  + ylim(0,80) + guides(fill=FALSE)
+```
+
+For errorbars and such, you need to use `position=position_dodge(width=.5)` to separate the groups equally.
+
+```{r}
+ggplot(foo, aes(group=sex, x=diabetic, y=wt,width=.5))  + 
+#  geom_bar(alpha=.3,aes(fill=sex),position='dodge',stat='identity') + 
+  geom_errorbar(aes(ymax=wt+2*se,ymin=wt-2*se,color=sex),
+                position=position_dodge(width=0.3),weight=3,size=2,width=.2)  + 
+  ylim(0,80) + ylab("Weight") + 
+  xlab("Diabetes status")
+```
+
+
+QUESTIONS TO ASK:
+* What variables are here?
+* What cases are here in the glyph-ready data?
+* Which variable is represented by color?
+* Which variable sets th position of the subgroup w.r.t. the overall group?
+* The length of the error bars reflects a quantity called the "standard error".  
+
+Make graphs to compare diabetics to non-diabetics in each group, and to compare males to females in each group.
+
+Perhaps jazz it up with age-group.
+
+## What fraction are diabetic in the various age groups
+
+```{r eval=FALSE}
+mutate(NHANES, AgeGroup=ntils(age,n=10,format='left')) %>% 
+  group_by(sex,AgeGroup) %>%
+  summarize(dfrac=mean(diabetic=='diabetic',na.rm=TRUE),
+            se=sqrt(dfrac*(1-dfrac)/length(diabetic)) )-> hoo
+ggplot(hoo, aes(x=AgeGroup,y=dfrac,group=sex)) + geom_bar(alpha=.3,aes(fill=sex,color=sex),position='dodge',stat='identity',width=4) + geom_errorbar(aes(ymax=dfrac+se,ymin=dfrac-se,color=sex),position='dodge')
+```
+
+### Proportion with summarize:
+
+The point here is that once you've reduced the data to a tally of each group, you want to keep those cases, so you want a mutate().  But even in `mutate()`, aggregation operators work over the whole group.
+
+The last grouping variable gets eliminated each time you use `mutate()` or `summarize()`.
+
+```{r}
+group_by(NHANES, sex, smoker, diabetic) %>% tally() -> tmp
+# get rid of the NA here
+filter(tmp, diabetic != 'NA' & smoker != 'NA') %>%
+mutate( total=sum(n),frac=n/total) %>% filter( diabetic=='diabetic')
+```
+
+## Create a proportion function
+
+Do I want this?
+
+```{r}
+simple <- function(v) {
+  sum(v,na.rm=TRUE)/length(v)
+}
+proportion <- function(.data,...) {
+  do(.data,data.frame(prop.table(do.call(table,select(.,...)))))
+}
+# example
+# group_by(NHANES,sex,smoker) %>% proportion(diabetic)
+```
+
+## TO DO
+
+* Fix NHANES to turn `NaN` into `NA` in the numerical variables.
+* Set the option `"na.rm"` to `TRUE` when the DCF package is loaded.
+* Have earlier examples with `summary()` of a single variable:
+```
+with( NHANES, summary(height) )
+```
+That will let you show what the variables look like.  Or maybe show a boxplot.
+
+## Returned values, arguments, inputs and outputs
+
+Explain what these are.
+
+Also, assignment.  Use `<-` to distinquish between assignment and named arguments.   `<-` gives the output of a function to a name, or, in other words, "assigns a value to an object named ..."
+
+
+For each sex and smoker group, what fraction has diabetes?
+```{r eval=FALSE}
+group_by(NHANES,sex,smoker) %>% mutate(count=n()) -> tmp
+summarize(tmp, sum(diabetic=='diabetic')/count )
+dcast(group_by(NHANES,sex,smoker) %>% proportion(diabetic),
+      ~diabetic,value.var='Freq')
+tmp <- group_by(NHANES,sex) %>% summarize( k=sum(diabetic=='diabetic') )
+ggplot(tmp, aes(x=sex,y=n,fill=smoker)) + 
+  geom_bar(stat='identity',position='fill')
+```
+
+
+### NOTE: For proportion ...
+
+```{r}
+group_by(NHANES, sex,smoker) %>% summarise(pd=mean(diabetic=='diabetic',na.rm=TRUE),sz=n(),se=sqrt(pd*(1-pd)/sqrt(sz)))
+```
+
+
+## How Many?
+
+n() and groupwise n().  n() takes no arguments because it wouldn't matter which variable you used: they all have the same length
+
+
+QUESTION:  Why are these two quantities so different?
+```{r}
+summarise( NHANES, 
+           mean( height, na.rm=TRUE ), 
+           mean( hgtDiff, na.rm=TRUE ) )
+```
+
+## Grouping
+
+Often, you will be interested in studying **groups** of cases, for instance the males and females in `NHANES` or the smoking diabetics versus non-smoking diabetics. 
+
+In order to do the grouping, you need one or more variables that specify the groups, for instance, `sex`, `diabetic`, and `smoker` in NHANES.  Use the `group_by()` function to specify which variables you want to use.
+
+Grouping cases doesn't in itself do anything.  Instead, grouping sets things up so that `summarize()`, `mutate()`, and some other functions can do things on a group-by-group basis.  Example:
+
+```{r}
+NHANES <- group_by( NHANES, sex )
+summarise( NHANES, typicalAge=median(age, na.rm=TRUE) )
+```
+
+
+
+
+
+
+## Style
+
+As mentioned before, re-using a name can make your commands easier to read.
+
+Reassignment of the output to the input data frame may make sense for a transform.  But it is generally a bad idea for an aggregation.  (Explain why.  Hint: What are the cases in the input and output.) [Show a reassignment in a summarize() and say DON'T DO THIS!]
+
+### Pipes
+
+
+
+
+ANS: Group by diabetes status rather than sex.  Kill the NAs.
+
+Add a new variable to `small` that gives the mean height for that person's group.
+
+See [this set of exercises](http://www.public.iastate.edu/~hofmann/stat480/homework/dplyr%20drills.html)
+
+
+### Quiz
+
+
+
+
+
+
+### Multiple Choice
+
+There are three (simple) steps to creating a multiple-choice problem in *ScoreR*:
+
+1. Initialization of the question
+2. Creation of the individual items, typically embedded in *markdown* statements
+3. Termination of the question.
+
+Initialization is done with the `newMC()` function.
+
+```{r}
+f = newMC(totalPts=5,name="minus1") # Ordinarily, make this silent
+```
+
+The function name, in this case `f`, is arbitrary.  You will use that name to create the individual items with statements like `I(f(TRUE))` and I(f(FALSE))`, which will be embedded in text.  For instance:
+
+Which of these is equal to $-1$?  
+`r I(f(FALSE))` The value of $a x^2 + b x - c$ for all $a$, $b$, and $c$  
+`r I(f(TRUE))`  $e^{i\pi}$  
+`r I(f(FALSE))` $\ln(0)$  
+`r I(f(FALSE))` There's no such thing as a negative number, just a negative attitude.
+`r I(f(finish=TRUE))`
+
+After the items have been defined, terminate the question by calling the function with the argument `finish=TRUE`
+```{r eval=FALSE} 
+I(f(finish=TRUE))
+```
+You may well want to use inline knitr notation --- that's up to you.
+
+### Select from a set
+
+What's the value of $\pi$?
+```{r}
+piQuestion3 = selectSet(name="piValue3",totalPts=4,
+                        "2.71727"=FALSE,
+                        "3.0"=FALSE,
+                        "3.14159"=TRUE,
+                        "6.28318"=FALSE)
+```
+
+* Let's try that again ... `r I(piQuestion3)`
+
+
+### Free Text
+
+The `freeText()` function in `ScoreR` implements free-text entry.  It's very, very simple to add a free-text question to a problem.  Just
+
+`r I(textItem(name="question-topic",rows=2,totalPts=10))`
+
+The name, of course, should be unique within the problem.  The optional arguments `rows` and `cols` sets the size of the text entry box.  On many browsers, this block can be resized by the user, so a small box is useful in for adding in extended text.
+
+
+### Second Part
+
+A perennial problem when writing scientific reports is figuring out
+how many significant digits to report.  It's naïve to 
+copy all the digits from one's calculator or computer
+output; the data generally do not justify such
+precision. 
+
+Once you have a confidence interval, however, you do not need to guess
+how many significant digits are appropriate.  The standard error
+provides good guidance.  Here is a rule of thumb: keep two significant
+digits of the margin of error and round the point estimate to the same
+precision.  
+
+For example, suppose you have a confidence interval of $1.7862 \pm
+0.3624$ with 95% confidence.  Keeping the first two significant
+digits of the margin of error gives $0.36$.  We'll keep the point
+estimate to the same number of digits, giving altogether $1.79 \pm
+0.36$.
+
+Another example: suppose the confidence interval is $6548.23 \pm
+1321$.  Keeping the first two digits of the margin of error gives
+$1300$, with a corresponding margin of error of $6500 \pm 1300$.
+
+* Suppose the computer output is $0.03234232 \pm 0.01837232$.
+
+```{r include=FALSE}
+f=newMC(totalPts=1, name="confidence.interval")
+```
+Using this rule of thumb, what should you report in as the
+confidence interval?      
+`r I(f(FALSE))` $0.3234 \pm 0.01837$     
+`r I(f(FALSE))` $0.3234 \pm 0.0183$     
+`r I(f(FALSE))` $0.0323 \pm 0.0184$    
+`r I(f(FALSE))` $0.0323 \pm 0.018$     
+`r I(f(TRUE))` $0.032 \pm 0.018$     
+`r I(f(FALSE))` $0.032 \pm 0.01$     
+`r I(f(FALSE))` $0.03 \pm 0.01$   
+`r I(f(finish=TRUE))`
+
+
+* Now suppose the computer output were $99.63742573 \pm 1.48924367$.
+
+```{r include=FALSE}
+g=newMC(totalPts=1, name="confidence.interval.2")
+```
+What should you report as the confidence interval?     
+`r I(g(FALSE))` $100 \pm 1$     
+`r I(g(FALSE))` $99 \pm 1.5$     
+`r I(g(TRUE))` $99.6 \pm 1.5$     
+`r I(g(FALSE))` $99.64 \pm 1.49$     
+`r I(g(FALSE))` $99.647 \pm 1.489$ 
+`r I(g(finish=TRUE))`
+
+`r I(endProblem())`
+
+
+* Filter --- Find those cases in the left table that have a match in the right. [Give back just those countries in the G8]
+
+* Translate --- Translate a value from the left table according to a specification in the right table.  [List of synonyms for countries and an official identifier.  Translate the synonmyms into the official identifier.]
+[Marking candidates as "minor" in Minneapolis Mayor]
+
+
+#### Left Join
+
+Merge with all.x=TRUE.
+
+A *left join* includes the results of the inner join along with all the non-matching cases from the left table.  For the non-matching cases, the value of the variable from the right table is "missing" data.
+
+```{r echo=FALSE,results='asis'}
+xtable( left_join( LL, RR ) )
+```
+
+  As an example, consider the following table (which is a small part of the `CountryData` table).
+
+```{r echo=FALSE}
+CountryLeft <- CountryData[c( 48, 70, 89, 109, 110, 174, 183, 221, 242, 248), 1:3]
+row.names(CountryLeft) <- NULL
+```
+
+```{r echo=FALSE,results='asis',scroller=300}
+xtable( CountryLeft )
+```
+
+An left join can attach the information from the `CountryGroups` table to the geographic/demographic data. 
+
+```{r echo=FALSE, results='hide'}
+left_join( CountryLeft, CountryGroups )
+```
+
+
+
+
+Join: minor candidates
+
+Join: 
+
+* select out the G20 countries
+* add a variable indicating whether a country is in the G20 --- make a map
+
+
+Mutate, Filter & Select, Arrange?  save Join for later.
+
+Example with Mutate: Calculation the proportion of smokers who are alive adjusted for sex and age.  You'll need `mutate()` to add the proportion variable on.
+
+
+
+There are many international groups to which countries may belong.  Some famous ones are the G8 and G20 industrialized economies.  Here's part of the `CountryGroups` table that identifies the membership for three different international groups.
+
+```{r echo=FALSE,results='asis',scroller=300}
+set.seed(129)
+CountryGroups %>% xtable()
+```
+
+```{r eval=FALSE}
+merge(CountryLeft, CountryGroups)
+```
+```{r echo=FALSE,results='asis',scroller=300 }
+merge(CountryLeft, CountryGroups) %>% xtable
+```
+```{r eval=FALSE}
+merge(CountryLeft, CountryGroups, all.x=TRUE)
+```
+
+```{r echo=FALSE,results='asis',scroller=300}
+merge(CountryLeft, CountryGroups, all.x=TRUE) %>% xtable
+```
+
+[List of synonyms for countries and an official identifier.  Translate the synonmyms into the official identifier.]
+
+
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```
+
+
 ### Multiple Choice
 
 There are three (simple) steps to creating a multiple-choice problem in *ScoreR*:

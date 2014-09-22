@@ -1,0 +1,84 @@
+---
+title: "Ideas for Exams"
+author: "Daniel Kaplan"
+date: "September 22, 2014"
+output: html_document
+---
+
+
+
+
+These questions and others from [this document](http://www.public.iastate.edu/~hofmann/stat480/homework/dplyr%20drills.html)
+
+REVIEW SHEET BASED ON THE BASEBALL PROBLEMS.
+
+MAKE SURE THESE WORK ON THE `BabyNames` data table.  The questions were based on [another source](https://raw.github.com/hadley/data-baby-names/master/baby-names.csv).
+
+* Create a new dataframe that only includes years since 2000. Show answer.
+* What name has been used for the most number of years (when used for a single gender)? Show answer.
+* What names have only been used one year? Show answer.
+* Create a new column that displays the number of genders the name was used for each year. Note: not recommended for slower computers. Show answer.
+* Make a data set of names that have been both boy and girl names. Show answer.
+* For each year, display the total number of names that were used. Treat boy and girl versions of the same name as two separate names. Show answer.
+* Which name received the largest percentage of any name for any year (consider boy and girl names as distinct) Show answer.
+* Which girl's name received the largest percentage of any girl's name for any year? Show answer.
+* Display the average percentage each name received during all the years it was used. Treat girl and boy versions of the same name as different names. Show answer.
+* Which name recorded in the data set has been out of use for the longest time? Show answer.
+In a new column, display the total number of years a name has been used (as either a boys name or a girls name). Show answer.
+* In general, are names that have been used for both boys and girls more popular for boys or girls? Show answer.
+* What name has earned the most percentage points in a year for any name since 2000? Show answer.
+
+### Make this Graphic
+
+But they need to do it with mScatter.  Mention that `geom_line()` can replace `geom_point()` and tell about `geom_hline(x=...)`.
+
+For instance, here is how to to look at how many babies named "Judy" or "Judith" were born in each year, arranged from the largest year to the smallest.
+
+```{r}
+BabyNames %>% 
+  filter( name %in% c("Judy", "Judith") ) %>%
+  arrange( count ) %>%
+  head( )
+```
+
+
+
+
+```{r}
+BabyNames %>% 
+  filter( name %in% c("Judy", "Judith") ) %>%
+  arrange( desc( count ) ) %>%
+  head( )
+```
+
+Keep in mind that arranging is useful mainly when you want to display the data table directly.  If you are doing graphics, the arrangement by the frame variables happens automatically.  For instance, here's a graph comparing the popularity of "Judy" and "Judith" over the years.
+
+```{r echo=FALSE}
+BabyNames %>% 
+  filter( name %in% c("Judy","Judith"), sex=="F") %>%
+  ggplot( aes(x=year,y=count)) + geom_line( aes(color=name)) + 
+  geom_vline( x=1934 ) + geom_vline(x=1939) + 
+  geom_vline(x=1969) + xlim(1920,2010)
+```
+
+The names Judy and Judith peaked in the 1940s and fell dramatically by 1970. This parallels the life of the famous singer Judy Garland.  Born Frances Gumm, and performing in her early years as part of the Gumm Sisters, she changed her name to Judy in 1934, became a celebrity in 1939 with the release of the movie "The Wizard of Oz," and died tragically in 1969.  These years are marked in the graphic.
+
+
+
+
+In the `CountryData`, find 
+
+* the fraction of the population that uses the Internet
+* the ratio of area to road length.  Also, the ratio of the  area to road length squared. 
+* scatterplot of health spending versus military spending
+* scatterplot of GDP per capita versus population density.
+
+Filter: Pick out the results for China, England, France, Germany, Russia 
+
+Join and filter: Pick out the results for the G20 countries.
+
+Join exercise: Give a set of synonyms for countries: two columns: standard and other.  Join the synonym set "other" with the source, read off the standard.
+
+
+
+
