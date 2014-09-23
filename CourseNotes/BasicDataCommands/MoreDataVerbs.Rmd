@@ -19,6 +19,8 @@ data( CountryData )
 opts_chunk$set( cache=TRUE )
 ```
 
+## Introducing a few more data verbs
+
 You have already seen two data verbs:
 
 * `summarise()`
@@ -141,9 +143,9 @@ The word "mutate" means to change in form or nature. The data verb "mutate" is a
 Often, mutation is used to combine or transform existing variables into a new variable. For instance, the `CountryData` data table has variables `pop` and `area` giving the population and area (in km^2) of each country.  Suppose you wanted to know the population *density*, that is, how many people per unit area.  Using mutate, you creating a new variable that is population / area.
 ```{r results='asis'}
 Result <-
-  CountryData %>%
+  CountryData %>% select( country, pop, area ) %>%
   mutate( popDensity=pop/area ) %>% 
-  na.omit() %>% 
+#  na.omit() %>% 
   sample_n(size=10) %>% xtable()
 ```
 
@@ -201,11 +203,11 @@ The notation used in these notes is `dplyr`.  Keep in mind that this is just one
 Here is the same expression in these different notations:
 
 * dplyr
-    BabyNames %>% group_by(year,sex) %>% summarise( nNames=n() )
+    `BabyNames %>% group_by(year,sex) %>% summarise( nNames=n() )`
 * SQL
-    "BabyNames" > GROUP_BY("year", "sex") > SUMMARISE(COUNT() AS "nNames")
+    `"BabyNames" > GROUP_BY("year", "sex") > SUMMARISE(COUNT() AS "nNames")`
 * data.table
-    BabyNames[, length(count), by=c("sex","year") ]
+    `BabyNames[, length(count), by=c("sex","year") ]`
 
 
 

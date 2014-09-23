@@ -35,6 +35,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </script>
 
 
+<link href="data:text/css,body%20%7B%0A%20%20%20%20%20%20%20%20font%2Dfamily%3A%20%27Lora%27%2C%20serif%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Efigure%20%7B%0A%20%20%20%20%20%20%20%20background%2Dcolor%3Aghostwhite%3B%0A%20%20%20%20%20%20%20%20padding%3A12pt%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Ecaption%7B%0A%20%20%20%20%20%20%20%20font%2Dstyle%3Aitalic%3B%0A%20%20%20%20%20%20%20%20width%3A40%25%3B%0A%20%20%20%20%20%20%20%20margin%3A12pt%3B%0A%20%20%20%20%20%20%20%20float%3A%20left%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2EdisplayAsFigure%7B%0A%20%20%20%20%20%20%20%20background%2Dcolor%3A%20ghostwhite%3B%0A%20%20%20%20%20%20%20%20padding%3A12pt%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Etable%2Dscroller300%20%7B%0A%20%20%20%20%20%20%20%20width%3A%20300px%3B%0A%20%20%20%20%20%20%20%20height%3A%20200px%3B%0A%20%20%20%20%20%20%20%20overflow%2Dx%3A%20scroll%3B%0A%20%20%20%20%20%20%20%20overflow%2Dy%3A%20scroll%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Etable%2Dscroller600%20%7B%0A%20%20%20%20%20%20%20%20width%3A%20600px%3B%0A%20%20%20%20%20%20%20%20height%3A%20200px%3B%0A%20%20%20%20%20%20%20%20overflow%2Dx%3A%20scroll%3B%0A%20%20%20%20%20%20%20%20overflow%2Dy%3A%20scroll%3B%0A%20%20%20%20%20%20%7D%0A%7D%0A%20%20%20%20%20%20" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -52,537 +53,429 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 
 
-<!--- Control the display of answers -->
-<style>
-  aside.answer {color:white; background-color:blue; display:none;}
-</style>
+<!--
+% Common elements of a DCF document
+-->
+
+<!-- UNCOMMENT THE NEXT LINE FOR PRODUCTION -->
+<!--
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
+-->
 
 
-<div id="week-3-drill" class="section level2">
-<h2>Week 3 Drill</h2>
-<div id="dont-peek" class="section level3">
-<h3>Don’t Peek!</h3>
-<p>Here are the first letters of the names of several data verbs. (Repeated letters are for different verbs.) Complete the name and say briefly what the verb does.</p>
-<p>Rather than looking at a list of verbs, do this just from memory.</p>
-<ul>
-<li>A</li>
-<li>G</li>
-<li>J</li>
-<li>M</li>
-<li>F</li>
-<li>S</li>
-<li>S</li>
-</ul>
-</div>
-</div>
-<div id="data-verbs-and-their-uses" class="section level2">
-<h2>Data verbs and their uses</h2>
-<p>Each of these tasks can be performed using a single data verb. For each task, say which verb it is:</p>
-<ul>
-<li>Find the average of one of the variables.</li>
-</ul>
-<aside class="answer">
-<code>summarise()</code>
-</aside>
 
-<ul>
-<li>Add a new column that is the ratio between two variables.</li>
-</ul>
-<aside class="answer">
-<code>mutate()</code>
-</aside>
+<!-- Change this to add parameters for the scroller -->
 
-<ul>
-<li>Sort the cases in descending order of a variable.</li>
-</ul>
-<aside class="answer">
-<code>arrange()</code>
-</aside>
 
-<ul>
-<li>Create a new data table that includes only those cases that meet a criterion.</li>
-</ul>
-<aside class="answer">
-<code>filter()</code>
-</aside>
 
-<ul>
-<li>From a data table with three categorical variables A, B, &amp; C, and a quantitative variable X, produce an output that has a separate case for each of the combinations of the levels of A and B. (Hint: It might be easier to see the answer if the problem statement added, “and gives the maximum value of X over all the cases that have a given combination of A and B.” )</li>
-</ul>
-<aside class="answer">
-<code>filter()</code>
-</aside>
 
+
+
+<div id="wide-and-narrow-data" class="section level1">
+<h1>Wide and narrow data</h1>
+<p>Here’s a small subset of the data in <code>BabyNames</code>:</p>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Tue Sep 23 11:35:21 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+name
+</TH> <TH> 
+sex
+</TH> <TH> 
+count
+</TH> <TH> 
+year
+</TH>  </TR>
+  <TR> <TD> 
+Rotha
+</TD> <TD> 
+F
+</TD> <TD align="right">   
+7
+</TD> <TD align="right"> 
+1907
+</TD> </TR>
+  <TR> <TD> 
+Julian
+</TD> <TD> 
+M
+</TD> <TD align="right"> 
+535
+</TD> <TD align="right"> 
+1948
+</TD> </TR>
+  <TR> <TD> 
+Julian
+</TD> <TD> 
+F
+</TD> <TD align="right">   
+7
+</TD> <TD align="right"> 
+1948
+</TD> </TR>
+  <TR> <TD> 
+Christina
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+6600
+</TD> <TD align="right"> 
+1967
+</TD> </TR>
+  <TR> <TD> 
+Christina
+</TD> <TD> 
+M
+</TD> <TD align="right">  
+22
+</TD> <TD align="right"> 
+1967
+</TD> </TR>
+  <TR> <TD> 
+Song
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+11
+</TD> <TD align="right"> 
+1994
+</TD> </TR>
+  <TR> <TD> 
+Wayman
+</TD> <TD> 
+M
+</TD> <TD align="right">   
+9
+</TD> <TD align="right"> 
+1997
+</TD> </TR>
+   </TABLE>
+
+<p>The above is not the only way that the data table can be arranged. For instance, the following contains the same information:</p>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Tue Sep 23 11:35:21 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+name
+</TH> <TH> 
+year
+</TH> <TH> 
+F
+</TH> <TH> 
+M
+</TH>  </TR>
+  <TR> <TD> 
+Christina
+</TD> <TD align="right"> 
+1967
+</TD> <TD align="right"> 
+6600.00
+</TD> <TD align="right"> 
+22.00
+</TD> </TR>
+  <TR> <TD> 
+Julian
+</TD> <TD align="right"> 
+1948
+</TD> <TD align="right"> 
+7.00
+</TD> <TD align="right"> 
+535.00
+</TD> </TR>
+  <TR> <TD> 
+Wayman
+</TD> <TD align="right"> 
+1997
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+9.00
+</TD> </TR>
+  <TR> <TD> 
+Rotha
+</TD> <TD align="right"> 
+1907
+</TD> <TD align="right"> 
+7.00
+</TD> <TD align="right"> 
+0.00
+</TD> </TR>
+  <TR> <TD> 
+Song
+</TD> <TD align="right"> 
+1994
+</TD> <TD align="right"> 
+11.00
+</TD> <TD align="right"> 
+0.00
+</TD> </TR>
+   </TABLE>
+
+<p>The first table is a <strong>narrow</strong> format, the second is a <strong>wide</strong> format. In the narrow format, there is a variable that describes the meaning of another variable. For instance, the <code>sex</code> variable tells whether <code>count</code> refers to a male or a female. A variable like <code>sex</code> is called a <em>key variable</em> because its value serves as the key or guide to another variable.</p>
+<p>In the wide format, there is no <code>sex</code> variable. The distinction between males and females is made by putting the count information into two variables: <code>F</code> and <code>M</code>.</p>
+<p>There are reasons to prefer each of the forms. The best choice is a matter of judgement and depends on the task to be performed.</p>
+<p>The wide format is useful if you want to compare variables. Suppose, for example, that you want to identify the names that are given to both boys and girls. In the wide format, you could simply compare the <code>M</code> and <code>F</code> variables, looking for cases where the numbers are approximately the same.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
+<pre class="r"><code>GenderNeutral &lt;-
+  Wide %&gt;%
+  mutate( ratio=pmin(M/F, F/M) )
+GenderNeutral %&gt;%  
+  arrange( desc(ratio) ) %&gt;%  
+  xtable</code></pre>
+<pre><code>&lt;!-- html table generated in R 3.1.0 by xtable 1.7-3 package --&gt;
+&lt;!-- Tue Sep 23 11:35:21 2014 --&gt;
+&lt;TABLE border=1&gt;
+&lt;TR&gt; &lt;TH&gt; name &lt;/TH&gt; &lt;TH&gt; year &lt;/TH&gt; &lt;TH&gt; F &lt;/TH&gt; &lt;TH&gt; M &lt;/TH&gt; &lt;TH&gt; ratio &lt;/TH&gt;  &lt;/TR&gt;
+  &lt;TR&gt; &lt;TD&gt; Julian &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 1948 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 7.00 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 535.00 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 0.01 &lt;/TD&gt; &lt;/TR&gt;
+  &lt;TR&gt; &lt;TD&gt; Christina &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 1967 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 6600.00 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 22.00 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 0.00 &lt;/TD&gt; &lt;/TR&gt;
+  &lt;TR&gt; &lt;TD&gt; Wayman &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 1997 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 0.00 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 9.00 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 0.00 &lt;/TD&gt; &lt;/TR&gt;
+  &lt;TR&gt; &lt;TD&gt; Rotha &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 1907 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 7.00 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 0.00 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 0.00 &lt;/TD&gt; &lt;/TR&gt;
+  &lt;TR&gt; &lt;TD&gt; Song &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 1994 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 11.00 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 0.00 &lt;/TD&gt; &lt;TD align=&quot;right&quot;&gt; 0.00 &lt;/TD&gt; &lt;/TR&gt;
+   &lt;/TABLE&gt;</code></pre>
+<p>You can see that Christina and Julian are — out of this small set — the names that are most gender-neutral.</p>
+It’s easy for wide formats to get out of hand. For instance, this wide table gives each name over time: <!-- html table generated in R 3.1.0 by xtable 1.7-3 package --> <!-- Tue Sep 23 11:35:25 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+name
+</TH> <TH> 
+sex
+</TH> <TH> 
+2005
+</TH> <TH> 
+2006
+</TH> <TH> 
+2007
+</TH> <TH> 
+2008
+</TH> <TH> 
+2009
+</TH> <TH> 
+2010
+</TH> <TH> 
+2011
+</TH> <TH> 
+2012
+</TH> <TH> 
+2013
+</TH>  </TR>
+  <TR> <TD> 
+Aaron
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+25.00
+</TD> <TD align="right"> 
+24.00
+</TD> <TD align="right"> 
+23.00
+</TD> <TD align="right"> 
+29.00
+</TD> <TD align="right"> 
+32.00
+</TD> <TD align="right"> 
+23.00
+</TD> <TD align="right"> 
+21.00
+</TD> <TD align="right"> 
+21.00
+</TD> <TD align="right"> 
+10.00
+</TD> </TR>
+  <TR> <TD> 
+Aaron
+</TD> <TD> 
+M
+</TD> <TD align="right"> 
+7799.00
+</TD> <TD align="right"> 
+8289.00
+</TD> <TD align="right"> 
+8932.00
+</TD> <TD align="right"> 
+8526.00
+</TD> <TD align="right"> 
+7961.00
+</TD> <TD align="right"> 
+7446.00
+</TD> <TD align="right"> 
+7603.00
+</TD> <TD align="right"> 
+7502.00
+</TD> <TD align="right"> 
+7246.00
+</TD> </TR>
+  <TR> <TD> 
+Ab
+</TD> <TD> 
+M
+</TD> <TD align="right"> 
+30.00
+</TD> <TD align="right"> 
+32.00
+</TD> <TD align="right"> 
+41.00
+</TD> <TD align="right"> 
+24.00
+</TD> <TD align="right"> 
+10.00
+</TD> <TD align="right"> 
+6.00
+</TD> <TD align="right"> 
+5.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+7.00
+</TD> </TR>
+  <TR> <TD> 
+Abbie
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+445.00
+</TD> <TD align="right"> 
+440.00
+</TD> <TD align="right"> 
+468.00
+</TD> <TD align="right"> 
+400.00
+</TD> <TD align="right"> 
+370.00
+</TD> <TD align="right"> 
+326.00
+</TD> <TD align="right"> 
+339.00
+</TD> <TD align="right"> 
+341.00
+</TD> <TD align="right"> 
+242.00
+</TD> </TR>
+  <TR> <TD> 
+Abbie
+</TD> <TD> 
+M
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+0.00
+</TD> </TR>
+  <TR> <TD> 
+Abbott
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+5.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+0.00
+</TD> <TD align="right"> 
+5.00
+</TD> <TD align="right"> 
+0.00
+</TD> </TR>
+   </TABLE>
+
+<p>This format is useful for some purposes, for instance calculating whether the use of a name went up or down between two years. (Example: Aaron for males increased between 2005 and 2008.) But if you want to plot out the usage over time, the narrow format is easier to handle.</p>
+<p>What’s important is that you realize that there is a choice between wide and narrow and:</p>
 <ul>
-<li>From a data table with three categorical variables A, B, &amp; C, and a quantitative variable X, produce an output that has the same cases but only the variables A and X.</li>
+<li>be able to identify situations where there is a key variable that describes another variable</li>
+<li>know that you can translate between wide and narrow, and that software will do this automatically.</li>
 </ul>
-</div>
-<div id="two-steps" class="section level2">
-<h2>Two steps</h2>
-<p>These questions refer to the <code>diamonds</code> data table. Take a look at the codebook (using <code>help()</code>) so that you’ll understand the meaning of the tasks.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
-<p>Each of the following tasks can be accomplished by a statement of the form</p>
-<pre class="r"><code>diamonds %&gt;% 
-  verb1( args1 ) %&gt;% 
-  verb2( args2 ) %&gt;% 
-  arrange( args3 ) %&gt;% head( 1 )</code></pre>
-<p>Identify the verbs and arguments.</p>
+<div id="software" class="section level2">
+<h2>Software</h2>
+<p>The data verb for turning a narrow data table into a wide one is “spread.” Going the other way, from wide to narrow, is to “gather.” You won’t use these verbs nearly so much as filter, mutate, summarise, group, and join.</p>
+<div id="spreading" class="section level3">
+<h3>Spreading</h3>
+<p>The <code>spread()</code> function performs this. You need to specify three things:</p>
 <ol style="list-style-type: decimal">
-<li>Which color diamonds seem to be largest on average (in terms of carats)?
-<ul>
-<li>verb1:</li>
-<li>verb2:</li>
-<li>args1:</li>
-<li>args2:</li>
-<li>args3:</li>
-</ul></li>
-<li>Which clarity of diamonds has the largest average “table” per carat?
-<ul>
-<li>verb1:</li>
-<li>verb2:</li>
-<li>args1:</li>
-<li>args2:</li>
-<li>args3:</li>
-</ul></li>
-<li>What color of diamonds occurs the most frequently among diamonds with ideal cuts?
-<ul>
-<li>verb1:</li>
-<li>verb2:</li>
-<li>args1:</li>
-<li>args2:</li>
-<li>args3:</li>
-</ul></li>
-<li>What is the average price per carat of diamonds that cost more than $10000?
-<ul>
-<li>verb1:</li>
-<li>verb2:</li>
-<li>args1:</li>
-<li>args2:</li>
-<li>args3:</li>
-</ul></li>
-<li>Create a new data set that groups diamonds by color and displays the average depth and average table for each group.
-<ul>
-<li>verb1:</li>
-<li>verb2:</li>
-<li>args1:</li>
-<li>args2:</li>
-<li>args3:</li>
-</ul></li>
+<li>The variable to use as the key.</li>
+<li>The variable that contains the value.</li>
+<li>What to fill in when there is no value, or a missing value for a particular key.</li>
 </ol>
+<p>In the example above the statement was:</p>
+<pre class="r"><code>Wide &lt;- BabyNames %&gt;% 
+  spread( key=sex, value=count, fill=0 )</code></pre>
+<pre class="r"><code>set.seed(101)
+inds &lt;- sample( 1:nrow(Wide), size=10 )
+Wide[inds,] %&gt;% arrange( year )</code></pre>
+<pre><code>        name year   F  M
+1    Demaris 1914  11  0
+2    Erastus 1939   0  7
+3     Alesia 1964 419  0
+4     Coleen 1972 184  0
+5     Devlin 1977   5 21
+6  Guillaume 1984   0  5
+7        Mea 1996  12  0
+8     Jameka 2004   8  0
+9      Hazen 2006   0 33
+10     Masao 2011   0  8</code></pre>
+<p>A fill of zero is appropriate here; when a name is missing in a year, there were no children given that name. Often, <code>NA</code> is the appropriate fill; that’s the default.</p>
 </div>
-<div id="tables" class="section level2">
-<h2>Tables</h2>
-<p>Here is a small data table based on <code>BabyNames</code>. Take this table as the input.</p>
-<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Tue Sep 23 09:10:00 2014 -->
-<TABLE border="1">
-<TR> <TH> 
-name
-</TH> <TH> 
-sex
-</TH> <TH> 
-count
-</TH> <TH> 
-year
-</TH>  </TR>
-  <TR> <TD> 
-Christina
-</TD> <TD> 
-M
-</TD> <TD align="right">  
-22
-</TD> <TD align="right"> 
-1967
-</TD> </TR>
-  <TR> <TD> 
-Rotha
-</TD> <TD> 
-F
-</TD> <TD align="right">   
-7
-</TD> <TD align="right"> 
-1907
-</TD> </TR>
-  <TR> <TD> 
-Wayman
-</TD> <TD> 
-M
-</TD> <TD align="right">   
-9
-</TD> <TD align="right"> 
-1997
-</TD> </TR>
-  <TR> <TD> 
-Song
-</TD> <TD> 
-F
-</TD> <TD align="right">  
-11
-</TD> <TD align="right"> 
-1994
-</TD> </TR>
-  <TR> <TD> 
-Julian
-</TD> <TD> 
-M
-</TD> <TD align="right"> 
-535
-</TD> <TD align="right"> 
-1948
-</TD> </TR>
-  <TR> <TD> 
-Vicky
-</TD> <TD> 
-F
-</TD> <TD align="right"> 
-2945
-</TD> <TD align="right"> 
-1957
-</TD> </TR>
-  <TR> <TD> 
-Kalia
-</TD> <TD> 
-F
-</TD> <TD align="right">  
-46
-</TD> <TD align="right"> 
-1989
-</TD> </TR>
-  <TR> <TD> 
-Lissa
-</TD> <TD> 
-F
-</TD> <TD align="right"> 
-102
-</TD> <TD align="right"> 
-1962
-</TD> </TR>
-  <TR> <TD> 
-Brand
-</TD> <TD> 
-M
-</TD> <TD align="right">  
-10
-</TD> <TD align="right"> 
-1991
-</TD> </TR>
-  <TR> <TD> 
-Josedejesus
-</TD> <TD> 
-M
-</TD> <TD align="right">   
-9
-</TD> <TD align="right"> 
-1985
-</TD> </TR>
-   </TABLE>
-
-<p>Just by chance, this small sample pulled out the listing for Christina males.</p>
-<div id="task" class="section level3">
-<h3>Task</h3>
-<p>For each of the following outputs, identify the operation and write down the details of the operation.</p>
+<div id="gathering" class="section level3">
+<h3>Gathering</h3>
+<p>Gathering is also straightforward. You need to specify</p>
 <ul>
-<li>Output Table 1</li>
+<li>which variables you want to gather</li>
+<li>what you want to call the key generated from the names of the gathered variables.</li>
+<li>what you want to call the value that the key depends on. As an example, here’s turning the wide baby names format back into narrow form.</li>
 </ul>
-<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Tue Sep 23 09:10:00 2014 -->
-<TABLE border="1">
-<TR> <TH> 
-name
-</TH> <TH> 
-sex
-</TH> <TH> 
-count
-</TH> <TH> 
-year
-</TH>  </TR>
-  <TR> <TD> 
-Rotha
-</TD> <TD> 
-F
-</TD> <TD align="right">   
-7
-</TD> <TD align="right"> 
-1907
-</TD> </TR>
-  <TR> <TD> 
-Song
-</TD> <TD> 
-F
-</TD> <TD align="right">  
-11
-</TD> <TD align="right"> 
-1994
-</TD> </TR>
-  <TR> <TD> 
-Kalia
-</TD> <TD> 
-F
-</TD> <TD align="right">  
-46
-</TD> <TD align="right"> 
-1989
-</TD> </TR>
-  <TR> <TD> 
-Lissa
-</TD> <TD> 
-F
-</TD> <TD align="right"> 
-102
-</TD> <TD align="right"> 
-1962
-</TD> </TR>
-  <TR> <TD> 
-Vicky
-</TD> <TD> 
-F
-</TD> <TD align="right"> 
-2945
-</TD> <TD align="right"> 
-1957
-</TD> </TR>
-  <TR> <TD> 
-Wayman
-</TD> <TD> 
-M
-</TD> <TD align="right">   
-9
-</TD> <TD align="right"> 
-1997
-</TD> </TR>
-  <TR> <TD> 
-Josedejesus
-</TD> <TD> 
-M
-</TD> <TD align="right">   
-9
-</TD> <TD align="right"> 
-1985
-</TD> </TR>
-  <TR> <TD> 
-Brand
-</TD> <TD> 
-M
-</TD> <TD align="right">  
-10
-</TD> <TD align="right"> 
-1991
-</TD> </TR>
-  <TR> <TD> 
-Christina
-</TD> <TD> 
-M
-</TD> <TD align="right">  
-22
-</TD> <TD align="right"> 
-1967
-</TD> </TR>
-  <TR> <TD> 
-Julian
-</TD> <TD> 
-M
-</TD> <TD align="right"> 
-535
-</TD> <TD align="right"> 
-1948
-</TD> </TR>
-   </TABLE>
-
-<ul>
-<li>Output Table 2</li>
-</ul>
-<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Tue Sep 23 09:10:00 2014 -->
-<TABLE border="1">
-<TR> <TH> 
-name
-</TH> <TH> 
-sex
-</TH> <TH> 
-count
-</TH> <TH> 
-year
-</TH>  </TR>
-  <TR> <TD> 
-Rotha
-</TD> <TD> 
-F
-</TD> <TD align="right">   
-7
-</TD> <TD align="right"> 
-1907
-</TD> </TR>
-  <TR> <TD> 
-Song
-</TD> <TD> 
-F
-</TD> <TD align="right">  
-11
-</TD> <TD align="right"> 
-1994
-</TD> </TR>
-  <TR> <TD> 
-Vicky
-</TD> <TD> 
-F
-</TD> <TD align="right"> 
-2945
-</TD> <TD align="right"> 
-1957
-</TD> </TR>
-  <TR> <TD> 
-Kalia
-</TD> <TD> 
-F
-</TD> <TD align="right">  
-46
-</TD> <TD align="right"> 
-1989
-</TD> </TR>
-  <TR> <TD> 
-Lissa
-</TD> <TD> 
-F
-</TD> <TD align="right"> 
-102
-</TD> <TD align="right"> 
-1962
-</TD> </TR>
-   </TABLE>
-
-<ul>
-<li>Output Table 3</li>
-</ul>
-<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Tue Sep 23 09:10:00 2014 -->
-<TABLE border="1">
-<TR> <TH> 
-name
-</TH> <TH> 
-sex
-</TH> <TH> 
-count
-</TH> <TH> 
-year
-</TH>  </TR>
-  <TR> <TD> 
-Christina
-</TD> <TD> 
-M
-</TD> <TD align="right">  
-22
-</TD> <TD align="right"> 
-1967
-</TD> </TR>
-  <TR> <TD> 
-Julian
-</TD> <TD> 
-M
-</TD> <TD align="right"> 
-535
-</TD> <TD align="right"> 
-1948
-</TD> </TR>
-   </TABLE>
-
-<ul>
-<li>Output Table 4</li>
-</ul>
-<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Tue Sep 23 09:10:00 2014 -->
-<TABLE border="1">
-<TR> <TH> 
-total
-</TH>  </TR>
-  <TR> <TD align="right"> 
-3696
-</TD> </TR>
-   </TABLE>
-
-<ul>
-<li>Output Table 5</li>
-</ul>
-<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Tue Sep 23 09:10:00 2014 -->
-<TABLE border="1">
-<TR> <TH> 
-name
-</TH> <TH> 
-count
-</TH>  </TR>
-  <TR> <TD> 
-Christina
-</TD> <TD align="right">  
-22
-</TD> </TR>
-  <TR> <TD> 
-Rotha
-</TD> <TD align="right">   
-7
-</TD> </TR>
-  <TR> <TD> 
-Wayman
-</TD> <TD align="right">   
-9
-</TD> </TR>
-  <TR> <TD> 
-Song
-</TD> <TD align="right">  
-11
-</TD> </TR>
-  <TR> <TD> 
-Julian
-</TD> <TD align="right"> 
-535
-</TD> </TR>
-  <TR> <TD> 
-Vicky
-</TD> <TD align="right"> 
-2945
-</TD> </TR>
-  <TR> <TD> 
-Kalia
-</TD> <TD align="right">  
-46
-</TD> </TR>
-  <TR> <TD> 
-Lissa
-</TD> <TD align="right"> 
-102
-</TD> </TR>
-  <TR> <TD> 
-Brand
-</TD> <TD align="right">  
-10
-</TD> </TR>
-  <TR> <TD> 
-Josedejesus
-</TD> <TD align="right">   
-9
-</TD> </TR>
-   </TABLE>
-
-
-
-
-
-
-
-</div>
-<div id="changing-cases" class="section level3">
-<h3>Changing Cases</h3>
-<p>There’s only one data verb that takes a single data table as input and produce an output that (in general) has a different meaning to the case. Which one?</p>
-<aside class="answer">
-<code>summarise()</code>
-</aside>
-
-<p>There’s only one data verb that takes two data tables as input rather than just a single data table. Which one?</p>
-<aside class="answer">
-<code>join()</code>
-</aside>
-
-
-
-
+<pre class="r"><code>Narrow &lt;- 
+  Wide %&gt;% 
+  gather( key=gender, value=howMany, M, F )</code></pre>
+<pre><code>        name year gender howMany
+1    Demaris 1914      M       0
+2    Demaris 1914      F      11
+3    Erastus 1939      M       7
+4    Erastus 1939      F       0
+5     Alesia 1964      M       0
+6     Alesia 1964      F     419
+7     Coleen 1972      M       0
+8     Coleen 1972      F     184
+9     Devlin 1977      M      21
+10    Devlin 1977      F       5
+11 Guillaume 1984      M       5
+12 Guillaume 1984      F       0
+13       Mea 1996      M       0
+14       Mea 1996      F      12
+15    Jameka 2004      M       0
+16    Jameka 2004      F       8
+17     Hazen 2006      M      33
+18     Hazen 2006      F       0
+19     Masao 2011      M       8
+20     Masao 2011      F       0</code></pre>
+<p>You could, of course, filter out the cases where no children were given a name.</p>
+<p>```</p>
+<pre class="r"><code>head( Narrow )</code></pre>
+<pre><code>       name sex count year
+1     Rotha   F     7 1907
+2    Julian   M   535 1948
+3    Julian   F     7 1948
+4 Christina   F  6600 1967
+5 Christina   M    22 1967
+6      Song   F    11 1994</code></pre>
+<p>Look for names that are substantially both male and female.</p>
 <p>Please use the comment system to make suggestions, point out errors, or to discuss the topic.</p>
 <div id="disqus_thread">
 
@@ -604,10 +497,11 @@ Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">c
 <p><a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></p>
 </div>
 </div>
+</div>
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Motivated by <a href="http://www.public.iastate.edu/~hofmann/stat480/homework/dplyr%20drills.html">this problem set</a> based on drills by Garrett Grolemund which are licensed under the <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/us/">CC Attribution-Noncommercial-Share Alike 3.0 License</a>.<a href="#fnref1">↩</a></p></li>
+<li id="fn1"><p>One way to define “appoximately the same” is to take the smaller of the ratios M/F and F/M. If females greatly outnumber males, then F/M will be large, but M/F will be small. If the sexes are about equal, then both ratios will be near 1. The smaller will never be greater than 1, so the most balanced names are those with the smaller of the ratios near 1.<a href="#fnref1">↩</a></p></li>
 </ol>
 </div>
 

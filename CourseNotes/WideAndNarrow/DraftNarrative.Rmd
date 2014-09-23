@@ -1,0 +1,134 @@
+---
+output:
+  html_document:
+    css: ../../CSS/DCF-style.css
+    fig_caption: yes
+    toc: no
+---
+
+```{r child="../../CSS/DCF-common.Rmd"}
+```
+
+```{r include=FALSE}
+require(xtable)
+```
+
+# Wide and narrow data
+
+Here's a small subset of the data in `BabyNames`:
+
+```{r echo=FALSE,results='asis'}
+set.seed( 101 )
+MySmall <- 
+  BabyNames %>% 
+#  filter( count > 1000 ) %>% 
+  sample_n( size=5 )
+Narrow <-
+  MySmall %>% 
+  select( name, year ) %>%
+  inner_join( BabyNames, . ) %>% arrange( year, desc(count))
+Narrow %>% xtable
+```
+
+The above is not the only way that the data table can be arranged.  For instance, the following contains the same information:
+
+```{r echo=FALSE,results='asis'}
+Wide <- Narrow %>% spread( key=sex, value=count, fill=0 )
+Wide %>% xtable
+```
+
+The first table is a **narrow** format, the second is a **wide** format.  In the narrow format, there is a variable that describes the meaning of another variable.  For instance, the `sex` variable tells whether `count` refers to a male or a female.  A variable like `sex` is called a *key variable* because its value serves as the key or guide to another variable.
+
+In the wide format, there is no `sex` variable.  The distinction between males and females is made by putting the count information into two variables: `F` and `M`.
+
+There are reasons to prefer each of the forms.  The best choice is a matter of judgement and depends on the task to be performed.
+
+The wide format is useful if you want to compare variables.  Suppose, for example, that you want to identify the names that are given to both boys and girls.  In the wide format, you could simply compare the `M` and `F` variables, looking for cases where the numbers are approximately the same.^[One way to define "appoximately the same" is to take the smaller of the ratios M/F and F/M.  If females greatly outnumber males, then F/M will be large, but M/F will be small.  If the sexes are about equal, then both ratios will be near 1.  The smaller will never be greater than 1, so the most balanced names are those with the smaller of the ratios near 1.]
+
+```{r echo=1:3,results='as.is'}
+GenderNeutral <-
+  Wide %>%
+  mutate( ratio=pmin(M/F, F/M) )
+GenderNeutral %>%  
+  arrange( desc(ratio) ) %>%  
+  xtable
+```
+
+You can see that Christina and Julian are --- out of this small set --- the names that are most gender-neutral.
+
+It's easy for wide formats to get out of hand.  For instance, this wide table gives each name over time:
+```{r echo=FALSE,results='asis'}
+TooWide <- 
+  BabyNames %>% 
+  spread( key=year, value=count, fill=0 ) %>% head
+xtable(TooWide[1:6,c(1,2,128:136)])
+```
+
+This format is useful for some purposes, for instance calculating whether the use of a name went up or down between two years.  (Example: Aaron for males increased between 2005 and 2008.)  But if you want to plot out the usage over time, the narrow format is easier to handle.
+
+What's important is that you realize that there is a choice between wide and narrow and:
+
+* be able to identify situations where there is a key variable that describes another variable
+* know that you can translate between wide and narrow, and that software will do this automatically.
+
+## Software
+
+The data verb for turning a narrow data table into a wide one is "spread." Going the other way, from wide to narrow, is to "gather."  You won't use these verbs nearly so much as filter, mutate, summarise, group, and join.
+
+### Spreading
+
+The `spread()` function performs this.  You need to specify three things:
+
+1. The variable to use as the key.
+#. The variable that contains the value.
+#. What to fill in when there is no value, or a missing value for a particular key.
+
+In the example above the statement was:
+```{r results='hide'}
+Wide <- BabyNames %>% 
+  spread( key=sex, value=count, fill=0 )
+```
+
+```{r}
+set.seed(101)
+inds <- sample( 1:nrow(Wide), size=10 )
+Wide[inds,] %>% arrange( year )
+```
+
+A fill of zero is appropriate here; when a name is missing in a year, there were no children given that name.  Often, `NA` is the appropriate fill; that's the default. 
+
+### Gathering
+
+Gathering is also straightforward.  You need to specify 
+
+* which variables you want to gather
+* what you want to call the key generated from the names of the gathered variables.
+* what you want to call the value that the key depends on.  As an example, here's turning the wide baby names format back into narrow form.
+
+```{r eval=FALSE}
+Narrow <- 
+  Wide %>% 
+  gather( key=gender, value=howMany, M, F )
+```
+```{r echo=FALSE}
+  Wide[inds,] %>%
+  gather( key=gender, value=howMany, M, F ) %>% arrange( year )
+```
+
+You could, of course, filter out the cases where no children were given a name.
+
+
+### Aside: Gender Neutal Names
+
+Since the topic came up, here's a statement to find the 20 most balanced gender-neutral names (out of the names with more than 1000 babies in a year).
+
+```{r}
+GenderNeutral <-
+  Wide %>% 
+  filter( M>1000, F>1000) %>%
+  mutate( ratio=pmin(M/F, F/M) ) %>%
+  filter( row_number(desc(ratio)) <= 20)
+```
+
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```

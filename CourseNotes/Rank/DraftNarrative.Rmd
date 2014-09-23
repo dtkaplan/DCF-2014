@@ -3,7 +3,7 @@ output:
   html_document:
     css: ../../CSS/DCF-style.css
     fig_caption: yes
-    toc: yes
+    toc: no
 ---
 
 ```{r child="../../CSS/DCF-common.Rmd"}
@@ -13,7 +13,7 @@ output:
 require(xtable)
 ```
 
-## Biggest and Smallest
+## Biggest, smallest, and inbetween
 
 
 Many questions take forms such as these:
@@ -104,3 +104,6 @@ tail( Top3ByYear, 15 )
 If there is a tie, there's no guarantee that any of the names will be in 3rd place: they might tie for 4th place.  Using `row_number()` instead of rank would help here.
 
 
+
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```

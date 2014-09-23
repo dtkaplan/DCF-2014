@@ -130,6 +130,9 @@ row.names( Small ) <- NULL
 Small %>% xtable
 ```
 
+Just by chance, this small sample pulled out the listing for Christina males.  
+
+### Task 
 
 For each of the following outputs, identify the operation and write down the details of the operation.
 
@@ -184,3 +187,6 @@ There's only one data verb that takes two data tables as input rather than just 
 </aside>
 
 
+
+```{r child="../CSS/DisqusTemplate.Rmd"}
+```
