@@ -12,6 +12,8 @@ output:
 ```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
 ```
 
+What are the most popular first and last letters over time?
+
 
 regex examples: 
 

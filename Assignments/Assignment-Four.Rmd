@@ -74,3 +74,24 @@ Biblical names: get a list of bible-related names, join these with BabyNames so 
 Standardizing country codes: See the CVC/Summer2014 exercise: WorldPop.Rmd
 
 Disasters --- join with population data to produce a risk factor for each state.
+
+### Entropy of Baby Names
+
+Turn each name count into a fraction for that year.  Then calculate the entropy over time for boys and girls separately.
+
+```{r}
+Entropy <- BabyNames %>%
+  group_by( sex, year ) %>%
+  mutate( frac=count/sum(count) ) %>%
+  ungroup() %>%
+  group_by( sex, year ) %>% 
+  summarise( entropy=sum( -frac*log2(frac)))
+```
+
+Plot it out:
+```{r}
+ggplot( Entropy, aes(x=year, y=entropy, group=sex, color=sex ) ) +
+  geom_line( )
+```
+
+Higher entropy corresponds to a greater diversity of names.  An entropy of 7 is equivalent to $2^7 = 128$ different names, each of equal likelihood.  An entropy of 10 is equivalent to $2^{10} = 1024$ different names.
