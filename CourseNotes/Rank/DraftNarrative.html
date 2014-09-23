@@ -57,7 +57,6 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <li><a href="#biggest-and-smallest">Biggest and Smallest</a><ul>
 <li><a href="#ties">Ties</a></li>
 <li><a href="#examples">Examples</a></li>
-<li><a href="#arrange-within-group_by">Arrange within group_by()</a></li>
 </ul></li>
 </ul>
 </div>
@@ -279,11 +278,6 @@ Groups: year
 402   Olivia   F 18256 2013</code></pre>
 <p>If there is a tie, there’s no guarantee that any of the names will be in 3rd place: they might tie for 4th place. Using <code>row_number()</code> instead of rank would help here.</p>
 </div>
-</div>
-<div id="arrange-within-group_by" class="section level3">
-<h3>Arrange within group_by()</h3>
-<p>Or maybe it should be one of the rank functions in filter.</p>
-<p>Within each precinct, which ward had the largest number of votes? (Hint: Make a data table with the number of votes in each <code>Precinct</code> <code>Ward</code> combination. Arrange this by <code>Precinct</code> and the number of votes.)</p>
 </div>
 </div>
 <div class="footnotes">
