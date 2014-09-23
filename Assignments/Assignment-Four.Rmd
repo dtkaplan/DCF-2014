@@ -95,3 +95,10 @@ ggplot( Entropy, aes(x=year, y=entropy, group=sex, color=sex ) ) +
 ```
 
 Higher entropy corresponds to a greater diversity of names.  An entropy of 7 is equivalent to $2^7 = 128$ different names, each of equal likelihood.  An entropy of 10 is equivalent to $2^{10} = 1024$ different names.
+
+### Arrange within group_by()
+
+Or maybe it should be one of the rank functions in filter.
+
+Within each precinct, which ward had the largest number of votes?  (Hint: Make a data table with the number of votes in each `Precinct` `Ward` combination.  Arrange this by `Precinct` and the number of votes.)
+

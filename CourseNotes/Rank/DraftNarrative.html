@@ -52,6 +52,15 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 
 
+<div id="TOC">
+<ul>
+<li><a href="#biggest-and-smallest">Biggest and Smallest</a><ul>
+<li><a href="#ties">Ties</a></li>
+<li><a href="#examples">Examples</a></li>
+<li><a href="#arrange-within-group_by">Arrange within group_by()</a></li>
+</ul></li>
+</ul>
+</div>
 
 <!--
 % Common elements of a DCF document
@@ -71,6 +80,8 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 
 
+<div id="biggest-and-smallest" class="section level2">
+<h2>Biggest and Smallest</h2>
 <p>Many questions take forms such as these:</p>
 <ul>
 <li>“Find the largest …”</li>
@@ -82,9 +93,205 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
   summarise( biggest=max( count ) )</code></pre>
 <pre><code>  biggest
 1   99674</code></pre>
-<p>quickly reveals that the most popular name was given 99674 times. ### Arrange within group_by()</p>
+<p>quickly reveals that the most popular name was given 99674 times. But the result doesn’t indicate what that popular name was or in what year it was given.</p>
+<p>What’s needed here is a data verb that will return the one biggest case. The job of choosing cases that meet a criterion belongs to <code>filter()</code>.</p>
+<pre class="r"><code>BabyNames %&gt;% 
+  filter( count==max( count ) )</code></pre>
+<pre><code>   name sex count year
+1 Linda   F 99674 1947</code></pre>
+<p>Note the difference in the use of <code>filter()</code> instead of <code>summarise()</code>: rather than creating a new variable as <code>summarise()</code> (it’s name <code>biggest</code> in the example), <code>filter()</code> needs a criterion or test. The criterion <code>count==max( count )</code> (with the double equals sign <code>==</code>) ask for the case where the value of <code>count</code> matches the largest value of <code>count</code>. That will be the biggest case.</p>
+<p>It’s also possible to ask for the cases that are almost as popular as the biggest, e.g. at least 90% as popular.</p>
+<pre class="r"><code>BabyNames %&gt;% 
+  filter( count &gt; 0.90*max( count ))</code></pre>
+<pre><code>     name sex count year
+1   Linda   F 99674 1947
+2   James   M 94758 1947
+3  Robert   M 91652 1947
+4   Linda   F 96210 1948
+5   Linda   F 90994 1949
+6 Michael   M 90629 1956
+7 Michael   M 92711 1957
+8 Michael   M 90512 1958</code></pre>
+<p>Frequently, however, the question will be framed in terms of the <span class="math">\(n\)</span> biggest or smallest values, not as a fraction of the largest. To perform such tasks, a new transformation verb is helpful: <code>rank()</code>.</p>
+<p><code>Rank()</code> does something very simple: it replaces each number in a set with where that number stands with respect to the others. For instance, the rank of the number 5 in the set 2,5,4,7,2,9,9,8 is 4 because 5 is the 4th smallest number in the set. (The three numbers 2, 2, 4 are smaller than 5.)</p>
+<p>Note that <code>rank()</code> is not a data verb. Data verbs take a data table as input and return a data table. In contrast, <code>rank()</code> takes a variable as input and returns a set of the same size that tells where each number in the set stands. The smallest number in a set of <span class="math">\(n\)</span> numbers will have rank 1; the largest will have rank <span class="math">\(n\)</span>.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> Since <code>rank()</code> transforms a variable into a variable, it’s particularly suitable for use in <code>mutate()</code> and <code>filter()</code>.</p>
+<p>To illustrate, here are the 10 most popular names in the <code>BabyNames</code> data table. (Note: <code>desc()</code> is used so that <code>rank()</code> will work in <em>descending</em> order, rather than from smallest to biggest.)</p>
+<pre class="r"><code>BabyNames %&gt;%
+  filter( rank( desc(count) ) &lt;= 10 )</code></pre>
+<pre><code>      name sex count year
+1    Linda   F 99674 1947
+2    James   M 94758 1947
+3   Robert   M 91652 1947
+4    Linda   F 96210 1948
+5    James   M 88610 1948
+6    Linda   F 90994 1949
+7  Michael   M 88481 1954
+8  Michael   M 90629 1956
+9  Michael   M 92711 1957
+10 Michael   M 90512 1958</code></pre>
+<p>Of course, <code>rank()</code> can be used with other data verbs, such as <code>group_by()</code>.</p>
+<pre class="r"><code>BabyNames %&gt;%
+  group_by( sex ) %&gt;%
+  filter( rank( desc(count) ) &lt;= 10 )</code></pre>
+<pre><code>Source: local data frame [20 x 4]
+Groups: sex
+
+      name sex count year
+1     Mary   F 73981 1921
+2     Mary   F 72172 1922
+3     Mary   F 71631 1923
+4     Mary   F 73520 1924
+5    James   M 87428 1946
+6    Linda   F 99674 1947
+7     Mary   F 71679 1947
+8    James   M 94758 1947
+9   Robert   M 91652 1947
+10    John   M 88318 1947
+11   Linda   F 96210 1948
+12   James   M 88610 1948
+13   Linda   F 90994 1949
+14   Linda   F 80433 1950
+15   Linda   F 73928 1951
+16 Michael   M 88481 1954
+17 Michael   M 88281 1955
+18 Michael   M 90629 1956
+19 Michael   M 92711 1957
+20 Michael   M 90512 1958</code></pre>
+<p>You can also perform other tasks, for instance finding the most popular names over all time by adding up the counts over the years:</p>
+<pre class="r"><code>BabyNames %&gt;%
+  group_by( sex, name ) %&gt;% 
+  summarise( count=sum(count) ) %&gt;%
+  filter( rank( desc(count) ) &lt;= 10 ) %&gt;% 
+  arrange( desc(count) )</code></pre>
+<pre><code>Source: local data frame [20 x 3]
+Groups: sex
+
+   sex      name   count
+1    M     James 5091189
+2    M      John 5073958
+3    M    Robert 4789776
+4    M   Michael 4293460
+5    F      Mary 4112464
+6    M   William 4038447
+7    M     David 3565229
+8    M    Joseph 2557792
+9    M   Richard 2552302
+10   M   Charles 2356886
+11   M    Thomas 2275889
+12   F Elizabeth 1591439
+13   F  Patricia 1570135
+14   F  Jennifer 1461186
+15   F     Linda 1450328
+16   F   Barbara 1432543
+17   F  Margaret 1238016
+18   F     Susan 1120083
+19   F   Dorothy 1105281
+20   F     Sarah 1055860</code></pre>
+<div id="ties" class="section level3">
+<h3>Ties</h3>
+<p>Often, there are ties. The <code>rank()</code> function deals with these by assigning all the tied values the same rank, which is the mean of the ranks those values would have had if they were not quite tied.</p>
+<p>Some rank-like functions are useful if ties are an issue. For instance, <code>row_number()</code> breaks ties in favor of the first case encountered.</p>
+</div>
+<div id="examples" class="section level3">
+<h3>Examples</h3>
+<div id="find-the-3rd-most-popular-name-in-each-year" class="section level4">
+<h4>Find the 3rd most popular name in each year</h4>
+<pre class="r"><code>PopularByYear &lt;- BabyNames %&gt;% 
+  group_by( year ) %&gt;% 
+  filter( rank( desc(count) ) == 3) 
+head( PopularByYear, 10 )</code></pre>
+<pre><code>Source: local data frame [10 x 4]
+Groups: year
+
+      name sex count year
+1     Mary   F  7065 1880
+2     Mary   F  6919 1881
+3     Mary   F  8148 1882
+4     Mary   F  8012 1883
+5  William   M  8897 1884
+6  William   M  8044 1885
+7  William   M  8252 1886
+8  William   M  7470 1887
+9  William   M  8705 1888
+10 William   M  7772 1889</code></pre>
+<pre class="r"><code>tail( PopularByYear, 10 )</code></pre>
+<pre><code>Source: local data frame [10 x 4]
+Groups: year
+
+        name sex count year
+125    Emily   F 25021 2004
+126  Michael   M 23789 2005
+127   Joshua   M 22298 2006
+128    Ethan   M 21013 2007
+129    Ethan   M 20194 2008
+130    Ethan   M 19828 2009
+131   Sophia   F 20601 2010
+132 Isabella   F 19850 2011
+133 Isabella   F 19026 2012
+134   Olivia   F 18256 2013</code></pre>
+</div>
+<div id="find-the-top-3-most-popular-names-in-each-year" class="section level4">
+<h4>Find the top 3 most popular names in each year</h4>
+<p>This is almost identical to the above, but with <code>==</code> replaced by <code>&lt;=</code>.</p>
+<pre class="r"><code>Top3ByYear &lt;- BabyNames %&gt;% 
+  group_by( year ) %&gt;% 
+  filter( rank( desc(count) ) &lt;= 3) %&gt;%  
+  arrange( year )
+head( Top3ByYear, 15 )</code></pre>
+<pre><code>Source: local data frame [15 x 4]
+Groups: year
+
+      name sex count year
+1     Mary   F  7065 1880
+2     John   M  9655 1880
+3  William   M  9532 1880
+4     Mary   F  6919 1881
+5     John   M  8769 1881
+6  William   M  8524 1881
+7     Mary   F  8148 1882
+8     John   M  9557 1882
+9  William   M  9298 1882
+10    Mary   F  8012 1883
+11    John   M  8894 1883
+12 William   M  8387 1883
+13    Mary   F  9217 1884
+14    John   M  9388 1884
+15 William   M  8897 1884</code></pre>
+<pre class="r"><code>tail( Top3ByYear, 15 )</code></pre>
+<pre><code>Source: local data frame [15 x 4]
+Groups: year
+
+        name sex count year
+388 Isabella   F 22273 2009
+389    Jacob   M 21133 2009
+390    Ethan   M 19828 2009
+391 Isabella   F 22872 2010
+392   Sophia   F 20601 2010
+393    Jacob   M 22074 2010
+394   Sophia   F 21799 2011
+395 Isabella   F 19850 2011
+396    Jacob   M 20310 2011
+397   Sophia   F 22245 2012
+398     Emma   F 20871 2012
+399 Isabella   F 19026 2012
+400   Sophia   F 21075 2013
+401     Emma   F 20788 2013
+402   Olivia   F 18256 2013</code></pre>
+<p>If there is a tie, there’s no guarantee that any of the names will be in 3rd place: they might tie for 4th place. Using <code>row_number()</code> instead of rank would help here.</p>
+</div>
+</div>
+<div id="arrange-within-group_by" class="section level3">
+<h3>Arrange within group_by()</h3>
 <p>Or maybe it should be one of the rank functions in filter.</p>
 <p>Within each precinct, which ward had the largest number of votes? (Hint: Make a data table with the number of votes in each <code>Precinct</code> <code>Ward</code> combination. Arrange this by <code>Precinct</code> and the number of votes.)</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Unless there are ties for the smallest or the largest.<a href="#fnref1">↩</a></p></li>
+</ol>
+</div>
 
 
 </div>

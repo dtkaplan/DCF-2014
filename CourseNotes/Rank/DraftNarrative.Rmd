@@ -13,6 +13,9 @@ output:
 require(xtable)
 ```
 
+## Biggest and Smallest
+
+
 Many questions take forms such as these:
 
 * "Find the largest ..."
