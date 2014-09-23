@@ -1,0 +1,288 @@
+\documentclass{report}
+\usepackage{mparhack}
+\usepackage{xstring}
+\usepackage{color}
+\usepackage{multicol}
+\usepackage[landscape,margin=.25in,bottom=.35in,includehead,includefoot]{geometry}
+
+\pagestyle{empty}
+
+<<include=FALSE>>=
+opts_chunk$set(
+  dev="pdf",
+  fig.path="figures"
+)
+require(mosaic)
+fetchData("m155development.R")
+trellis.par.set(theme=col.mosaic())
+set.seed(123)
+knit_hooks$set(inline = function(x) {
+if (is.numeric(x)) return(knitr:::format_sci(x, 'latex'))
+x = as.character(x)
+h = knitr:::hilight_source(x, 'latex', list(prompt=FALSE, size='normalsize'))
+h = gsub("([_#$%&])", "\\\\\\1", h)
+h = gsub('(["\'])', '\\1{}', h)
+gsub('^\\\\begin\\{alltt\\}\\s*|\\\\end\\{alltt\\}\\s*$', '', h)
+})
+opts_chunk$set(eval=FALSE, tidy=FALSE,fig.width=5,fig.height=2.5,message=FALSE,warning=FALSE)
+@
+
+\newcommand{\asection}[1]{{\sf\bfseries #1}}
+\renewenvironment{knitrout}{\vspace*{-.1in}}{\vspace*{-.1in}} % an empty environment to be redefined in TeX
+\begin{document}
+\parindent=0pt
+
+\vspace*{-.85in}\begin{center}
+September 2014 \hspace{1in}
+{\sf \bfseries \Large Enough R for Data \& Computing Fundamentals}  \hspace{1in}
+Daniel Kaplan
+\end{center}
+
+\def\opt#1{#1}
+\def\squeeze{\vspace*{-4ex}}
+A couple dozen functions suffice to carry out your work in Data \& Computing Fundaments.  
+
+\begin{multicols}{4}
+\raggedright
+
+\asection{Getting Started} Load the package whenever you start a new session.
+<<include=FALSE,eval=TRUE>>=
+require(DCF)
+@
+<<eval=FALSE>>=
+library(DCF)
+@
+
+\asection{Overview} The data verbs, summary functions, and transformation functions enable you to transfigure data into a glyph- or analysis-ready form.
+
+\smallskip
+
+The basic syntax:
+<<>>=
+Result <-
+  DT %>% 
+  verb1( [some args] ) %>%
+  verb2( [more args] ) %>%
+  ... and so on as needed ...
+@
+
+$\bullet$ \texttt{<-} is the assignment symbol.
+\smallskip
+
+$\bullet$ \texttt{\%>\%} is the chaining symbol: take the output of the left expression and make it the input of the right expression.
+
+\smallskip
+
+$\bullet$ Lines that {\bf end} with \texttt{<-} or \texttt{\%>\%} identify that the next line continues the expression. 
+
+\medskip
+
+\asection{Data Tables} are organized into cases and variables.  Variables are either quantitative or categorical: numbers or words.
+
+<<echo=FALSE,eval=TRUE,cache=TRUE>>=
+set.seed(201)
+DT <- data.frame(name=c("Alma","Junior","Gary", "Kristy"),
+                 sex=c("F", "M", "M", "F"),
+                 height=c(1.64,1.82,1.71,1.75),
+                 weight=c(54, 73, 64, 61))
+
+@
+\smallskip
+
+\begin{small}
+$\bullet$ First example data table: \texttt{DT}
+<<eval=TRUE,echo=FALSE>>=
+DT
+@
+\texttt{sex} is categorical, \texttt{height} and \texttt{weight} are quantitative.
+
+\smallskip
+
+$\bullet$ Second example table: \texttt{Sports}
+<<eval=TRUE,echo=FALSE>>=
+Sports <- data.frame(
+  name=c("Fred","Alma","Alma", "Gary"), sport=c("Football","Water Polo", "Hockey", "Football"))
+@
+<<eval=TRUE,echo=FALSE>>=
+Sports
+@
+\end{small}
+
+
+\smallskip
+
+\asection{Quick presentation of data tables}
+
+<<eval=FALSE>>=
+str( DT )   summary( DT )
+nrow( DT )  names( DT )
+head( DT )  tail( DT )
+@
+
+\vfill
+\columnbreak
+
+\parbox{5.5in}{\asection{Data Verbs} take a data table as input and return as output a modified table.
+
+\smallskip
+
+\hspace*{-.2in}\begin{tabular}{llrl}
+Verb & Task & Argument(s) & Example\\\hline
+\texttt{filter()} & Winnow cases & Comparison & \texttt{filter(year$>$2000)}\\
+\texttt{mutate()} & Adds vars. & Transformation & \texttt{mutate(bmi=weight/height\^{}2)}\\
+\texttt{summarise()} & Combines cases & Summary & \texttt{summarise(ave=mean(height))} \\
+\texttt{select()} & Drops vars. & Var. Names & \texttt{select(sex, height)}\\
+\texttt{arrange()} & Order cases & Var. Names & \texttt{arrange(height)}\\
+Join & Combines tables & Data Table & See \asection{Various Joins} \\
+\texttt{group\_by()} & Split into groups & Var. Names & \texttt{group\_by(sex)}\\\hline
+\end{tabular}
+
+\smallskip
+All the examples assume a data table is being chained in, e.g. \texttt{DT \%>\% group\_by(sex)}.}
+\bigskip
+
+\asection{Grouping Operations}
+
+\texttt{group\_by()} can be used with several data verbs.
+
+\smallskip
+Summarize within each group property
+<<>>=
+DT %>% group_by( sex ) %>%
+ summarise(tallest=max(height))
+@
+
+\smallskip
+Compare each case to a group property
+<<>>=
+DT %>% group_by( sex ) %>%
+  mutate( rel=height-mean(height))
+@
+
+\smallskip
+Choose cases from each group.
+<<>>=
+DT %>% group_by( sex ) %>%
+  filter( rank(height)==1 )
+@
+
+\smallskip
+
+\asection{Various Joins} differ mainly in how they deal with unmatched cases.
+
+Cases matched by *all* variables that appear in both tables, just \texttt{name} in the example.
+
+\smallskip
+
+$\bullet$\Keep Keep all cases that have a match:\\
+\texttt{DT \%>\% inner\_join( Sports )}
+\begin{small}
+<<eval=TRUE,echo=FALSE>>=
+DT %>% inner_join( Sports )
+@
+\end{small}
+Note: output has {\em both} of Alma's sports.
+
+\smallskip
+
+$\bullet$ Keep all cases from left table:\\
+\texttt{DT \%>\% merge( Sports, all.x=TRUE )}\\
+Use \texttt{all=TRUE} to keep all cases from both tables.
+
+\smallskip
+$\bullet$ Keep unmatched cases:\\
+\texttt{DT \%>\% anti\_join( Sports )}
+
+
+
+\vfill
+\columnbreak
+\vspace*{1.75in}
+
+\asection{To Use in Arguments to Data Verbs}
+
+\medskip
+
+\asection{Summary Functions} take a variable as input and return a single number.
+
+<<eval=FALSE>>=
+mean( height, na.rm=TRUE )
+max( weight )
+min( weight )
+@
+
+\medskip
+\asection{Transformation Functions} are used with \texttt{mutate()}.  They take one or more variables as input and return a variable (with the same number of cases).
+
+<<eval=FALSE>>=
+rank( var )
+pmin( var1,var2) #smaller of the two
+var1/(var1+var2) #division, addition
+@
+
+\smallskip
+
+\asection{Comparison Expressions}
+
+\texttt{filter()} uses one or more comparison expression to determine which cases to pass through.
+<<>>=
+filter( DT, height < 1.8 )
+filter( DT, name=="Junior" )
+filter( DT, sex=="F", height < 1.8 )
+filter( DT, count>2000, count<10000 )
+filter( DT, name %in% c("Alma","Gary") )
+@
+
+\vfill
+\columnbreak
+
+\asection{Graphics with ggplot}
+
+$\bullet$ Create a new graphic: \texttt{ggplot()}\\
+\smallskip
+
+$\bullet$ Functions to add graphical layers\\
+\texttt{geom\_point()}
+\texttt{geom\_text()}
+\texttt{geom\_bar()}, etc. Others: \texttt{xlab()}, \texttt{ylab}, \texttt{xlim(low,high)}, \texttt{ylim(low,high)}
+\smallskip
+
+$\bullet$ Identify group by color\\
+\texttt{group=sex}
+\smallskip
+
+$\bullet$ \texttt{aes()} to map variables to graphical attributes (aesthetics).
+
+Example:
+<<results='hold',echo=1:4,eval=TRUE>>=
+DT %>%
+ ggplot(aes(x=height,y=weight)) +
+ geom_text( aes(label=name) ) +
+ geom_point(aes(color=sex,size=sex))     +
+ xlim(1.63,1.85) + ylim(50,80)
+@
+
+<<eval=TRUE,echo=FALSE,message=FALSE>>=
+StateData <- 
+  ZipDemography %>% inner_join(ZipGeography) %>% 
+  group_by(State) %>%
+  summarise( age=median(MedianAge,na.rm=TRUE), 
+             Latitude=mean(Latitude,na.rm=TRUE),
+             Longitude=mean(Longitude, na.rm=TRUE),
+             water=sum(WaterArea, na.rm=TRUE))
+@ 
+
+\smallskip
+
+\asection{Choropleth Maps}
+
+In \texttt{mUSMap()}, the `key=` argument identifies the variable naming geographic entity and `fill=` specifies the quantity to be plotted.
+<<eval=TRUE,message=FALSE,warning=FALSE>>=
+plot(mUSMap(data=StateData, 
+            key="State",fill="age") )
+@
+Similarly for \texttt{mWorldMap()}.
+
+\end{multicols}
+\end{document}
+

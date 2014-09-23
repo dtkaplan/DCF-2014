@@ -119,6 +119,6 @@ What should you report as the confidence interval?
 
 `r I(endProblem())`
 
-```{r child="../../CSS/DisqusTemplate.Rmd"}
+```{r child="../CSS/DisqusTemplate.Rmd"}
 ```
 
