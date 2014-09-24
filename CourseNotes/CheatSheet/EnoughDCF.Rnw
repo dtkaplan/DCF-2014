@@ -40,7 +40,6 @@ Daniel Kaplan
 
 \def\opt#1{#1}
 \def\squeeze{\vspace*{-4ex}}
-A couple dozen functions suffice to carry out your work in Data \& Computing Fundaments.  
 
 \begin{multicols}{4}
 \raggedright
@@ -114,9 +113,9 @@ Sports
 \asection{Quick presentation of data tables}
 
 <<eval=FALSE>>=
-str( DT )   summary( DT )
-nrow( DT )  names( DT )
-head( DT )  tail( DT )
+str( DT )  summary( DT )  
+nrow( DT ) names( DT )
+head( DT ) tail( DT ) glimpse( DT )
 @
 
 \vfill
@@ -138,7 +137,7 @@ Join & Combines tables & Data Table & See \asection{Various Joins} \\
 \end{tabular}
 
 \smallskip
-All the examples assume a data table is being chained in, e.g. \texttt{DT \%>\% group\_by(sex)}.}
+\hspace*{-.15in}All the examples assume a data table is being chained in, e.g. \texttt{DT \%>\% group\_by(sex)}.}
 \bigskip
 
 \asection{Grouping Operations}
@@ -149,7 +148,7 @@ All the examples assume a data table is being chained in, e.g. \texttt{DT \%>\% 
 Summarize within each group property
 <<>>=
 DT %>% group_by( sex ) %>%
- summarise(tallest=max(height))
+  summarise(tallest=max(height))
 @
 
 \smallskip
@@ -170,26 +169,22 @@ DT %>% group_by( sex ) %>%
 
 \asection{Various Joins} differ mainly in how they deal with unmatched cases.
 
-Cases matched by *all* variables that appear in both tables, just \texttt{name} in the example.
+Cases matched with *all* variables that appear in both tables, just \texttt{name} in the example.
 
-\smallskip
-
-$\bullet$\Keep Keep all cases that have a match:\\
+$\bullet$ Keep all cases that have a match:\\
 \texttt{DT \%>\% inner\_join( Sports )}
 \begin{small}
 <<eval=TRUE,echo=FALSE>>=
 DT %>% inner_join( Sports )
 @
 \end{small}
-Note: output has {\em both} of Alma's sports.
+Note: output has *both* of Alma's sports.
 
-\smallskip
 
 $\bullet$ Keep all cases from left table:\\
 \texttt{DT \%>\% merge( Sports, all.x=TRUE )}\\
 Use \texttt{all=TRUE} to keep all cases from both tables.
 
-\smallskip
 $\bullet$ Keep unmatched cases:\\
 \texttt{DT \%>\% anti\_join( Sports )}
 
@@ -207,12 +202,12 @@ $\bullet$ Keep unmatched cases:\\
 
 <<eval=FALSE>>=
 mean( height, na.rm=TRUE )
-max( weight )
-min( weight )
+max( weight )  n()
+min( weight )  n_distinct()
 @
 
 \medskip
-\asection{Transformation Functions} are used with \texttt{mutate()}.  They take one or more variables as input and return a variable (with the same number of cases).
+\asection{Transformation Functions}, used with \texttt{mutate()}, take one or more variables as input and return a variable (with the same number of cases).
 
 <<eval=FALSE>>=
 rank( var )
@@ -230,8 +225,14 @@ filter( DT, height < 1.8 )
 filter( DT, name=="Junior" )
 filter( DT, sex=="F", height < 1.8 )
 filter( DT, count>2000, count<10000 )
-filter( DT, name %in% c("Alma","Gary") )
+filter( DT, name%in%c("Alma","Gary"))
 @
+
+\smallskip
+
+\asection{Variable Names}
+
+\texttt{group\_by()}, \texttt{select()}, and \texttt{arrange()} take one or more variable names as arguments, in addition to the chained in data table.
 
 \vfill
 \columnbreak
@@ -247,19 +248,19 @@ $\bullet$ Functions to add graphical layers\\
 \texttt{geom\_bar()}, etc. Others: \texttt{xlab()}, \texttt{ylab}, \texttt{xlim(low,high)}, \texttt{ylim(low,high)}
 \smallskip
 
-$\bullet$ Identify group by color\\
+$\bullet$ Distinguish groups using color\\
 \texttt{group=sex}
 \smallskip
 
 $\bullet$ \texttt{aes()} to map variables to graphical attributes (aesthetics).
 
 Example:
-<<results='hold',echo=1:4,eval=TRUE>>=
+<<results='hold',echo=-5,eval=TRUE>>=
 DT %>%
  ggplot(aes(x=height,y=weight)) +
  geom_text( aes(label=name) ) +
  geom_point(aes(color=sex,size=sex))     +
- xlim(1.63,1.85) + ylim(50,80)
+                                            xlim(1.63,1.85) + ylim(50,80)
 @
 
 <<eval=TRUE,echo=FALSE,message=FALSE>>=
@@ -276,12 +277,12 @@ StateData <-
 
 \asection{Choropleth Maps}
 
-In \texttt{mUSMap()}, the `key=` argument identifies the variable naming geographic entity and `fill=` specifies the quantity to be plotted.
+\texttt{mUSMap()} has a  \texttt{key=} argument identifies the variable naming the geographic entity. \texttt{fill=} specifies the quantity to be plotted.
 <<eval=TRUE,message=FALSE,warning=FALSE>>=
 plot(mUSMap(data=StateData, 
             key="State",fill="age") )
 @
-Similarly for \texttt{mWorldMap()}.
+\texttt{mWorldMap()} is used in the same way.
 
 \end{multicols}
 \end{document}

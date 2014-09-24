@@ -17,7 +17,7 @@ require(xtable)
 
 Here's a small subset of the data in `BabyNames`:
 
-```{r echo=FALSE,results='asis'}
+```{r echo=FALSE}
 set.seed( 101 )
 MySmall <- 
   BabyNames %>% 
@@ -27,14 +27,14 @@ Narrow <-
   MySmall %>% 
   select( name, year ) %>%
   inner_join( BabyNames, . ) %>% arrange( year, desc(count))
-Narrow %>% xtable
+Narrow
 ```
 
 The above is not the only way that the data table can be arranged.  For instance, the following contains the same information:
 
-```{r echo=FALSE,results='asis'}
+```{r echo=FALSE}
 Wide <- Narrow %>% spread( key=sex, value=count, fill=0 )
-Wide %>% xtable
+Wide 
 ```
 
 The first table is a **narrow** format, the second is a **wide** format.  In the narrow format, there is a variable that describes the meaning of another variable.  For instance, the `sex` variable tells whether `count` refers to a male or a female.  A variable like `sex` is called a *key variable* because its value serves as the key or guide to another variable.
@@ -45,18 +45,15 @@ There are reasons to prefer each of the forms.  The best choice is a matter of j
 
 The wide format is useful if you want to compare variables.  Suppose, for example, that you want to identify the names that are given to both boys and girls.  In the wide format, you could simply compare the `M` and `F` variables, looking for cases where the numbers are approximately the same.^[One way to define "appoximately the same" is to take the smaller of the ratios M/F and F/M.  If females greatly outnumber males, then F/M will be large, but M/F will be small.  If the sexes are about equal, then both ratios will be near 1.  The smaller will never be greater than 1, so the most balanced names are those with the smaller of the ratios near 1.]
 
-```{r echo=1:3,results='as.is'}
-GenderNeutral <-
-  Wide %>%
-  mutate( ratio=pmin(M/F, F/M) )
-GenderNeutral %>%  
-  arrange( desc(ratio) ) %>%  
-  xtable
+```{r}
+Wide %>%
+  mutate( ratio=pmin(M/F, F/M) ) %>%  
+  arrange( desc(ratio) )
 ```
 
-You can see that Christina and Julian are --- out of this small set --- the names that are most gender-neutral.
-
+You can see that Christina and Julian are --- out of this small set --- the names that are most gender-neutral.  
 It's easy for wide formats to get out of hand.  For instance, this wide table gives each name over time:
+
 ```{r echo=FALSE,results='asis'}
 TooWide <- 
   BabyNames %>% 
@@ -64,7 +61,7 @@ TooWide <-
 xtable(TooWide[1:6,c(1,2,128:136)])
 ```
 
-This format is useful for some purposes, for instance calculating whether the use of a name went up or down between two years.  (Example: Aaron for males increased between 2005 and 2008.)  But if you want to plot out the usage over time, the narrow format is easier to handle.
+This format can be genuinely useful for some purposes, for instance calculating whether the use of a name went up or down between two years.  (Example: Aaron for males increased between 2005 and 2008.)  But if you want to plot out the usage over time, the narrow format is easier to handle.
 
 What's important is that you realize that there is a choice between wide and narrow and:
 
@@ -120,14 +117,30 @@ You could, of course, filter out the cases where no children were given a name.
 
 ### Aside: Gender Neutal Names
 
-Since the topic came up, here's a statement to find the 20 most balanced gender-neutral names (out of the names with more than 1000 babies in a year).
+
+Out of the very small dataset used in the example of gender-neutral names, Julian and Christina had entries for both sexes.  If Julian and Christina don't strike you as particularly gender neutral, take note that they are nearby misspellings of Christian and Julianne: much more common names with the opposite gender orientation to Christina and Julian.
 
 ```{r}
-GenderNeutral <-
-  Wide %>% 
-  filter( M>1000, F>1000) %>%
+BabyNames %>% 
+  filter( name==c("Christian", "Julianne") ) %>% 
+  group_by(name, sex) %>%  
+  summarise( n=sum(count) )
+```
+
+Rather than using that tiny dataset, here's a statement to find the 10 most balanced gender-neutral names out of the names with more than 50,000 babies. Remember, a ratio of 1 means exactly balanced; a ratio of 0.5  means two to one in favor of one sex; 0.33 means three to one.
+
+```{r}
+BabyNames %>% 
+  spread( key=sex, value=count, fill=0 ) %>% 
+  group_by( name ) %>%
+  summarise( M=sum(M), F=sum(F) ) %>%
+  filter( M>50000, F>50000) %>%
   mutate( ratio=pmin(M/F, F/M) ) %>%
-  filter( row_number(desc(ratio)) <= 20)
+  filter( row_number(desc(ratio)) <= 10) %>%
+  arrange( desc(ratio) )
+```
+```{r eval=FALSE,echo=FALSE,results='asis'}
+cat(paste( Result[["name"]], collapse=", " ))
 ```
 
 ```{r child="../../CSS/DisqusTemplate.Rmd"}

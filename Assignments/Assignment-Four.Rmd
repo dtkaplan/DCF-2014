@@ -102,3 +102,14 @@ Or maybe it should be one of the rank functions in filter.
 
 Within each precinct, which ward had the largest number of votes?  (Hint: Make a data table with the number of votes in each `Precinct` `Ward` combination.  Arrange this by `Precinct` and the number of votes.)
 
+### Immigration data
+
+In data scraping, convert the wide format to narrow.  Move to week 7.
+
+### NCI60
+
+Convert the wide format to narrow.
+
+### Pull out the 50 most popular gender-neutral baby names
+
+Then plot out a line graph to see how they change in balance over time.

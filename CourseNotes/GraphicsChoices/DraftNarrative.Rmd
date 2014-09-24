@@ -91,6 +91,16 @@ Show proportion in each age of the height ntiles.  Stack them.
 
 (Some color palettes](xhttp://learnr.wordpress.com/2009/04/15/ggplot2-qualitative-colour-palettes/)
 
+
+## Tuning up graphics
+
+* Labels with `xlab()` and `ylab()`
+* Setting the x-y scale by hand.
+* Removing xxtraneous factors: use `droplevels()` to drop unpopulated levels
+* Setting the overall style, e.g. Economist, NYT, 
+
+
+
 ```{r child="../../CSS/DisqusTemplate.Rmd"}
 ```
 

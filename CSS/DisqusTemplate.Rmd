@@ -1,3 +1,8 @@
+
+</div>
+
+<hr>
+
 Please use the comment system to make suggestions, point out errors, or to discuss the topic.
 
 <div id="disqus_thread"></div>
@@ -15,3 +20,14 @@ var disqus_shortname = 'dcf2014'; // required: replace example with your forum s
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
     
+<style>
+.vcenter {
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+}
+</style>
+<div class="vcenter">
+<div style="padding-left:10px;padding-top:10px;margin-top:10px;vertical-align:middle;"><img src='http://dtkaplan.github.io/DCF-2014/kaplan.jpeg' width='48' class='img-rounded' style="float:right;margin:5px;vertical-align:middle;" /></div>
+
+<p style="background-color:gray;padding-left:10px;padding-top:10px;margin-right:0px;">Written by Daniel Kaplan for the Data & Computing Fundamentals Course.  Development was supported by grants from the National Science Foundation for Project Mosaic (NSF DUE-0920350) and from the Howard Hughes Medical Institute. </p> 
