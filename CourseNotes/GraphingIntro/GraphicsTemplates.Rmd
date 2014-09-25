@@ -1,0 +1,102 @@
+---
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
+    fig_caption: yes
+    toc: yes
+---
+
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
+```
+
+Patterns for graphics.
+
+This document, which will grow as we encounter new graphical patterns, contains templates for `ggplot()` graphics.
+
+To use the template, create your glyph-ready data, and put in your own variables in place of the ones listed here IN CAPS.
+
+## Scatter Plots
+
+This command will make a scatterplot with some bells and whistles.
+
+```{r eval=FALSE}
+YOUR_DATA_TABLE %>%              # REQUIRED
+  ggplot(aes(x=X_VAR,y=Y_VAR)) + # REQUIRED -- insert your variable names
+  geom_point() +                 # REQUIRED
+  aes(colour=GROUP_VAR) +        # Optional -- map variable onto color
+  aes(size=SIZE_VAR) +           # Optional -- map variable onto size
+  scale_x_log10() +              # Optional -- use logarithmic scale for x axis.  
+  scale_y_log10() +              # Optional -- use logarithmic y scale for y-axis
+  facet_wrap(~FACET_VAR, ncol=4) # Optional -- faceting variable
+```
+
+You can delete any of the **optional** lines if you don't want that aspect of the plot.  Then, replace each of the placeholders --- `YOUR_DATA_TABLE`, `X_VAR`, `Y_VAR`, `GROUP_VAR`, `FACET_VAR` --- with the relevant variable from your data table.  (If you delete an optional line, you don't need to worry about the placeholder variable; it will disappear from the statement.)
+
+Example: 
+
+```{r}
+# Create the glyph-ready data
+data( NHANES )
+Small <- sample_n( NHANES, size=2000 ) # glyph ready table
+
+# Template pasted in and placeholders filled in with real variables.
+Small %>%                        # REQUIRED
+  ggplot(aes(x=age,y=height)) +  # REQUIRED -- insert your variable names
+  geom_point() +                 # REQUIRED
+  aes(colour=smoker) +           # Optional -- map variable onto color
+  aes(size=diabetic) +           # Optional -- map variable onto size
+  scale_x_log10() +              # Optional -- use logarithmic scale for x axis.  
+  facet_wrap(~sex, ncol=4)       # Optional -- faceting variable
+```
+
+One of the optional lines (`scale_y_log10()`) was deleted so the y-axis is on the usual linear scale.
+
+## Bar Charts
+
+[Under construction ...  I need a better example]
+
+
+
+```{r eval=FALSE}
+DATA_TABLE %>%                           # REQUIRED
+  ggplot(aes(x=X_VAR,                    # REQUIRED
+             y=Y_VAL, 
+             fill=FILL_VAR)) +           # REQUIRED
+  geom_bar(stat='identity',              # REQUIRED
+           position=                     # REQUIRED
+             position_HOW(width=.9)) +   # REQUIRED options: stack, proportion, dodge
+  facet_wrap(~FACET_VAR,ncol=3)          # Optional
+```
+
+Note the `HOW` placeholder.  Choose one of `stack`, `proportion`, or `dodge` so that the function looks like `position_stack()`, `position_proportion()`, or `position_dodge()`.
+
+### Example
+
+Make your glyph-ready data ...
+```{r}
+FirstPlaceTally <-
+  Minneapolis2013 %>%
+  group_by( First ) %>%
+  summarise( total=n() )
+ByPrecinct <-
+  FirstPlaceTally %>% 
+  filter(total > 5000) %>% # Just the big candidates.
+  inner_join( Minneapolis2013, . ) %>%
+  group_by( Precinct, First) %>% 
+  summarise( total=n() ) %>%
+  mutate( First=droplevels(First) )
+```
+
+Copy and customize the template ...
+```{r}
+ByPrecinct %>% 
+  ggplot(aes(x=Precinct,
+             y=total,
+             fill=First)) +
+  geom_bar(stat='identity', 
+           position=position_stack(width=.9)) + 
+  facet_wrap(~First,ncol=3) 
+```
+
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```

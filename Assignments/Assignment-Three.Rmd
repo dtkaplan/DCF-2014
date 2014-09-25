@@ -74,3 +74,8 @@ Pick out the 10000 zip codes with the highest population.  Make a scatter plot o
 How many zip codes have a `WaterArea` that is more than 50% of the `LandArea`?  Make a scatter plot showing the geographical location of these, with color indicating the population.
 
 
+
+```{r child="../CSS/DisqusTemplate.Rmd"}
+```
+
+

@@ -93,7 +93,7 @@ p + ggtitle("Average medicare charges by DRG in New Jersey")
 
 This chart uses bars to give a fair impression of the range in charges for different medical procedures in New Jersey.  
 
-But how do these charges compare to those in other states?  One way to display this is to add another layer showing the individual states.  
+But how do these charges compare to those in other states?  One way to display this is to add another layer showing  the individual states.  
 
 ```{r echo=FALSE}
 p + geom_point( data=ChargesByState, size=1 ) + 

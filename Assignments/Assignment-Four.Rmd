@@ -113,3 +113,10 @@ Convert the wide format to narrow.
 ### Pull out the 50 most popular gender-neutral baby names
 
 Then plot out a line graph to see how they change in balance over time.
+
+
+
+```{r child="../CSS/DisqusTemplate.Rmd"}
+```
+
+
