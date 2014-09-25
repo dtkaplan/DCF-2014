@@ -3,7 +3,7 @@
 \usepackage{xstring}
 \usepackage{color}
 \usepackage{multicol}
-\usepackage[landscape,margin=.25in,bottom=.35in,includehead,includefoot]{geometry}
+\usepackage[landscape,margin=.25in,bottom=-.35in,includehead,includefoot]{geometry}
 
 \pagestyle{empty}
 
@@ -33,9 +33,8 @@ opts_chunk$set(eval=FALSE, tidy=FALSE,fig.width=5,fig.height=2.5,message=FALSE,w
 \parindent=0pt
 
 \vspace*{-.85in}\begin{center}
-September 2014 \hspace{1in}
-{\sf \bfseries \Large Enough R for Data \& Computing Fundamentals}  \hspace{1in}
-Daniel Kaplan
+{\sf \bfseries \Large Enough R for Data \& Computing Fundamentals}\\
+\texttt{dtkaplan.github.io/DCF-2014-Course/CourseNotes/Guides/EnoughDCF.pdf}
 \end{center}
 
 \def\opt#1{#1}
@@ -51,6 +50,13 @@ require(DCF)
 <<eval=FALSE>>=
 library(DCF)
 @
+Don't have DCF?  Install the package:
+<<>>=
+library( devtools )
+install\_github("dtkaplan/DCFdevel)
+@
+
+\smallskip
 
 \asection{Overview} The data verbs, summary functions, and transformation functions enable you to transfigure data into a glyph- or analysis-ready form.
 
@@ -76,7 +82,7 @@ $\bullet$ Lines that {\bf end} with \texttt{<-} or \texttt{\%>\%} identify that 
 
 \medskip
 
-\asection{Data Tables} are organized into cases and variables.  Variables are either quantitative or categorical: numbers or words.
+\asection{Data Tables} are organized into cases and variables.  Variables are either quantitative or categorical: numbers or words. Two examples used here:
 
 <<echo=FALSE,eval=TRUE,cache=TRUE>>=
 set.seed(201)
@@ -97,7 +103,7 @@ DT
 
 \smallskip
 
-$\bullet$ Second example table: \texttt{Sports}
+$\bullet$ Second example data table: \texttt{Sports}
 <<eval=TRUE,echo=FALSE>>=
 Sports <- data.frame(
   name=c("Fred","Alma","Alma", "Gary"), sport=c("Football","Water Polo", "Hockey", "Football"))
@@ -234,6 +240,13 @@ filter( DT, name%in%c("Alma","Gary"))
 
 \texttt{group\_by()}, \texttt{select()}, and \texttt{arrange()} take one or more variable names as arguments, in addition to the chained in data table.
 
+\smallskip
+
+\asection{Datasets in the DCF Course}
+
+Get a listing with \texttt{data( package="DCF" )}.  All those listed are available by name once the DCF package is loaded.  See also \texttt{mosaicData} and \texttt{NHANES} packages.
+
+
 \vfill
 \columnbreak
 
@@ -279,8 +292,8 @@ StateData <-
 
 \texttt{mUSMap()} has a  \texttt{key=} argument identifies the variable naming the geographic entity. \texttt{fill=} specifies the quantity to be plotted.
 <<eval=TRUE,message=FALSE,warning=FALSE>>=
-plot(mUSMap(data=StateData, 
-            key="State",fill="age") )
+mUSMap(data=StateData, 
+            key="State",fill="age") 
 @
 \texttt{mWorldMap()} is used in the same way.
 
