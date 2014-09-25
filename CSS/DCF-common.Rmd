@@ -12,6 +12,8 @@ require(mosaic)
 require(knitr)
 require(dplyr)
 require(tidyr)
+require(NHANES)
+require(mosaicData)
 
 # For typesetting
 library(xtable)

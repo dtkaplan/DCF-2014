@@ -100,7 +100,11 @@ p + geom_point( data=ChargesByState, size=1 ) +
   ggtitle("New Jersey compared to other states")
 ```
 
+With the context of the individual states, it's easy to see the charges in New Jersey are among the highest, and often the very highest, in the country for each DRG.
 
+<!--
 See <http://docs.ggplot2.org/current/>
 
 ## Labels, etc.
+
+-->
