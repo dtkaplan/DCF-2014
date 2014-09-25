@@ -9,7 +9,7 @@ output:
 ```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
 ```
 
-Patterns for graphics.
+# Templates for graphics.
 
 This document, which will grow as we encounter new graphical patterns, contains templates for `ggplot()` graphics.
 
@@ -17,7 +17,8 @@ To use the template, create your glyph-ready data, and put in your own variables
 
 ## Scatter Plots
 
-This command will make a scatterplot with some bells and whistles.
+### Template
+Make a scatterplot with some bells and whistles.
 
 ```{r eval=FALSE}
 YOUR_DATA_TABLE %>%              # REQUIRED
@@ -32,7 +33,7 @@ YOUR_DATA_TABLE %>%              # REQUIRED
 
 You can delete any of the **optional** lines if you don't want that aspect of the plot.  Then, replace each of the placeholders --- `YOUR_DATA_TABLE`, `X_VAR`, `Y_VAR`, `GROUP_VAR`, `FACET_VAR` --- with the relevant variable from your data table.  (If you delete an optional line, you don't need to worry about the placeholder variable; it will disappear from the statement.)
 
-Example: 
+### Example
 
 ```{r}
 # Create the glyph-ready data
@@ -55,7 +56,7 @@ One of the optional lines (`scale_y_log10()`) was deleted so the y-axis is on th
 
 [Under construction ...  I need a better example]
 
-
+### Template
 
 ```{r eval=FALSE}
 DATA_TABLE %>%                           # REQUIRED
@@ -65,7 +66,7 @@ DATA_TABLE %>%                           # REQUIRED
   geom_bar(stat='identity',              # REQUIRED
            position=                     # REQUIRED
              position_HOW(width=.9)) +   # REQUIRED options: stack, proportion, dodge
-  facet_wrap(~FACET_VAR,ncol=3)          # Optional
+  facet_wrap(~FACET_VAR,ncol=3)  +       # Optional
 ```
 
 Note the `HOW` placeholder.  Choose one of `stack`, `proportion`, or `dodge` so that the function looks like `position_stack()`, `position_proportion()`, or `position_dodge()`.
