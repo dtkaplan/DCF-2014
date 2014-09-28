@@ -1,0 +1,52 @@
+---
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
+    fig_caption: yes
+    toc: no
+---
+
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
+```
+
+## Groups with data verbs
+
+
+The `group_by()` and `summarise()` data verbs go hand in hand.  As you know, `group_by()` lets you establish which variables will be used to define the groups in a data table; `summarise()` lets you do calculations within each of the groups, returning each group as one case.  For instance,
+
+```{r}
+StatePopulation <- 
+  ZipGeography %>%
+  group_by( State ) %>% 
+  summarise( totalPop=sum( Population, na.rm=TRUE ))
+```
+
+```{r echo=FALSE}
+head( StatePopulation )
+```
+
+You can also do grouping operations with `filter()` and `mutate()`.  Whenever you use a *summary function* within `filter()` or `mutate()`, a groupwise calculation will be performed.  When you use a variable or transformation, it refers to the individual case, but the output of the summary function refers to the entire group. 
+
+Find the ZIP code in each state with the largest `Population` as a fraction of the state's population:
+
+```{r}
+PopFrac <-
+  ZipGeography %>%
+  group_by( State ) %>% 
+  mutate( frac=Population / sum(Population, na.rm=TRUE )) %>%
+  filter( rank(desc(frac))==1 )
+```
+```{r eval=FALSE}
+PopFrac
+```
+```{r echo=FALSE}
+PopFrac %>% na.omit() %>% select( State, Population, CityName, ZIP) %>%
+  head()
+```
+
+Leading the list is [Vega Baja](http://en.wikipedia.org/wiki/Vega_Baja,_Puerto_Rico), a city in Puerto Rico, which is part of the US, but not a state.
+
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```
+
+

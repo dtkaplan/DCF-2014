@@ -64,7 +64,7 @@ Once you can read the expressions, you can figure out how to modify them to prod
 
 ## Some Basic Graphics
 
-You don't need to use functions like `mScatter()` at all.  Here are a few templates for different kinds of graphs.  Often, once you have chosen the kind of graph you want to make, modifications are as simple as changing the name of the data table and the variables.
+You don't need to use functions like `mScatter()` at all.  Here are a few [templates for different kinds of graphs](GraphicsTemplates.html).  Often, once you have chosen the kind of graph you want to make, modifications are as simple as changing the name of the data table and the variables.
 
 
 ## Layers
@@ -101,6 +101,19 @@ p + geom_point( data=ChargesByState, size=1 ) +
 ```
 
 With the context of the individual states, it's easy to see the charges in New Jersey are among the highest, and often the very highest, in the country for each DRG.
+
+## Facets
+
+When you want to compare patterns in other variables across different levels of a variable, **facets** can be a simple, effective approach.  A couple of examples will suffice.  (Note: Make sure to notice the tilde ~ in the argument to the `facet_wrap()` command.)
+
+```{r}
+Small <- sample_n( NHANES, size=3000 )
+Small %>% ggplot( aes( x=age, y=height )) +
+  geom_point( aes( color=sex )) +
+  facet_wrap( ~ death ) # Note the tilde ~
+```
+
+By default, `facet_wrap()` will maintain the same x- and y-scales for every facet.  This is a good practice in general; it makes the different levels of the faceting variable easy to compare.  But sometimes you may want one or both axis scales to arrange themselves according to the data in just that facet.  For this, use as an argument to `facet_wrap()` one of these choice: `scale="free"` or `scale="free_x"` or `scale="free_y"`.
 
 <!--
 See <http://docs.ggplot2.org/current/>

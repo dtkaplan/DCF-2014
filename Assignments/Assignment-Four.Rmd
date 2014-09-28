@@ -1,5 +1,5 @@
 ---
-title: "Assignment for Week Three"
+title: "Assignment for Week Four"
 author: "Data and Computing Fundamentals"
 date: "Macalester College"
 output:
@@ -12,8 +12,19 @@ output:
 ```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
 ```
 
+## Simple Problems
 
-## Birds at the Ordway Nature Reserve
+Using the `ZipGeography` data table, answer these questions:
+
+* Which city names are used in the most states?
+* Which city names with more than 5% of the state population are used in the most states?
+* Does any state have more than one time zone?
+* Does any city have more than one time zone? 
+* Does any county have more than one time zone?
+
+
+
+## Birds at the Ordway Nature Reserve --- this is in an in-class activity
 
 Here's part of a data table showing how many times birds of each species appear in the `OrdwayBirds` data.  Construct a statement that generates this table.
 
