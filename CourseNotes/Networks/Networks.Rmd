@@ -1,0 +1,99 @@
+---
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
+    fig_caption: yes
+    toc: no
+---
+
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
+```
+
+# Networks
+
+Consider the `Minneapolis2013` election.  Presumably, there is some relationship between a voter's first and second choices.  This could be visualized as a network.  Each candidate is a node, edges exist between candidate pairs who were commonly selected.
+
+Here's an analysis that looks at the *fraction* of the ballots that contained a pair among the ballots for each first-choice candidate:
+
+```{r}
+PairFrac <- Minneapolis2013 %>%
+  group_by( First, Second ) %>%
+  summarise( ballots=n() ) %>% # remains grouped by First
+  mutate( frac=ballots/sum(ballots))
+```
+
+Since there are 38 candidates, there are $38 \times 38 = 1444$ possible pairs.^[Including ballots where the first- and second-place choices are the same.] Such a large number of edges would be hard to see.  So let's look at the top 3 second-place choices for each candidate and winnow further by requiring that there be more than 20 ballots for the pair:
+
+```{r}
+Edges <-
+  PairFrac %>%
+  group_by( Second ) %>%
+  filter( rank(desc(frac)) <= 3, ballots > 20 )
+```
+```{r eval=FALSE}
+Edges
+```
+```{r echo=FALSE}
+head(Edges)
+```
+
+Each candidate will be a node in the network.  But there is no natural order to the candidates that would dictate where they should be positioned in a diagram.
+
+The `edgesToVertices()` function calculates vertex locations in a way that brings connected vertices nearby and separates unconnected vertices.
+
+```{r}
+Vertices <-
+  edgesToVertices( Edges, from=First, to=Second )
+head(Vertices)
+```
+
+This is easy to plot out, for instance:
+```{r}
+Vertices %>% 
+  ggplot(  ) + 
+  geom_text( aes(label=ID, x=x, y=y))
+```
+
+Now the x, y positions of the nodes can be used to set the start and ending positions of each of the edges.  To combine the information in `Vertices` with that in `Edges`, use `edgesForPlotting()`:
+```{r}
+PositionedEdges <-
+  edgesForPlotting( Vertices, ID=ID, x, y, from=First, to=Second, Edges=Edges )
+head( PositionedEdges)
+```
+
+`geom_segment()` lets you draw in the segments.  Since the vertices and edges come from different data tables, `geom_segment()` needs to be passed the positioned edges as the `data=` argument.
+
+```{r}
+Vertices %>% 
+  ggplot(  ) + 
+  geom_text( aes(label=ID, x=x, y=y)) +
+  geom_segment( data=PositionedEdges, 
+                aes( x=x, y=y, xend=xend, yend=yend))
+```
+
+You can see that there are two major groups and a couple of minor groups.  It might be informative to use color to indicate how many ballots there are in each connection and size of a dot to show the total number of votes a candidate got.
+
+```{r out.width='60%',fig.width=18,fig.height=18}
+Votes <-
+  Minneapolis2013 %>%
+  mutate( ID=First ) %>%
+  group_by( ID ) %>%
+  summarise( total=n() )
+Vertices %>%
+  inner_join( Votes ) %>%
+  ggplot(  ) + 
+  geom_point(alpha=.2, aes( x=x, y=y, size=total ) ) +
+  scale_size_area( max_size=50, guide="none" ) +
+  geom_text( aes(label=ID, x=x, y=y)) +
+  geom_segment( data=PositionedEdges, 
+                aes( x=x, y=y, xend=xend, yend=yend, color=ballots )) +
+  theme(axis.ticks=element_blank(), axis.text=element_blank(), panel.background=element_blank())  
+```     
+
+You can see the political affiliations and other information about the candidates [here](http://en.wikipedia.org/wiki/Minneapolis_mayoral_election,_2013).  Betsy Hodges, Don Samuels, Mark Andrew, and Jackie Cherryholmes are all affiliated with the DFL; Cam Winton is an independent endorsed by the Republican party.
+
+
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```
+
+
