@@ -1,0 +1,52 @@
+---
+title: "BibleNames"
+author: "Daniel Kaplan"
+date: "September 28, 2014"
+output: html_document
+---
+
+```{r include=FALSE}
+library( DCF )
+```
+
+Looking for the popularity of names in the bible.
+
+Names found [here](http://cyberspacei.com/jesusi/doc/bibles/names/biblenames2.html#J).
+
+```{r}
+BibleNames <- read.csv("bibleNames.csv",as.is=TRUE)
+```
+
+```{r}
+InTheBible <-
+  BabyNames %>% 
+  inner_join( BibleNames %>% select(name) )
+```
+
+Total names by year
+```{r}
+InTheBible %>%
+  group_by( year, sex ) %>%
+  summarise( total=sum(count)) %>%
+  ggplot( aes(x=year, y=total)) +
+  geom_line( aes( group=sex, color=sex ) )
+```
+
+Most popular names
+
+```{r}
+ByCount <-
+  InTheBible %>%
+  group_by( name, sex ) %>%
+  summarise( total=sum(count) ) %>% 
+  spread(key=sex,value=total) %>%
+  arrange( desc(M+F) )
+```
+
+By name balance
+```{r}
+SexBalance <-
+  ByCount %>%
+  mutate( balance=pmin(M/F, F/M)) %>%
+  arrange( desc( balance ) )
+```

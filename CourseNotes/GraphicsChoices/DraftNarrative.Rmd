@@ -25,10 +25,17 @@ charges for different DRG in MedicareCharges data as in GraphicsCommands.Rmd.  U
 
 * Dynamite plots: why they are bad and how you can do better.
 
+## Jitter and alpha
+
+See the weight example.
+
+## Continuous or discrete
+
+Conversion of quantitative to categorical.
+
 ## Example: Blood pressure and diabetes
 
 The NHANES data gives ... for 31000 people.  Suppose you are interested in the question, does waist to height ratio differ between diabetics and non-diabetics.
-
 
 ```{r}
 group_by(NHANES, sex, diabetic) %>% 

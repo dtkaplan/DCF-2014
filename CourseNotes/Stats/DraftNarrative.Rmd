@@ -1,6 +1,159 @@
 ---
-title: "Draft Narrative"
-output: html_document
+output:
+  html_document:
+    css: ../../CSS/DCF-style.css
+    fig_caption: yes
+    toc: yes
 ---
 
-In this document, place draft narrative for this section of the notes. 
+```{r child="../../CSS/DCF-common.Rmd"}
+```
+
+```{r include=FALSE}
+require(xtable)
+theme_blank <-  theme(axis.ticks=element_blank(), 
+                      axis.text=element_blank(), 
+                      panel.background=element_blank())
+theme_blank_y <-  theme(axis.ticks.y=element_blank(), 
+                      axis.text.y=element_blank(), 
+                      panel.background=element_blank())
+```
+
+# Distributions and Statistics
+
+Up to now, the emphasis has been on individual cases.  Data graphics, for instance, translate each case into a representation in terms of a glyph's graphical attributes: position, color, size, shape, etc.
+
+There are many occasions where a different emphasis is called for: representing the collective properties of cases.  You've seen simple collective properties calculated with *summary functions*: mean, median, max, etc.  The concern here is detailed collective descriptions, aspects of the collective that cannot be summed up in a single number.
+
+## Distribution of a variable
+
+To start, consider the `weight` variable in the `NHANES` data.  Of course, weight varies from person to person; there is a **distribution** of weights from case to case.  
+
+Sometimes it's helpful to show this distribution, what values are common, what values are rare, what values never show up.  
+
+### Density 
+
+Naïvely, this might be done by drawing a weight axis and putting on it a point for each case:
+
+```{r echo=FALSE, fig.height=1, fig.width=5}
+ggplot( NHANES, aes(x=weight,y=1) ) + geom_point( alpha=1, size=1 ) + theme_blank_y + ylab("") + xlab("Weight (kg)")
+```
+
+This graph shows some familiar facts: humans tend not to be lighter than a few kilograms, and tend not to be heavier than about 150 kg.  Between these limits, there seems to be no detail.
+
+This is misleading, the result of having so many cases (`r nrow(NHANES)`) to plot. All those cases lead to ink saturation.  One way to overcome this problem is by using transparency, another is to *jitter* the individual points.  The result is this:
+
+```{r echo=FALSE, fig.height=2, fig.width=5}
+ggplot( NHANES, aes(x=weight,y=1) ) + geom_point( alpha=.1, size=1, position="jitter" ) + theme_blank_y + ylab("") + xlab("Weight (kg)")
+```
+
+This is a much more satisfactory display; the ink saturation has been greatly reduced and now detail in the distribution of weights can be seen.  For instance, the most common weights are between 55 and 90 kg, and that weights less than 20 kg are also pretty common.  There aren't so many people with weights near 30kg, and very few over 120 kg.
+
+The visual impression is due to collective properties of the data.  Every individual glyph is identical, but for weights where the glyphs are densely packed, the impression the glyphs collectively give is of darkness.  Unfortunately, people are not very good at comparing different levels of darkness.
+
+The collective property of density is conventionally displayed as a another kind of glyph that displays the collective density property using position instead of darkness, like this:
+
+```{r}
+ggplot( NHANES, aes(x=weight) ) + 
+  geom_density(color="gray", fill="gray", alpha=.75) + 
+  xlab("Weight (kg)") + ylab( "Density (1/kg)")
+```
+
+In this format, the *height* of the band indicates the density of cases.  You can't see individual cases, just the collective property of the density at each weight.^[The scale of the y axis may seem odd; it has units of "inverse kilograms."  This scale is arranged so that the area under the entire density curve is 1.  This convention facilitates densities for different groups, e.g. male versus female. It also means that narrow distributions tend to have high density.]  
+
+To help see the translation between the density as vertical position and the density as darkness, here is an unusual graph format that combines both.
+
+```{r echo=FALSE}
+ggplot( NHANES, aes(x=weight) ) + 
+  geom_density(color="gray", fill="gray", alpha=.75) + 
+  geom_point( alpha=.03, position=position_jitter(height=.002), aes(y=0.002)) + 
+  xlab("Weight (kg)") + ylab( "Density (1/kg)")
+```
+
+Density glyphs can be used to compare distributions for different groups.  You need merely indicate which variable should be used for grouping.  For instance, here are the densities of body weight for each sex:
+
+```{r}
+ggplot( NHANES, aes(x=weight, group=sex) ) + 
+  geom_density(aes(color=sex, fill=sex), alpha=.5) + 
+  xlab("Weight (kg)") + ylab( "Density (1/kg)")
+```
+
+The density shows detail, but is often a fairly simple shape.  This allows you to place densities side by side for comparison.  For instance, here people are being divided into different age groups.
+
+```{r}
+NHANES <- 
+  NHANES %>% 
+  mutate( ageGroup=
+      ntiles(age, n=6, format="interval") )
+```
+```{r out.width="90%"}
+NHANES %>%
+  ggplot( aes(x=weight, group=sex) ) + 
+  geom_density(aes(color=sex, fill=sex), alpha=.25) + 
+  xlab("Weight (kg)") + ylab( "Density (1/kg)") + 
+  facet_wrap( ~ ageGroup )
+```
+
+This graphic tells a rich story.  For young children the two sexes have almost identical distributions.  For kids from 5 to 13 years, the distributions are still similar, though you can see that some girls have grown faster, producing a somewhat higher density near 50 kg.  From the teenage years on, the distribution for men is shifter to somewhat higher weight than for women.  This shift stays pretty much constant for the rest of life.
+
+As always, the best choice of a mapping between variables and graphical attributes depends on what aspect of the data you would like to emphasize.  For instance, to see how weight changes with age, you might prefer to use `sex` as the faceting variable and `age` as the grouping variable.
+
+```{r out.width="90%", fig.height=6,fig.width=9}
+NHANES %>%
+  ggplot( aes(x=weight, group=ageGroup) ) + 
+  geom_density(aes(color=ageGroup, fill=ageGroup), alpha=.25) + 
+  xlab("Weight (kg)") + ylab( "Density (1/kg)") + 
+  facet_wrap( ~ sex )
+```
+
+### Simple depictions of distribution
+
+The detail in the density curves can be visually overwhelming: there's a lot of detail in each density curve.  To simplify the graph, sometimes a more stylized depiction of the distribution is helpful.  This makes it feasible to put the distributions side-by-side for comparison.  The most common such depiction is the *box and whisker* glyph. 
+
+```{r}
+NHANES %>%
+  ggplot( aes(y=weight, x=ageGroup) ) + 
+  geom_boxplot(
+    aes(color=ageGroup, fill=ageGroup), 
+    alpha=.25, outlier.size=1) + 
+  ylab("Weight (kg)") + xlab( "Age Group (yrs)") + 
+  facet_wrap( ~ sex )
+```
+
+The box-and-whisker glyph shows the extent of the middle 50% of the distribution as a box.  The whiskers show the range of the top and bottom quarter of the distribution.  When there are uncommon, extremely high or low values --- called "outliers" --- they are displayed as individual dots for each of the outlier cases.
+
+The *violin* glyph provides a similar ease of comparison to the box-and-whisker glyph, but shows more detail in the density. 
+
+```{r}
+NHANES %>%
+  ggplot( aes(y=weight, x=ageGroup) ) + 
+  geom_violin(
+    aes(color=ageGroup, fill=ageGroup), 
+    alpha=.25, outlier.size=1) + 
+  ylab("Weight (kg)") + xlab( "Age Group (yrs)") + 
+  facet_wrap( ~ sex )
+```
+
+
+## Conditional Distributions
+
+The previous few graphics, where weight was compared across cases of different sex and ages, is an example of "conditioning."  SAY WHAT CONDITIONING IS
+
+Bivariate plots.
+
+Show where the diabetics are.  There are just a few of them, so a scatter plot with different colors or symbols or sizes doesn't work so well.
+
+## Statistical Inference
+
+lines, smoothers (height against age for the different sexes)
+
+### Avoid the Dynamite Plot
+
+How to make them, what plots are bigger.
+
+Bars are good when you want to emphasize positive versus negative.  Including 0 in the plot is enough to show position.
+
+## Clustering to Identify Implicit Groups
+
+Dendrograms, clusters, ...
+
