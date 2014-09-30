@@ -23,7 +23,7 @@ charges for different DRG in MedicareCharges data as in GraphicsCommands.Rmd.  U
 
 ## Show the data!
 
-* Dynamite plots: why they are bad and how you can do better.
+* Dynamite plots: why they are bad and how you can do better.  Bars are good when you want to emphasize positive versus negative.  Including 0 in the plot is enough to show position.
 
 ## Jitter and alpha
 

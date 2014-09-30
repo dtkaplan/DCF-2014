@@ -3,7 +3,7 @@ output:
   html_document:
     css: ../../CSS/DCF-style.css
     fig_caption: yes
-    toc: yes
+    toc: no
 ---
 
 ```{r child="../../CSS/DCF-common.Rmd"}
@@ -18,6 +18,14 @@ theme_blank_y <-  theme(axis.ticks.y=element_blank(),
                       axis.text.y=element_blank(), 
                       panel.background=element_blank())
 ```
+
+```{r echo=FALSE}
+NHANES <-
+  NHANES %>%
+  filter( !is.na(diabetic) ) %>%
+  mutate( diabetic=ifelse(diabetic==1,"Diabetic","Not"))
+```
+
 
 # Distributions and Statistics
 
@@ -112,10 +120,10 @@ The detail in the density curves can be visually overwhelming: there's a lot of 
 
 ```{r}
 NHANES %>%
-  ggplot( aes(y=weight, x=ageGroup) ) + 
+  ggplot( aes(y=weight, x=ageGroup ) ) + 
   geom_boxplot(
     aes(color=ageGroup, fill=ageGroup), 
-    alpha=.25, outlier.size=1) + 
+    alpha=.25, outlier.size=2, outlier.colour="gray") + 
   ylab("Weight (kg)") + xlab( "Age Group (yrs)") + 
   facet_wrap( ~ sex )
 ```
@@ -127,33 +135,120 @@ The *violin* glyph provides a similar ease of comparison to the box-and-whisker 
 ```{r}
 NHANES %>%
   ggplot( aes(y=weight, x=ageGroup) ) + 
-  geom_violin(
-    aes(color=ageGroup, fill=ageGroup), 
+  geom_violin( aes(color=ageGroup, fill=ageGroup), 
     alpha=.25, outlier.size=1) + 
   ylab("Weight (kg)") + xlab( "Age Group (yrs)") + 
   facet_wrap( ~ sex )
 ```
 
+Both the box-and-whisker and violin glyphs use ink very efficiently.  This allows you to show other data.  For instance, here's the same box-and-whisker plot, but with people with diabetics shown in red.
 
-## Conditional Distributions
+```{r}
+Diabetics <-
+  NHANES %>% filter( diabetic=="Diabetic" )
+Nondiabetics <-
+  NHANES %>% filter( diabetic=="Not" )
+Nondiabetics %>%
+  ggplot( aes(y=weight, x=ageGroup) ) + 
+  geom_boxplot(
+    aes(color=ageGroup, fill=ageGroup), 
+    alpha=.25, outlier.size=2, outlier.colour="gray") + 
+  ylab("Weight (kg)") + xlab( "Age Group (yrs)") + 
+  facet_wrap( ~ sex ) + 
+  geom_boxplot( data=Diabetics, width=.3,color='red',
+                outlier.colour="lightpink",alpha=.2)
+```
 
-The previous few graphics, where weight was compared across cases of different sex and ages, is an example of "conditioning."  SAY WHAT CONDITIONING IS
+You can see that diabetics tend to be heavier than non-diabetics, especially for ages 19+.
 
-Bivariate plots.
 
-Show where the diabetics are.  There are just a few of them, so a scatter plot with different colors or symbols or sizes doesn't work so well.
 
-## Statistical Inference
+## Confidence Intervals
 
-lines, smoothers (height against age for the different sexes)
+ 
+Statistical inference refers to an assessment of the *strength* of evidence for a claim.  For instance, in interpreting the plot above, it was claimed that diabetics tend to be heavier than non-diabetics.  Perhaps this is just an accident.  Might it be that there are so few diabetics that their weight distribution is not well known?
 
-### Avoid the Dynamite Plot
+The *confidence interval* of a statistic tells how much uncertainty there is due to the size of the sample.  Smaller-sized samples provide weaker evidence and their confidence intervals are longer than produced by larger-sized samples.
 
-How to make them, what plots are bigger.
+A box-and-whiskers glyph can show the confidence interval of the median by means of a "notch".  Overlap between the notches in two boxes indicates that the evidence for a difference is weak.
 
-Bars are good when you want to emphasize positive versus negative.  Including 0 in the plot is enough to show position.
+```{r}
+Nondiabetics %>%
+  ggplot( aes(y=weight, x=ageGroup) ) + 
+  geom_boxplot(
+    aes(color=ageGroup, fill=ageGroup), 
+    alpha=.25, outlier.size=2, notch=TRUE,
+    outlier.colour="gray") + 
+  ylab("Weight (kg)") + xlab( "Age Group (yrs)") + 
+  facet_wrap( ~ sex ) + 
+  geom_boxplot( data=Diabetics, width=.3,
+                color='red',
+                outlier.colour="lightpink",
+                alpha=.2, notch=TRUE )
+```
 
-## Clustering to Identify Implicit Groups
+## Model Functions
 
-Dendrograms, clusters, ...
+A *function* is one way of describing a relationship between input and output.  Often it's helpful to use a function estimated from data.
+
+For example, consider the relationship between weight and age in the NHANES data. Is it the same for diabetics and non-diabetics? 
+
+```{r}
+NHANES %>% 
+  ggplot( aes(x=age, y=weight, color=diabetic ) ) +
+  stat_smooth(se=FALSE ) 
+```
+
+There are two functions here, calculated by `stat_smooth()` from the age and weight variables. One function is for diabetics, the other for non-diabetics. Each function gives just one weight value for each age, rather than the distribution seen in the raw data.  That value is^[Roughly.  The function is smoothed over a range of close ages.] the mean weight at each age.  From the functions, it seems that the diabetics are consistently heavier than the non-diabetics, at least on average.  At age 30, that average difference is more than 20kg, less for people near 80.
+
+The confidence interval will show the precision of the function.  This is so important to interpreting the graphic that the default in `stat_smooth()` is to calculate and show the confidence interval unless the user specifically asks not to.
+
+```{r}
+NHANES %>% 
+  ggplot( aes(x=age, y=weight, color=diabetic ) ) +
+  stat_smooth( ) 
+```
+
+The function for non-diabetics has a narrow confidence interval; you have to look hard to even see the gray zone. The confidence interval for diabetics, however, is noticeably wide. For ages below about 20, the non-diabetic and diabetic confindence intervals overlap.  This means that there is only weak evidence that diabetics as a group in this age group differ in weight from non-diabetics.  Around age 20, the two functions' confidence intervals do not overlap.  This indicates stronger evidence that the groups in the 20+ age bracket do differ in average weight.
+
+You might ask, why the confidence interval for the diabetics is so much wider than for the non-diabetics?  And why is the diabetic confidence interval broad in some places and narrow in others?
+
+The width of a confidence interval depends on three things:
+
+* the amount of variation in the value of y at or near the x value.
+* the number of cases close to the x value
+* the extent to which the function is an extrapolation.
+
+You can see all these things by plotting out the individual cases in another graphical layer.
+
+```{r}
+NHANES %>% 
+  ggplot( aes(x=age, y=weight, color=diabetic ) ) +
+  stat_smooth( ) +
+  geom_point( data=Diabetics, color="red", alpha=.2) 
+```
+
+There are only a handful of cases with age less than 20, and hardly any with age less than 10: that's why the confidence interval for diabetics is wide there.  On the other hand, there are lots of cases for age greater than 60.
+
+This sort of function, called a "smoother", is able to bend with the data.  A much more commonly used function --- the "linear" function --- is utterly stiff; it can't bend at all.  You can construct this sort of function from the data with `method=lm` as an argument to `stat_smooth()`.
+
+```{r}
+NHANES %>% 
+  ggplot( aes(x=age, y=weight, color=diabetic ) ) +
+  stat_smooth( method=lm ) +
+  geom_point( data=Diabetics, color="red", alpha=.2) 
+```
+
+In this situation, a linear function is too stiff.  The function for non-diabetics slopes up at high ages not because older non-diabetics in fact weigh less than middle-aged diabetics, but because the line needs to accomodate both the children (light in weight) and the adults (who are heavier).
+
+You'll often see linear functions in the scientific literature.  This is for several reasons, some good and some bad:
+
+* Linear functions generally have tighter confidence intervals than smoothers. (A good reason)
+* People are familiar with straight-line functions from high school. (A bad reason)
+* Many people don't know about non-linear functions such as a smoother. (A bad reason)
+
+A simple rule of thumb: When in doubt, use a smoother.
+
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```
 
