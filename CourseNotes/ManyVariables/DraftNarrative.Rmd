@@ -1,9 +1,186 @@
 ---
-title: "Draft Narrative: Many Variables"
-output: html_document
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
+    fig_caption: yes
+    toc: no
 ---
 
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
+```
+
+The United Nations publishes the ["World Happiness Report"](http://en.wikipedia.org/wiki/World_Happiness_Report) that attempts to quantify happiness country by country.  The `Happiness` data table contains the results based on data collected in 2010-2012.  Here's a map of the happiness scores:
+```{r}
+mosaic::mWorldMap( HappinessIndex, key="country", fill="score")
+```
+
+Presumably the 11 other quantitative variables --- e.g. `corruption`, `lifeExpectancy`, etc. --- are combined in some way to make up the happiness score.  You're used to looking at 2 or 3 or 4 variables in a graphic, but 11 is out of hand.
+
+These notes are about how to deal with data that has many variables.
+
+## Dimension Reduction
+
+Individual variables are often related to one another.  It can be helpful to show these connections as a network.  Instead of connecting *cases*, the network connects *variables*.
+
+A simple and widely used way to measure the strength of a connection is the *correlation coefficient*.  This will be familiar to anyone who has taken a statistics course. It's a number between $-1$ and $1$.
+
+```{r echo=FALSE,results="hold",out.width="25%"}
+Small <- 
+  HappinessIndex %>% 
+  select( freedom, corruption, 
+          gdpPerCapita, lifeExpectancy,socialSupport,generosity) 
+ggplot( Small, aes(x=corruption, y=freedom)) + geom_point() +
+  stat_smooth( method=lm )
+ggplot( Small, aes(x=socialSupport, y=generosity)) + 
+  geom_point() +
+  stat_smooth( method=lm )
+ggplot( Small, aes(x=gdpPerCapita, y=lifeExpectancy)) + 
+  geom_point() +
+  stat_smooth( method=lm )
+```
+
+![Correlation between variables in `HappinessIndex`.  Left: negative correlation; Center: zero correlation; Right: positive correlation.](blank.png)
+
+
+Imagine taking every possible pair of variables and calculating the correlation coefficient within the pair.  This *correlation matrix* could be displayed with a heat map: bright colors for positive correlations, dark colors for negative.
+
+
+```{r echo=FALSE}
+M <-
+  HappinessIndex %>%
+  select( -country, -region ) %>%
+  cor( use="complete")
+M2 <- M[,(sort(colnames(M)))] %>% 
+  as.data.frame(M2) %>% mutate( var1=as.character(rownames(M))) %>%
+  arrange(desc(var1))
+Mlong <- gather(data.frame(M2), key="var2", value='r', -var1 ) 
+ggplot( Mlong, aes(x=var1, y=var2 )) + geom_tile( aes(fill=r) ) +
+  theme(axis.text.x=element_text(angle=60,hjust=1)) +
+  xlab("") + ylab("")
+```
+
+![The correlation matrix.  Bright colors reflect a positive correlation near 1.  Dark colors are for negative correlations.](blank.png)
+
+The `r nrow(Mlong)` pairwise correlations here can be hard to interpret.  You can see that `corruption` and `affectNeg` are negatively correlated with just about everything else.  Among the other variables, there is no clear pattern.
+
+The correlation is an imperfect measure of connection; the straight-line model underlying it does not always capture the pattern of the points.  Nonetheless, it's a place to start.
+
+Another straightforward visualization of the relationships among variables is a network connecting the most highly correlated pairs.  In the following graph, an edge has been included for each vertex for the 3 most highly correlated variables.
+
+```{r echo=FALSE}
+set.seed(104)
+keepers <- 
+  Mlong %>% 
+  filter( r < 1 ) %>% 
+  group_by( var1 ) %>%
+  filter(rank(desc(abs(r)))<=3)
+V <- edgesToVertices( keepers, from=var1, to=var2 )
+E <- edgesForPlotting( V, ID=ID, x, y, from=var1, to=var2, Edges=keepers)
+ggplot( V ) + 
+  geom_segment( data=E, 
+                aes( x=x, y=y, xend=xend, yend=yend,
+                     color=factor(sign(r)),
+                     size=5*(abs(r))) ) +
+  geom_text(size=6, aes(label=ID, x=x, y=y))  + 
+  theme(axis.ticks=element_blank(),      
+        axis.text=element_blank(), 
+        panel.background=element_blank()) +
+  xlab("") + ylab("")  + guides( color=FALSE, size=FALSE )
+```
+
+![A network connecting the most highly correlated variables.  Red is a negative correlation, blue a positive.  Line thickness indicates the size of r.](blank.png)
+```
+
+```{r echo=FALSE}
+M <-
+  CountryData %>%
+  select( -country ) %>%
+  cor( use="complete")
+M2 <- M[,(sort(colnames(M)))] %>% 
+  as.data.frame(M2) %>% mutate( var1=as.character(rownames(M))) %>%
+  arrange(desc(var1))
+Mlong <- gather(data.frame(M2), key="var2", value='r', -var1 ) 
+ggplot( Mlong, aes(x=var1, y=var2 )) + geom_tile( aes(fill=r) ) +
+  theme(axis.text.x=element_text(angle=60,hjust=1)) +
+  xlab("") + ylab("")
+```
+
+
+```{r echo=FALSE}
+set.seed(104)
+keepers <- 
+  Mlong %>% 
+  filter( r < 1 ) %>% 
+  group_by( var1 ) %>%
+  filter(rank(desc(abs(r-.3)))<=5)
+V <- edgesToVertices( keepers, from=var1, to=var2 )
+E <- edgesForPlotting( V, ID=ID, x, y, from=var1, to=var2, Edges=keepers)
+ggplot( V ) + 
+  geom_segment( data=E, 
+                aes( x=x, y=y, xend=xend, yend=yend,
+                     color=factor(sign(r)),
+                     size=5*(abs(r))) ) +
+  geom_text(size=6, aes(label=ID, x=x, y=y))  + 
+  theme(axis.ticks=element_blank(),      
+        axis.text=element_blank(), 
+        panel.background=element_blank()) +
+  xlab("") + ylab("")  + guides( color=FALSE, size=FALSE )
+```
+
+Singular Value decomposition:
+```{r}
+foo <- 
+  CountryData %>% 
+  select(-country) %>% 
+  as.matrix()
+foo[is.na(foo)] <- 0
+#  cor(use="complete") %>% 
+goo <-  svd(foo) 
+```
+## Clustering
+
+## Partition Models
+
+## Statistical Models
+
+The `CountryData` data table includes the name of the country and `r length(CountryData)-1` variables.  It's easy to come up with hypotheses about the relationships between variables, for instance that money savings should go along with Gross Domestic Product.
+
+```{r include=FALSE,eval=FALSE}
+require(XML)
+foo <- getURLContent(
+  "http://en.wikipedia.org/wiki/World_Happiness_Report")
+goo <- readHTMLTable( foo )
+Happiness <-
+  goo[[1]] %>% 
+  mutate( country=as.character(Country),
+          happinessChange=
+            as.numeric(as.character(
+              `Change in happiness\nfrom 2005-07`)), 
+          happiness=as.numeric(as.character(Happiness))) %>% 
+  select(country, happiness, happinessChange) %>%
+  mutate( country=ifelse(country="South Korea","Korea, South",country))
+CountryData <- inner_join(CountryData, Happiness)
+```
+
+```
+Happyr <- 
+  pairCor(select(CountryData,-country)) %>% 
+  filter( name1=="happiness" | name2=="happiness")
+arrange( Happyr, desc(abs(r))) %>% head
+```
+
+Country [Happiness index](http://en.wikipedia.org/wiki/World_Happiness_Report)
  
+```{r eval=FALSE,echo=FALSE}
+library(tm)
+pdf <- readPDF(control=list(text = "-layout"))
+
+dat <- pdf(elem = list(uri='/Users/kaplan/Downloads/HappinessData.pdf'), language='en', id='id1')
+chars <- paste(dat$content, collapse="\\n")
+```
+ 
+# Notes in draft
+
 ## Dimension Reduction
 
 Data can be a picture of Mindo.  It's the numbers that constitute the datatable.  But the information (for us humans or dogs) is the overall shape.  This amount of data is overkill: you can see the pattern even if we take every second or third row --- so only one-half or one-third of the variables convey the information.  The other ones are redundant.  
@@ -17,5 +194,7 @@ How to do this when there's not a person doing the interpretation.  SVD of NCI d
 Fit linear models to, say, cardiac death versus BMI and sex and other variables.  Which ones are important.  We can capture a lot of the information using just a few main effects and perhaps some interactions.
 
 
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```
 
 

@@ -19,9 +19,11 @@ In the ranked-choice ballot system, once a voter has picked a first choice candi
 
 In answering each of the following, you should include three things:
 
-1. A statement in English (using data verbs!) of your strategy for carry out the calculation.
+1. A statement in English (using data verbs!) of your strategy for carrying out the calculation.
 2. The implementation of the calculation in R.
 3. The data table that is the result of the calculation.  This will be printed automatically from (2).  You **do not** have to format the result beautifully.  It's sufficient to show the first few lines in the data table appear.  (Remember `head()`).
+
+Here are the questions.
 
 * How many people chose the same candidate for both `First` and `Second` place?
 * Of the ballots where the `First` and `Second` place choices are the same, what were the top 3 choices?
@@ -44,7 +46,7 @@ In the `MedicareCharges` data table:
         * lowest proportion
         * highest proportion
         
-* Make a scatterplot map of the locations of the Medicare providers. (Hint: the ZIP code provides this information, if you can translate it into latitude and longitude.)  Overlay this on a choropleth map giving the population of each state.
+* Make a scatterplot map of the locations of the Medicare providers. (Hint: the ZIP code provides this information. You can translate it into latitude and longitude with `ZipGeography`.)  Overlay this on a choropleth map giving the population of each state.
 
 * Suppose you wanted to display how many people were treated for problems in various body systems: Heart, Respiratory, Skeletal, BrainCNS, Blood, Circulation, Psychology, Sepsis, Kidney, Endocrine, Digestive, Other.  To help, a translation table is available.  You can access it with commands these commands (which create a data table named `DRGtoBodySystem`): 
 ```{r eval=FALSE}
@@ -63,10 +65,9 @@ Join the zip code geography and demography:
 * Make another bar chart showing the *proportion* of the state's population that is in each of the age categories. 
 * Call a ZIP code "crowded" when the population is over 50,000.  Make a scatter plot showing the geographic location of the crowded zips. 
 * Make a choropleth map of the US showing, for each state, one of the following (your choice).  Hint: you'll have to sum over all the ZIP codes in a state before you can meaningfully find the fraction.
-
-* the fraction of housing units (`Totalhousingunits`) that are vacant (`Vacanthousingunits`).  
-* the fraction of the population that is over 65 years old.
-* the fraction of the population with a bachelor's degree (`Bachelorsdegreeorhigher`).
+    * the fraction of housing units (`Totalhousingunits`) that are vacant (`Vacanthousingunits`).  
+    * the fraction of the population that is over 65 years old.
+    * the fraction of the population with a bachelor's degree (`Bachelorsdegreeorhigher`).
 
 
 Pick out the 10000 zip codes with the highest population.  Make a scatter plot of the latitude versus longitude.  (Hint: `arrange()` and `head()`.)  Use color to represent the fraction of the population that is over 65.
