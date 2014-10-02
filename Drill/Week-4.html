@@ -6,7 +6,6 @@
 
 <meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
 <meta name="generator" content="pandoc" />
 
 
@@ -36,6 +35,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </script>
 
 
+<link href="data:text/css,body%20%7B%0A%20%20%20%20%20%20%20%20font%2Dfamily%3A%20%27Lora%27%2C%20serif%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Efigure%20%7B%0A%20%20%20%20%20%20%20%20background%2Dcolor%3Aghostwhite%3B%0A%20%20%20%20%20%20%20%20padding%3A12pt%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Ecaption%7B%0A%20%20%20%20%20%20%20%20font%2Dstyle%3Aitalic%3B%0A%20%20%20%20%20%20%20%20width%3A40%25%3B%0A%20%20%20%20%20%20%20%20margin%3A12pt%3B%0A%20%20%20%20%20%20%20%20float%3A%20left%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2EdisplayAsFigure%7B%0A%20%20%20%20%20%20%20%20background%2Dcolor%3A%20ghostwhite%3B%0A%20%20%20%20%20%20%20%20padding%3A12pt%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Etable%2Dscroller300%20%7B%0A%20%20%20%20%20%20%20%20width%3A%20300px%3B%0A%20%20%20%20%20%20%20%20height%3A%20200px%3B%0A%20%20%20%20%20%20%20%20overflow%2Dx%3A%20scroll%3B%0A%20%20%20%20%20%20%20%20overflow%2Dy%3A%20scroll%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Etable%2Dscroller600%20%7B%0A%20%20%20%20%20%20%20%20width%3A%20600px%3B%0A%20%20%20%20%20%20%20%20height%3A%20200px%3B%0A%20%20%20%20%20%20%20%20overflow%2Dx%3A%20scroll%3B%0A%20%20%20%20%20%20%20%20overflow%2Dy%3A%20scroll%3B%0A%20%20%20%20%20%20%7D%0A%0A%7D" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -53,194 +53,447 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 
 
+<!--
+% Common elements of a DCF document
+-->
+
+<!-- UNCOMMENT THE NEXT LINE FOR PRODUCTION -->
+<!--
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
+-->
+
+
+
+<!-- Change this to add parameters for the scroller -->
+
+
+
+
+<!--- Control the display of answers -->
+<style>
+  aside.answer {color:white; background-color:blue; display:none;}
+</style>
+
+
 <div id="week-4" class="section level2">
 <h2>Week 4</h2>
-<div id="multiple-choice" class="section level3">
-<h3>Multiple Choice</h3>
-<p>There are three (simple) steps to creating a multiple-choice problem in <em>ScoreR</em>:</p>
-<ol style="list-style-type: decimal">
-<li>Initialization of the question</li>
-<li>Creation of the individual items, typically embedded in <em>markdown</em> statements</li>
-<li>Termination of the question.</li>
+<div id="functions-and-their-roles" class="section level3">
+<h3>Functions and their roles</h3>
+<p>Identify each of these functions as either a <strong>Data Verb</strong>, a <strong>Transformation</strong>, a <strong>Summary Function</strong>, or a <strong>Quick Presentation</strong> or a <strong>Comparison Expression</strong>.</p>
+<ul>
+<li><code>str()</code>
+<aside class="answer"> 
+Quick presentation
+</aside></li>
+<li><code>group_by()</code>
+<aside class="answer"> 
+Data verb
+</aside></li>
+<li><code>rank()</code>
+<aside class="answer"> 
+Transformation
+</aside></li>
+<li><code>mean()</code>
+<aside class="answer"> 
+Summary Function
+</aside></li>
+<li><code>filter()</code>
+<aside class="answer"> 
+Data Verb
+</aside></li>
+<li><code>summary()</code>
+<aside class="answer">
+Quick presentation
+</aside></li>
+<li><code>summarise()</code>
+<aside class="answer">
+Data verb
+</aside></li>
+<li><code>anti_join()</code>
+<aside class="answer">
+Data verb
+</aside></li>
+<li><code>merge()</code>
+<aside class="answer">
+Data verb
+</aside></li>
+<li><code>glimpse()</code>
+<aside class="answer">
+Quick presentation
+</aside>
+</li>
+</ul>
+</div>
+<div id="diamonds" class="section level3">
+<h3>Diamonds</h3>
+<p>These questions refer to the <code>diamonds</code> data table. Take a look at the codebook (using <code>help()</code>) so that you’ll understand the meaning of the tasks.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> Write, using paper and pen, an expression that will answer these questions.</p>
+<ul>
+<li>What’s the largest diamond depth observed for each clarity group?</li>
+<li>What color of diamond is most common for each of the different cuts?</li>
+</ul>
+</div>
+<div id="output-from-summarising" class="section level3">
+<h3>Output from Summarising</h3>
+<p>Imagine a data table, <code>Patients</code>, with categorical variables <code>name</code>, <code>diagnosis</code>, <code>sex</code>, and quantitative variable <code>age</code>.</p>
+<p>You have a statement in the form</p>
+<pre><code>Patients %&gt;%
+  group_by(  some variables ) %&gt;%
+  summarise( count=n(), meanAge=mean(age) )</code></pre>
+<p>Replacing <code>some variables</code> with each of the following, say …</p>
+<ul>
+<li>what variables will appear in the output</li>
+<li>whether <code>meanAge</code> will contain any new information.</li>
+</ul>
+<ol>
+<li><code>sex</code></li>
+<li><code>diagnosis</code></li>
+<li><code>sex</code>, <code>diagosis</code></li>
+<li><code>age</code>, <code>diagnosis</code></li>
+<li><code>age</code></li>
 </ol>
-<p>Initialization is done with the <code>newMC()</code> function.</p>
-<pre class="r"><code>f = newMC(totalPts=5,name=&quot;minus1&quot;) # Ordinarily, make this silent</code></pre>
-<p>The function name, in this case <code>f</code>, is arbitrary. You will use that name to create the individual items with statements like <code>I(f(TRUE))</code> and I(f(FALSE))`, which will be embedded in text. For instance:</p>
-<p>Which of these is equal to <span class="math">\(-1\)</span>?<br /><label for="MCitem1"><input type="radio" name="ScoreR1" id="MCitem1" value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;A&quot; 
-}"> <b>A</b></label> The value of <span class="math">\(a x^2 + b x - c\)</span> for all <span class="math">\(a\)</span>, <span class="math">\(b\)</span>, and <span class="math">\(c\)</span><br /><label for="MCitem2"><input type="radio" name="ScoreR1" id="MCitem2" value="{
- &quot;pts&quot;:      5,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;B&quot; 
-}"> <b>B</b></label> <span class="math">\(e^{i\pi}\)</span><br /><label for="MCitem3"><input type="radio" name="ScoreR1" id="MCitem3" value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;C&quot; 
-}"> <b>C</b></label> <span class="math">\(\ln(0)\)</span><br /><label for="MCitem4"><input type="radio" name="ScoreR1" id="MCitem4" value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;D&quot; 
-}"> <b>D</b></label> There’s no such thing as a negative number, just a negative attitude. <input type="text" readonly="readonly" style="color:green" size="3" id="ScoreR1out"></input><select style="visibility: hidden" width="5" name="ScoreR1info"><option value="{
- &quot;setID&quot;: &quot;DCF-Assignment4&quot;,
-&quot;itemN&quot;:      1,
-&quot;name&quot;: &quot;minus1&quot;,
-&quot;totalpts&quot;:      5,
-&quot;type&quot;: &quot;MC&quot;,
-&quot;reward&quot;: &quot;&quot; 
-}">Question info</option></select></p>
-<p>After the items have been defined, terminate the question by calling the function with the argument <code>finish=TRUE</code></p>
-<pre class="r"><code>I(f(finish=TRUE))</code></pre>
-<p>You may well want to use inline knitr notation — that’s up to you.</p>
 </div>
-<div id="select-from-a-set" class="section level3">
-<h3>Select from a set</h3>
-<p>What’s the value of <span class="math">\(\pi\)</span>?</p>
-<pre class="r"><code>piQuestion3 = selectSet(name=&quot;piValue3&quot;,totalPts=4,
-                        &quot;2.71727&quot;=FALSE,
-                        &quot;3.0&quot;=FALSE,
-                        &quot;3.14159&quot;=TRUE,
-                        &quot;6.28318&quot;=FALSE)</code></pre>
+<div id="wide-and-narrow" class="section level3">
+<h3>Wide and Narrow</h3>
+<p>Here are three data tables with the same information:</p>
+<style>
+td, th {
+    padding: 3px;
+}
+tr  {
+    vertical-align: "top";
+    padding: 15px;
+    border-collapse: collapse;
+}
+</style>
+</head>
+
+<body>
+<table border="1">
+ <caption>
+The same data presented in three versions
+</caption> 
+  <tr> 
+    <th>
+Version One
+</th><th>
+Version Two
+</th><th>
+Version Three
+</th>
+  </tr>
+  <tr>
+    <td>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Thu Oct  2 18:10:24 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+name
+</TH> <TH> 
+sex
+</TH> <TH> 
+year
+</TH> <TH> 
+nbabies
+</TH>  </TR>
+  <TR> <TD> 
+Harrison
+</TD> <TD> 
+M
+</TD> <TD align="right"> 
+1912
+</TD> <TD align="right"> 
+170
+</TD> </TR>
+  <TR> <TD> 
+Roderick
+</TD> <TD> 
+M
+</TD> <TD align="right"> 
+1912
+</TD> <TD align="right">  
+46
+</TD> </TR>
+  <TR> <TD> 
+Terry
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+1912
+</TD> <TD align="right">  
+17
+</TD> </TR>
+  <TR> <TD> 
+Terry
+</TD> <TD> 
+M
+</TD> <TD align="right"> 
+1912
+</TD> <TD align="right">  
+49
+</TD> </TR>
+  <TR> <TD> 
+Harrison
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+2012
+</TD> <TD align="right">  
+15
+</TD> </TR>
+  <TR> <TD> 
+Harrison
+</TD> <TD> 
+M
+</TD> <TD align="right"> 
+2012
+</TD> <TD align="right"> 
+2120
+</TD> </TR>
+  <TR> <TD> 
+Roderick
+</TD> <TD> 
+M
+</TD> <TD align="right"> 
+2012
+</TD> <TD align="right"> 
+202
+</TD> </TR>
+  <TR> <TD> 
+Terry
+</TD> <TD> 
+F
+</TD> <TD align="right"> 
+2012
+</TD> <TD align="right">  
+17
+</TD> </TR>
+  <TR> <TD> 
+Terry
+</TD> <TD> 
+M
+</TD> <TD align="right"> 
+2012
+</TD> <TD align="right"> 
+479
+</TD> </TR>
+   </TABLE>
+    </td>
+    <td>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Thu Oct  2 18:10:24 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+name
+</TH> <TH> 
+year
+</TH> <TH> 
+F
+</TH> <TH> 
+M
+</TH>  </TR>
+  <TR> <TD> 
+Harrison
+</TD> <TD align="right"> 
+1912
+</TD> <TD align="right">  </TD> <TD align="right"> 
+170
+</TD> </TR>
+  <TR> <TD> 
+Harrison
+</TD> <TD align="right"> 
+2012
+</TD> <TD align="right">  
+15
+</TD> <TD align="right"> 
+2120
+</TD> </TR>
+  <TR> <TD> 
+Roderick
+</TD> <TD align="right"> 
+1912
+</TD> <TD align="right">  </TD> <TD align="right">  
+46
+</TD> </TR>
+  <TR> <TD> 
+Roderick
+</TD> <TD align="right"> 
+2012
+</TD> <TD align="right">  </TD> <TD align="right"> 
+202
+</TD> </TR>
+  <TR> <TD> 
+Terry
+</TD> <TD align="right"> 
+1912
+</TD> <TD align="right">  
+17
+</TD> <TD align="right">  
+49
+</TD> </TR>
+  <TR> <TD> 
+Terry
+</TD> <TD align="right"> 
+2012
+</TD> <TD align="right">  
+17
+</TD> <TD align="right"> 
+479
+</TD> </TR>
+   </TABLE>
+    </td> 
+    <td>
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+<!-- Thu Oct  2 18:10:24 2014 -->
+<TABLE border="1">
+<TR> <TH> 
+name
+</TH> <TH> 
+sex
+</TH> <TH> 
+1912
+</TH> <TH> 
+2012
+</TH>  </TR>
+  <TR> <TD> 
+Harrison
+</TD> <TD> 
+F
+</TD> <TD align="right">  </TD> <TD align="right">  
+15
+</TD> </TR>
+  <TR> <TD> 
+Harrison
+</TD> <TD> 
+M
+</TD> <TD align="right"> 
+170
+</TD> <TD align="right"> 
+2120
+</TD> </TR>
+  <TR> <TD> 
+Roderick
+</TD> <TD> 
+M
+</TD> <TD align="right">  
+46
+</TD> <TD align="right"> 
+202
+</TD> </TR>
+  <TR> <TD> 
+Terry
+</TD> <TD> 
+F
+</TD> <TD align="right">  
+17
+</TD> <TD align="right">  
+17
+</TD> </TR>
+  <TR> <TD> 
+Terry
+</TD> <TD> 
+M
+</TD> <TD align="right">  
+49
+</TD> <TD align="right"> 
+479
+</TD> </TR>
+   </TABLE>
+    </td>
+ </tr>
+</table>
+ 
+<ol>
+<li>What is the meaning of a case in each of the tables?
 <ul>
-<li>Let’s try that again … <select name="ScoreR2"><option value="NA" selected>UNANSWERED</option> <option value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;2.71727&quot; 
-}">2.71727</option> <option value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;3.0&quot; 
-}">3.0</option> <option value="{
- &quot;pts&quot;:      4,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;3.14159&quot; 
-}">3.14159</option> <option value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;6.28318&quot; 
-}">6.28318</option></select><small><input type="text" readonly="readonly" style="color:green" size="3" id="ScoreR2out"></input></small><select style="visibility: hidden" width="5" name="ScoreR2info"><option value="{
- &quot;setID&quot;: &quot;DCF-Assignment4&quot;,
-&quot;itemN&quot;:      2,
-&quot;name&quot;: &quot;piValue3&quot;,
-&quot;totalpts&quot;:      4,
-&quot;type&quot;: &quot;Fixed Choice&quot; 
-}">Info for Select Set</option></select></li>
+<li>Version One</li>
+<li>Version Two</li>
+<li>Version Three</li>
+</ul></li>
+<li>Comparing Version One to Version Two, which table is narrow and which one is wide?<br /></li>
+<li>What “key” variable from the narrow table is being used?</li>
+<li>There are no <code>NA</code>s in Version One, but there are in Versions Two and Three. Why?</li>
+<li>Version Two has 6 cases, while Version 3 has only 5 cases. How can they contain the same information?</li>
+<li>Version Three was “spread” from Version One. What variable was used to denote the spread columns?</li>
+<li>Version One can be created by gathering columns from Version Two.
+<ul>
+<li>Which variables from Two were gathered into One?<br /></li>
+<li>What “key” variable, not explicitly named in Version Two, does appear in Version One?</li>
+<li>Where where the values taken from Version Two to use as levels in the key variable created for Version One?</li>
+</ul></li>
+</ol>
+<ul>
+<li><p>Suppose you want to create the following table with the name of the most popular name of either sex each year</p>
+<pre><code>Source: local data frame [4 x 4]
+Groups: year, sex
+
+      name sex year nbabies
+1 Roderick   M 1912      46
+2    Terry   F 1912      17
+3 Harrison   F 2012      15
+4 Roderick   M 2012     202</code></pre>
+What should the chain of commands look like to make this from Table One?</li>
+<li><p>Suppose you want to calculate the ratio of male to female in each name in each year. Like this:</p>
+<pre><code>Source: local data frame [6 x 3]
+
+      name year    ratio
+1 Harrison 1912       NA
+2 Harrison 2012 0.007075
+3 Roderick 1912       NA
+4 Roderick 2012       NA
+5    Terry 1912 0.346939
+6    Terry 2012 0.035491</code></pre>
+<ul>
+<li>Would you rather start from Version Two or Version Three?</li>
+<li>If you were given Version One, would you rather work directly on that with the data verbs or, first, translate to one of the other forms?</li>
+</ul></li>
 </ul>
 </div>
-<div id="free-text" class="section level3">
-<h3>Free Text</h3>
-<p>The <code>freeText()</code> function in <code>ScoreR</code> implements free-text entry. It’s very, very simple to add a free-text question to a problem. Just</p>
-<textarea cols="30" rows="2" id="ScoreR3" placeholder="Your answer here ..."></textarea>
-<p><select style="visibility: hidden" width="5" name="ScoreR3info"><option value="{
- &quot;setID&quot;: &quot;DCF-Assignment4&quot;,
-&quot;itemN&quot;:      3,
-&quot;name&quot;: &quot;question-topic&quot;,
-&quot;totalpts&quot;:     10,
-&quot;type&quot;: &quot;Free text&quot;,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;&quot; 
-}">Question info for free text</option></select></p>
-<p>The name, of course, should be unique within the problem. The optional arguments <code>rows</code> and <code>cols</code> sets the size of the text entry box. On many browsers, this block can be resized by the user, so a small box is useful in for adding in extended text.</p>
+
+
+<hr>
+
+<p>Please use the comment system to make suggestions, point out errors, or to discuss the topic.</p>
+<div id="disqus_thread">
+
 </div>
-<div id="second-part" class="section level3">
-<h3>Second Part</h3>
-<p>A perennial problem when writing scientific reports is figuring out how many significant digits to report. It’s naïve to copy all the digits from one’s calculator or computer output; the data generally do not justify such precision.</p>
-<p>Once you have a confidence interval, however, you do not need to guess how many significant digits are appropriate. The standard error provides good guidance. Here is a rule of thumb: keep two significant digits of the margin of error and round the point estimate to the same precision.</p>
-<p>For example, suppose you have a confidence interval of <span class="math">\(1.7862 \pm 0.3624\)</span> with 95% confidence. Keeping the first two significant digits of the margin of error gives <span class="math">\(0.36\)</span>. We’ll keep the point estimate to the same number of digits, giving altogether <span class="math">\(1.79 \pm 0.36\)</span>.</p>
-<p>Another example: suppose the confidence interval is <span class="math">\(6548.23 \pm 1321\)</span>. Keeping the first two digits of the margin of error gives <span class="math">\(1300\)</span>, with a corresponding margin of error of <span class="math">\(6500 \pm 1300\)</span>.</p>
-<ul>
-<li>Suppose the computer output is <span class="math">\(0.03234232 \pm 0.01837232\)</span>.</li>
-</ul>
-<p>Using this rule of thumb, what should you report in as the confidence interval?<br /><label for="MCitem1"><input type="radio" name="ScoreR4" id="MCitem1" value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;A&quot; 
-}"> <b>A</b></label> <span class="math">\(0.3234 \pm 0.01837\)</span><br /><label for="MCitem2"><input type="radio" name="ScoreR4" id="MCitem2" value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;B&quot; 
-}"> <b>B</b></label> <span class="math">\(0.3234 \pm 0.0183\)</span><br /><label for="MCitem3"><input type="radio" name="ScoreR4" id="MCitem3" value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;C&quot; 
-}"> <b>C</b></label> <span class="math">\(0.0323 \pm 0.0184\)</span><br /><label for="MCitem4"><input type="radio" name="ScoreR4" id="MCitem4" value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;D&quot; 
-}"> <b>D</b></label> <span class="math">\(0.0323 \pm 0.018\)</span><br /><label for="MCitem5"><input type="radio" name="ScoreR4" id="MCitem5" value="{
- &quot;pts&quot;:      1,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;E&quot; 
-}"> <b>E</b></label> <span class="math">\(0.032 \pm 0.018\)</span><br /><label for="MCitem6"><input type="radio" name="ScoreR4" id="MCitem6" value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;F&quot; 
-}"> <b>F</b></label> <span class="math">\(0.032 \pm 0.01\)</span><br /><label for="MCitem7"><input type="radio" name="ScoreR4" id="MCitem7" value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;G&quot; 
-}"> <b>G</b></label> <span class="math">\(0.03 \pm 0.01\)</span><br /><input type="text" readonly="readonly" style="color:green" size="3" id="ScoreR4out"></input><select style="visibility: hidden" width="5" name="ScoreR4info"><option value="{
- &quot;setID&quot;: &quot;DCF-Assignment4&quot;,
-&quot;itemN&quot;:      4,
-&quot;name&quot;: &quot;confidence.interval&quot;,
-&quot;totalpts&quot;:      1,
-&quot;type&quot;: &quot;MC&quot;,
-&quot;reward&quot;: &quot;&quot; 
-}">Question info</option></select></p>
-<ul>
-<li>Now suppose the computer output were <span class="math">\(99.63742573 \pm 1.48924367\)</span>.</li>
-</ul>
-<p>What should you report as the confidence interval?<br /><label for="MCitem1"><input type="radio" name="ScoreR5" id="MCitem1" value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;A&quot; 
-}"> <b>A</b></label> <span class="math">\(100 \pm 1\)</span><br /><label for="MCitem2"><input type="radio" name="ScoreR5" id="MCitem2" value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;B&quot; 
-}"> <b>B</b></label> <span class="math">\(99 \pm 1.5\)</span><br /><label for="MCitem3"><input type="radio" name="ScoreR5" id="MCitem3" value="{
- &quot;pts&quot;:      1,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;C&quot; 
-}"> <b>C</b></label> <span class="math">\(99.6 \pm 1.5\)</span><br /><label for="MCitem4"><input type="radio" name="ScoreR5" id="MCitem4" value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;D&quot; 
-}"> <b>D</b></label> <span class="math">\(99.64 \pm 1.49\)</span><br /><label for="MCitem5"><input type="radio" name="ScoreR5" id="MCitem5" value="{
- &quot;pts&quot;:      0,
-&quot;hint&quot;: &quot;&quot;,
-&quot;reward&quot;: &quot;Right!&quot;,
-&quot;content&quot;: &quot;E&quot; 
-}"> <b>E</b></label> <span class="math">\(99.647 \pm 1.489\)</span> <input type="text" readonly="readonly" style="color:green" size="3" id="ScoreR5out"></input><select style="visibility: hidden" width="5" name="ScoreR5info"><option value="{
- &quot;setID&quot;: &quot;DCF-Assignment4&quot;,
-&quot;itemN&quot;:      5,
-&quot;name&quot;: &quot;confidence.interval.2&quot;,
-&quot;totalpts&quot;:      1,
-&quot;type&quot;: &quot;MC&quot;,
-&quot;reward&quot;: &quot;&quot; 
-}">Question info</option></select></p>
-<p><select style="visibility: hidden" width="5" name="roster"><option value="[ &quot;minus1&quot;, &quot;piValue3&quot;, &quot;question-topic&quot;, &quot;confidence.interval&quot;, &quot;confidence.interval.2&quot; ]">problem roster</option></select></p>
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'dcf2014'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>
+Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+<p><a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></p>
+<style>
+.vcenter {
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+}
+</style>
+<div class="vcenter">
+<div style="padding-left:10px;padding-top:10px;margin-top:10px;vertical-align:middle;">
+<img src="data:image/jpeg;base64,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" width="48" class="img-rounded" style="float:right;margin:5px;vertical-align:middle;" />
 </div>
+<p style="background-color:gray;padding-left:10px;padding-top:10px;margin-right:0px;">
+Written by Daniel Kaplan for the Data &amp; Computing Fundamentals Course. Development was supported by grants from the National Science Foundation for Project Mosaic (NSF DUE-0920350) and from the Howard Hughes Medical Institute.
+</p> 
+
+
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Motivated by <a href="http://www.public.iastate.edu/~hofmann/stat480/homework/dplyr%20drills.html">this problem set</a> based on drills by Garrett Grolemund.<a href="#fnref1">↩</a></p></li>
+</ol>
 </div>
 
 
@@ -255,12 +508,12 @@ $(document).ready(function () {
 
 </script>
 
-<!-- dynamically load mathjax for compatibility with --self-contained -->
+<!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
