@@ -271,8 +271,8 @@ Example:
 <<results='hold',echo=-5,eval=TRUE>>=
 DT %>%
  ggplot(aes(x=height,y=weight)) +
- geom_text( aes(label=name) ) +
- geom_point(aes(color=sex,size=sex))     +
+ geom_point(aes(color=sex,size=sex)) +
+ geom_text( aes(label=name) )                          +    
                                             xlim(1.63,1.85) + ylim(50,80)
 @
 

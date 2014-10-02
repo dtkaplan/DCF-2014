@@ -3,4 +3,5 @@ title: "Draft Narrative"
 output: html_document
 ---
 
-In this document, place draft narrative for this section of the notes. 
+Grab some baby-related names [here](http://baby-names.familyeducation.com/browse/origin/african).  Use this, along with `BabyNames` to figure out the ethnicity distribution over the years.
+
