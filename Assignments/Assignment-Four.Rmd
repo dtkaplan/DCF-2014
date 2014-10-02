@@ -6,15 +6,15 @@ output:
   html_document:
     css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
     fig_caption: yes
-    toc: yes
+    toc: no
 ---
 
 ```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
 ```
 
-## Simple Problems
+## State by State
 
-Using the `ZipGeography` data table, answer these questions:
+Using the `ZipGeography` data table, answer the following questions.  In addition to the answer itself, show the statement that you used and the data table created by your statement that contains the answer.
 
 * Which city names are used in the most states?
 * Which city names with more than 5% of the state population are used in the most states?
@@ -22,9 +22,59 @@ Using the `ZipGeography` data table, answer these questions:
 * Does any city have more than one time zone? 
 * Does any county have more than one time zone?
 
+## Babies and the Bible  
+
+You can access a list of bible-related first names with this command:
+```{r}
+BibleNames <- fetchData("DCF/BibleNames.csv")
+```
+
+It looks like this:
+```{r echo=FALSE}
+head(BibleNames)
+```
+
+1. Using `BibleNames` and `BabyNames` ...
+    * Create a data table, `BibleCount`, that gives, for each sex and each year, the number of babies born with bible-related names.  
+    * Make a meaningful graphic from `BibleCount` displaying this.
+    * Create a data table, `BibleGirls` that lists biblical names that are used primarily for girls.
+
+## Gender-Neutral Names
+
+The `BabyNames` data table looks like this:
+```{r echo=FALSE}
+Small <- sample_n(BabyNames, size=100000)
+rownames(Small) <- NULL
+head(Small,6)
+```
 
 
-## Birds at the Ordway Nature Reserve --- this is in an in-class activity
+
+Turn this into a wide-format table that looks like this:
+```{r echo=FALSE}
+Small %>% 
+  spread( key=sex, value=count ) %>%
+  filter( M>5, F>5) %>%
+  head()
+```
+
+Your statement will have the following form: you have to fill in the variable name to replace ???
+```
+Wider <-
+  BabyNames %>%
+  spread( key=???, value=count ) %>%
+  filter( F>1, M>1 )
+```
+
+Now that you have `Wider` ... 
+
+1. Find the 10 names with the closest balance between females and males.  You can define gender-balance quantitatively as `abs(log(F/M))`.  The smaller this number, the more balanced the name count.
+2. Find the 10 names with the closest balance that have more than 100 babies of either sex.
+3. **Extra Credit**. Find the 10 names with the closest balance that have lasting popularity.  Define lasting popularity as having more than 100 babies in at least 20 of the years.
+
+
+
+## Birds at the Ordway Nature Reserve
 
 Here's part of a data table showing how many times birds of each species appear in the `OrdwayBirds` data.  Construct a statement that generates this table.
 
@@ -72,59 +122,6 @@ CorrectlyCounted %>%
   arrange( desc(fractionWrong) ) %>%
   select( -fractionWrong ) %>% head()
 ```
-
-
-## Review
-
-* CVC/Summer2014/Activities/NCI60.Rmd.  There's only one join operation in the thing, but that's why the topic is in this week rather than week 3.
-
-## Join  
-
-Biblical names: get a list of bible-related names, join these with BabyNames so that there's a biblical column.  How have biblical names gone up or down over the years.
-
-Standardizing country codes: See the CVC/Summer2014 exercise: WorldPop.Rmd
-
-Disasters --- join with population data to produce a risk factor for each state.
-
-### Entropy of Baby Names
-
-Turn each name count into a fraction for that year.  Then calculate the entropy over time for boys and girls separately.
-
-```{r}
-Entropy <- BabyNames %>%
-  group_by( sex, year ) %>%
-  mutate( frac=count/sum(count) ) %>%
-  ungroup() %>%
-  group_by( sex, year ) %>% 
-  summarise( entropy=sum( -frac*log2(frac)))
-```
-
-Plot it out:
-```{r}
-ggplot( Entropy, aes(x=year, y=entropy, group=sex, color=sex ) ) +
-  geom_line( )
-```
-
-Higher entropy corresponds to a greater diversity of names.  An entropy of 7 is equivalent to $2^7 = 128$ different names, each of equal likelihood.  An entropy of 10 is equivalent to $2^{10} = 1024$ different names.
-
-### Arrange within group_by()
-
-Or maybe it should be one of the rank functions in filter.
-
-Within each precinct, which ward had the largest number of votes?  (Hint: Make a data table with the number of votes in each `Precinct` `Ward` combination.  Arrange this by `Precinct` and the number of votes.)
-
-### Immigration data
-
-In data scraping, convert the wide format to narrow.  Move to week 7.
-
-### NCI60
-
-Convert the wide format to narrow.
-
-### Pull out the 50 most popular gender-neutral baby names
-
-Then plot out a line graph to see how they change in balance over time.
-
 
 
 ```{r child="../CSS/DisqusTemplate.Rmd"}

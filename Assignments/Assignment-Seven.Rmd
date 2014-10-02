@@ -21,3 +21,10 @@ regex examples:
 * Names with a space (like Lee Ann)
 * Names ending with "joe" (like BettyJoe)
 * Names like Caitlin --- ^[k|c].*[tl].*n$
+
+## From BibleNames
+
+```{r}
+BibleNames <- fetchData("DCF/BibleNames.csv")
+```
+Which bible names have any of these words in them ... [Make a list of words and pick some of the most common.]
