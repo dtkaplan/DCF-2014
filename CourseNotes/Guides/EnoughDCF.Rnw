@@ -43,6 +43,7 @@ opts_chunk$set(eval=FALSE, tidy=FALSE,fig.width=5,fig.height=2.5,message=FALSE,w
 \begin{multicols}{4}
 \raggedright
 
+\small
 \asection{Getting Started} Load the package whenever you start a new session.
 <<include=FALSE,eval=TRUE>>=
 require(DCF)
@@ -127,11 +128,13 @@ head( DT ) tail( DT ) glimpse( DT )
 \vfill
 \columnbreak
 
-\parbox{5.5in}{\asection{Data Verbs} take a data table as input and return as output a modified table.
+\definecolor{light-gray}{gray}{0.97}
+
+\hspace*{-.18in}\colorbox{light-gray}{\parbox{5.35in}{\normalsize\hspace*{.2in}\asection{Data Verbs} take a data table as input and return as output a modified table.
 
 \smallskip
 
-\hspace*{-.2in}\begin{tabular}{llrl}
+\begin{tabular}{llrl}
 Verb & Task & Argument(s) & Example\\\hline
 \texttt{filter()} & Winnow cases & Comparison & \texttt{filter(year$>$2000)}\\
 \texttt{mutate()} & Adds vars. & Transformation & \texttt{mutate(bmi=weight/height\^{}2)}\\
@@ -143,7 +146,7 @@ Join & Combines tables & Data Table & See \asection{Various Joins} \\
 \end{tabular}
 
 \smallskip
-\hspace*{-.15in}All the examples assume a data table is being chained in, e.g. \texttt{DT \%>\% group\_by(sex)}.}
+All the examples assume a data table is being chained in, e.g. \texttt{DT \%>\% group\_by(sex)}.}}
 \bigskip
 
 \asection{Grouping Operations}
@@ -217,7 +220,7 @@ min( weight )  n_distinct()
 
 <<eval=FALSE>>=
 rank( var )
-pmin( var1,var2) #smaller of the two
+pmin( var1, var2) #smaller of the two
 var1/(var1+var2) #division, addition
 @
 
@@ -227,11 +230,11 @@ var1/(var1+var2) #division, addition
 
 \texttt{filter()} uses one or more comparison expression to determine which cases to pass through.
 <<>>=
-filter( DT, height < 1.8 )
-filter( DT, name=="Junior" )
-filter( DT, sex=="F", height < 1.8 )
-filter( DT, count>2000, count<10000 )
-filter( DT, name%in%c("Alma","Gary"))
+DT %>% filter( height < 1.8 )
+DT %>% filter( name=="Junior" )
+DT %>% filter( sex=="F", height < 1.8 )
+DT %>% filter( count>2000, count<10000 )
+DT %>% filter( name%in%c("Alma","Gary"))
 @
 
 \smallskip
@@ -244,7 +247,7 @@ filter( DT, name%in%c("Alma","Gary"))
 
 \asection{Datasets in the DCF Course}
 
-Get a listing with \texttt{data( package="DCF" )}.  All those listed are available by name once the DCF package is loaded.  See also \texttt{mosaicData} and \texttt{NHANES} packages.
+Get a listing with \texttt{data(~package="DCF"~)}.  All those listed are available by name once the DCF package is loaded.  See also \texttt{mosaicData} and \texttt{NHANES} packages.
 
 
 \vfill
@@ -261,18 +264,16 @@ $\bullet$ Functions to add graphical layers\\
 \texttt{geom\_bar()}, etc. Others: \texttt{xlab()}, \texttt{ylab}, \texttt{xlim(low,high)}, \texttt{ylim(low,high)}
 \smallskip
 
-$\bullet$ Distinguish groups using color\\
-\texttt{group=sex}
-\smallskip
 
-$\bullet$ \texttt{aes()} to map variables to graphical attributes (aesthetics).
+$\bullet$ \texttt{aes()} to \bf{map} variables to graphical attributes (aesthetics). E.g. Distinguish groups using color \texttt{aes(color=sex, ...)}. \bf{Set} properties to constants outside \texttt{aes()}.
 
 Example:
 <<results='hold',echo=-5,eval=TRUE>>=
 DT %>%
  ggplot(aes(x=height,y=weight)) +
- geom_point(aes(color=sex,size=sex)) +
- geom_text( aes(label=name) )                          +    
+ geom_point(size=5,           #Setting
+            aes(color=sex,shape=sex)) +
+ geom_text( aes(label=name) )                         +    
                                             xlim(1.63,1.85) + ylim(50,80)
 @
 
