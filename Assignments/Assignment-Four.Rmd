@@ -60,68 +60,19 @@ Small %>%
 
 Your statement will have the following form: you have to fill in the variable name to replace ???
 ```
-Wider <-
+BothSexes <-
   BabyNames %>%
   spread( key=???, value=count ) %>%
   filter( F>1, M>1 )
 ```
 
-Now that you have `Wider` ... 
+Now that you have `BothSexes` ... 
 
 1. Find the 10 names with the closest balance between females and males.  You can define gender-balance quantitatively as `abs(log(F/M))`.  The smaller this number, the more balanced the name count.
 2. Find the 10 names with the closest balance that have more than 100 babies of either sex.
 3. **Extra Credit**. Find the 10 names with the closest balance that have lasting popularity.  Define lasting popularity as having more than 100 babies in at least 20 of the years.
+4. **Extra Credit**.  Are there names that have switched gender over the years.  Find, for each year, the gender ratio.  Pull out ones where the maximum and minumum over the years differ by a large amount.  Then plot out over time.
 
-
-
-## Birds at the Ordway Nature Reserve
-
-Here's part of a data table showing how many times birds of each species appear in the `OrdwayBirds` data.  Construct a statement that generates this table.
-
-```{r echo=FALSE}
-OrdwayBirds %>% 
-  group_by( SpeciesName ) %>%
-  summarise( count=n() ) %>% 
-  arrange( desc(count) ) %>% head()
-```
-
-In fact, many of the listings in the `OrdwayBirds` data have mis-spelled species names, the result of errors in entering the data.  Often these are trivial mis-spellings that are easy to correct.  The `OrdwaySpeciesNames` table contains a list of mis-spellings and the corrected spelling.  Here's a part of it:
-
-```{r echo=FALSE}
-Tmp <- OrdwaySpeciesNames[c(66,79,140,160,187),]
-row.names(Tmp) <- NULL
-Tmp
-```
-
-Use `OrdwaySpeciesNames` along with `OrdwayBirds` to produce a corrected count of species.  It will look like this:
-
-```{r echo=FALSE,message=FALSE}
-OrdwayBirds %>% 
-  inner_join(OrdwaySpeciesNames) %>%
-  group_by( SpeciesNameCleaned ) %>%
-  summarise( count=n() ) %>% 
-  arrange( desc(count) ) %>% head()
-```
-
-Finally, create a table, like this, that shows which species are miscounted the most if the mis-spelled species names are used in the count.
-
-```{r echo=FALSE,message=FALSE}
-MisCounted <- 
-  OrdwayBirds %>% 
-  group_by( SpeciesName ) %>%
-  summarise( origCount=n() ) 
-CorrectlyCounted <- 
-  OrdwayBirds %>% 
-  inner_join(OrdwaySpeciesNames) %>%
-  group_by( SpeciesNameCleaned ) %>%
-  summarise( correctedCount=n() ) %>%
-  mutate( SpeciesName=SpeciesNameCleaned ) %>% select(-SpeciesNameCleaned )
-CorrectlyCounted %>% 
-  inner_join(MisCounted) %>%
-  mutate( fractionWrong=(correctedCount-origCount)/correctedCount ) %>%
-  arrange( desc(fractionWrong) ) %>%
-  select( -fractionWrong ) %>% head()
-```
 
 
 ```{r child="../CSS/DisqusTemplate.Rmd"}

@@ -110,72 +110,33 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <div id="gender-neutral-names" class="section level2">
 <h2>Gender-Neutral Names</h2>
 <p>The <code>BabyNames</code> data table looks like this:</p>
-<pre><code>      name sex count year
-1 Kahdijah   F    13 1993
-2   Kohlby   M     5 2004
-3 Allyanah   F     5 2012
-4   Carola   F    12 1941
-5    Teala   F     8 1963
-6 Mathilda   F    21 1941</code></pre>
+<pre><code>     name sex count year
+1 Silvano   M    20 2000
+2   Edgar   M   721 1964
+3   Adiel   M     8 1984
+4  Matias   M    32 1975
+5   Nuria   F     8 2012
+6    Holt   M     7 1962</code></pre>
 <p>Turn this into a wide-format table that looks like this:</p>
-<pre><code>    name year   F    M
-1 Adrian 1930  16  204
-2 Albert 1955  29 5162
-3  Allen 1983  19 2245
-4   Alma 1957 981   12
-5  Alpha 1945  43   11
-6  Alton 1914   7  419</code></pre>
+<pre><code>     name year     F    M
+1     Ada 1912  1268    6
+2    Adam 2000    16 8132
+3    Alex 1999   278 6826
+4   Alice 1883  1488    6
+5   Alice 1923 11330   27
+6 Allison 1933    15   40</code></pre>
 <p>Your statement will have the following form: you have to fill in the variable name to replace ???</p>
-<pre><code>Wider &lt;-
+<pre><code>BothSexes &lt;-
   BabyNames %&gt;%
   spread( key=???, value=count ) %&gt;%
   filter( F&gt;1, M&gt;1 )</code></pre>
-<p>Now that you have <code>Wider</code> …</p>
+<p>Now that you have <code>BothSexes</code> …</p>
 <ol style="list-style-type: decimal">
 <li>Find the 10 names with the closest balance between females and males. You can define gender-balance quantitatively as <code>abs(log(F/M))</code>. The smaller this number, the more balanced the name count.</li>
 <li>Find the 10 names with the closest balance that have more than 100 babies of either sex.</li>
 <li><strong>Extra Credit</strong>. Find the 10 names with the closest balance that have lasting popularity. Define lasting popularity as having more than 100 babies in at least 20 of the years.</li>
+<li><strong>Extra Credit</strong>. Are there names that have switched gender over the years. Find, for each year, the gender ratio. Pull out ones where the maximum and minumum over the years differ by a large amount. Then plot out over time.</li>
 </ol>
-</div>
-<div id="birds-at-the-ordway-nature-reserve" class="section level2">
-<h2>Birds at the Ordway Nature Reserve</h2>
-<p>Here’s part of a data table showing how many times birds of each species appear in the <code>OrdwayBirds</code> data. Construct a statement that generates this table.</p>
-<pre><code>Source: local data frame [6 x 2]
-
-             SpeciesName count
-1    Slate-colored Junco  2717
-2           Tree Sparrow  1331
-3     American Goldfinch  1153
-4 Black-capped Chickadee  1110
-5                  Robin   606
-6          Field Sparrow   582</code></pre>
-<p>In fact, many of the listings in the <code>OrdwayBirds</code> data have mis-spelled species names, the result of errors in entering the data. Often these are trivial mis-spellings that are easy to correct. The <code>OrdwaySpeciesNames</code> table contains a list of mis-spellings and the corrected spelling. Here’s a part of it:</p>
-<pre><code>             SpeciesName     SpeciesNameCleaned
-1   Clay-Colored Sparrow   Clay-colored Sparrow
-2          Easter Phoebe         Eastern Phoebe
-3   Orange-crown Warbler Orange-Crowned Warbler
-4           Purple FInch           Purple Finch
-5 Rose-Breasted Grosbeak Rose Breasted Grosbeak</code></pre>
-<p>Use <code>OrdwaySpeciesNames</code> along with <code>OrdwayBirds</code> to produce a corrected count of species. It will look like this:</p>
-<pre><code>Source: local data frame [6 x 2]
-
-      SpeciesNameCleaned count
-1    Slate-colored Junco  2732
-2                     NA  1871
-3           Tree Swallow  1537
-4 Black-capped Chickadee  1327
-5     American Goldfinch  1204
-6          Field Sparrow  1164</code></pre>
-<p>Finally, create a table, like this, that shows which species are miscounted the most if the mis-spelled species names are used in the count.</p>
-<pre><code>Source: local data frame [6 x 3]
-
-  correctedCount            SpeciesName origCount
-1            201 Rose Breasted Grosbeak         4
-2             53   Red-Winged Blackbird         2
-3             20    Red-Breast Grosbeak         1
-4             16    Black-billed Cookoo         1
-5             16       Harris's Sparrow         1
-6             43         Red-eyed Viero         3</code></pre>
 </div>
 
 
