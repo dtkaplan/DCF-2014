@@ -16,6 +16,7 @@ output:
 
 Using the `ZipGeography` data table, answer the following questions.  In addition to the answer itself, show the statement that you used and the data table created by your statement that contains the answer.
 
+* How many different counties are there?
 * Which city names are used in the most states?
 * Which city names with more than 5% of the state population are used in the most states?
 * Does any state have more than one time zone?

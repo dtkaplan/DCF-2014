@@ -5,7 +5,25 @@ date: "September 22, 2014"
 output: html_document
 ---
 
+### One
 
+Explain what this command will do:
+```
+BabyNames %>% 
+  group_by(name) %>% 
+  summarise(tot=sum(count)) %>% 
+  mutate( rank=rank(desc(tot))) %>%
+  filter( name=="Fernando")
+```
+
+<aside class="answer">
+The first two statements compute the total count of each name.  Case is a name.  The third statement adds a variable `rank` which contains the ranked place among the names from most popular to least popular.  Last, the single case for "Fernando" is extracted.
+
+In effect, the commands finds the total count and popularity rank for the name "Fernando".
+</aside>
+
+
+### Two
 
 
 These questions and others from [this document](http://www.public.iastate.edu/~hofmann/stat480/homework/dplyr%20drills.html)
