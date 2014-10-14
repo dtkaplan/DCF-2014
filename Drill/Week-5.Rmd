@@ -1,123 +1,137 @@
 
 ```{r include=FALSE}
+require(DCF)
 require(mosaic)
 require(dplyr)
 require(ggplot2)
 require(tidyr)
 require(ScoreR)
-startProblem("DCF-Assignment5")
+require(NHANES)
+require(knitr)
 ```
 
+```{r include=FALSE}
+opts_chunk$set( echo=FALSE, message=FALSE, out.width="60%",
+                warning=FALSE)
+```
 
 ## Week 5
 
-### Multiple Choice
+### One
 
-There are three (simple) steps to creating a multiple-choice problem in *ScoreR*:
+This and several following problems concern the `NHANES` data.
 
-1. Initialization of the question
-2. Creation of the individual items, typically embedded in *markdown* statements
-3. Termination of the question.
+Judging from the graph, what's the most likely height among the `NHANES` people? (FYI: The heights are in meters.)
 
-Initialization is done with the `newMC()` function.
 
 ```{r}
-f = newMC(totalPts=5,name="minus1") # Ordinarily, make this silent
+ggplot( data=NHANES, aes( x=height )) + 
+  geom_density(color="gray",fill="black", alpha=.4)
 ```
 
-The function name, in this case `f`, is arbitrary.  You will use that name to create the individual items with statements like `I(f(TRUE))` and I(f(FALSE))`, which will be embedded in text.  For instance:
+### Two
 
-Which of these is equal to $-1$?  
-`r I(f(FALSE))` The value of $a x^2 + b x - c$ for all $a$, $b$, and $c$  
-`r I(f(TRUE))`  $e^{i\pi}$  
-`r I(f(FALSE))` $\ln(0)$  
-`r I(f(FALSE))` There's no such thing as a negative number, just a negative attitude.
-`r I(f(finish=TRUE))`
+What's the most likely height for women?  For men?
 
-After the items have been defined, terminate the question by calling the function with the argument `finish=TRUE`
-```{r eval=FALSE} 
-I(f(finish=TRUE))
-```
-You may well want to use inline knitr notation --- that's up to you.
-
-### Select from a set
-
-What's the value of $\pi$?
 ```{r}
-piQuestion3 = selectSet(name="piValue3",totalPts=4,
-                        "2.71727"=FALSE,
-                        "3.0"=FALSE,
-                        "3.14159"=TRUE,
-                        "6.28318"=FALSE)
+ggplot( data=NHANES, aes( x=height, color=sex )) + 
+  geom_density(aes(fill=sex), alpha=.4)
 ```
 
-* Let's try that again ... `r I(piQuestion3)`
+### Three
 
+Here's the density for `bmi` and `age` simultaneously.  The blue lines play the role of contours on a contour map of geography.
 
-### Free Text
-
-The `freeText()` function in `ScoreR` implements free-text entry.  It's very, very simple to add a free-text question to a problem.  Just
-
-`r I(textItem(name="question-topic",rows=2,totalPts=10))`
-
-The name, of course, should be unique within the problem.  The optional arguments `rows` and `cols` sets the size of the text entry box.  On many browsers, this block can be resized by the user, so a small box is useful in for adding in extended text.
-
-
-### Second Part
-
-A perennial problem when writing scientific reports is figuring out
-how many significant digits to report.  It's naïve to 
-copy all the digits from one's calculator or computer
-output; the data generally do not justify such
-precision. 
-
-Once you have a confidence interval, however, you do not need to guess
-how many significant digits are appropriate.  The standard error
-provides good guidance.  Here is a rule of thumb: keep two significant
-digits of the margin of error and round the point estimate to the same
-precision.  
-
-For example, suppose you have a confidence interval of $1.7862 \pm
-0.3624$ with 95% confidence.  Keeping the first two significant
-digits of the margin of error gives $0.36$.  We'll keep the point
-estimate to the same number of digits, giving altogether $1.79 \pm
-0.36$.
-
-Another example: suppose the confidence interval is $6548.23 \pm
-1321$.  Keeping the first two digits of the margin of error gives
-$1300$, with a corresponding margin of error of $6500 \pm 1300$.
-
-* Suppose the computer output is $0.03234232 \pm 0.01837232$.
-
-```{r include=FALSE}
-f=newMC(totalPts=1, name="confidence.interval")
+```{r}
+pp <-
+  filter( NHANES, age>=25, age<80) %>%
+  ggplot( aes( x=age, y=bmi )) + 
+  geom_point( alpha=.03, position="jitter" ) +
+    geom_density2d( alpha=.4, color="red", size=1) +
+  ylim(17,42)
 ```
-Using this rule of thumb, what should you report in as the
-confidence interval?      
-`r I(f(FALSE))` $0.3234 \pm 0.01837$     
-`r I(f(FALSE))` $0.3234 \pm 0.0183$     
-`r I(f(FALSE))` $0.0323 \pm 0.0184$    
-`r I(f(FALSE))` $0.0323 \pm 0.018$     
-`r I(f(TRUE))` $0.032 \pm 0.018$     
-`r I(f(FALSE))` $0.032 \pm 0.01$     
-`r I(f(FALSE))` $0.03 \pm 0.01$   
-`r I(f(finish=TRUE))`
 
+What's the most likely BMI for a 40-year old?  For a 70-year old?
 
-* Now suppose the computer output were $99.63742573 \pm 1.48924367$.
+### Four
 
-```{r include=FALSE}
-g=newMC(totalPts=1, name="confidence.interval.2")
+```{r}
+ZD<-
+  ZipDemography %>% sample_n( size=20000 ) %>% 
+  filter( X65yearsandover > 0) %>%
+  mutate( renters=Occupiedhousingunits/Totalhousingunits,
+          kids=Under5years/Totalpopulation,
+          elderly=X65yearsandover/Totalpopulation,
+          balance=kids/elderly ) %>%
+  filter( elderly < 0.50 )
 ```
-What should you report as the confidence interval?     
-`r I(g(FALSE))` $100 \pm 1$     
-`r I(g(FALSE))` $99 \pm 1.5$     
-`r I(g(TRUE))` $99.6 \pm 1.5$     
-`r I(g(FALSE))` $99.64 \pm 1.49$     
-`r I(g(FALSE))` $99.647 \pm 1.489$ 
-`r I(g(finish=TRUE))`
 
-`r I(endProblem())`
+You're doing a study of whether grandparents go where the grandkids are.  As a first attempt, you look at 20 ZIP codes.  You find the relationship between the fraction of people in a ZIP code under 5 years old and the fraction 65 and older,  plotted below.
+
+
+```{r} 
+set.seed(111)
+ZD %>%  sample_n(size=20) %>%
+  ggplot( aes( x=100*kids,y=100*elderly )) +
+  geom_point( alpha=.3, position="jitter" ) +
+  stat_smooth(method='lm') +
+  ylim(0,40) + xlim(0,15) + xlab("Fraction under 5") + 
+  ylab("Fraction 65 and older")
+```
+
+* Do the data indicate that ZIP codes with high elderly populations tend to have high child populations?
+
+* Looking at the confidence bands, is your data possibly consistent with there being no relationship (that is, a level line) between elderly population and child population?
+
+You decide to get more data: study 80 ZIP codes.  Here's the result.
+
+```{r}
+set.seed(111)
+ZD %>%  sample_n(size=80) %>%
+  ggplot( aes( x=100*kids,y=100*elderly )) +
+  geom_point( alpha=.3, position="jitter" ) +
+  stat_smooth(method='lm') +
+  ylim(0,40) + xlim(0,15) + xlab("Fraction under 5") + 
+  ylab("Fraction 65 and older")
+```
+
+* Is a flat line consistent with the data?
+
+* Compare the height of the confidence band with 20 ZIP codes to the height of the band with 80 ZIP codes: 4 times as much data in the larger sample than the smaller.  Roughly, what's the ratio of confidence band heights?
+
+* Statistical theory indicates that the width of a confidence band  based on $n$ points goes as $1/\sqrt{n}$.  Does this seem about right?
+
+### Five
+
+Studying a sample of 100 ZIP codes, the following graphic divides ZIP codes into 5 income groups, looking at the fraction of the population that is 65 and older.  
+
+```{r}
+set.seed(102)
+DD <- ZD %>% 
+  mutate( 
+    incomeGroup=ntiles(Medianhouseholdincomedollars,5, 
+                       format="median"))
+DD %>% sample_n( size=100 ) %>%
+  ggplot( aes( x=incomeGroup,y=100*elderly )) +
+  geom_boxplot( aes(group=incomeGroup), outlier.colour="gray",notch=TRUE,fill=NA ) +
+  geom_point(alpha=.1) + ylab("Fraction 65 and older")
+```
+
+
+What relationship do you see between income and the fraction of the population greater than 65? (The notch shows the confidence interval on the median population.)
+
+
+The same analysis, but for a sample 16 times as big as before.
+
+```{r}
+DD %>% sample_n( size=1600 ) %>%
+  ggplot( aes( x=incomeGroup,y=100*elderly )) +
+  geom_boxplot( aes(group=incomeGroup), outlier.colour="gray",notch=TRUE,fill=NA ) +
+  geom_point(alpha=.025)  + ylab("Fraction 65 and older")
+```
+
+Do the notch sizes (confidence intervals) follow the $1/\sqrt{n}$ rule?
+
 
 ```{r child="../CSS/DisqusTemplate.Rmd"}
 ```

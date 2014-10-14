@@ -10,10 +10,10 @@ output: html_document
 Explain what this command will do:
 ```
 BabyNames %>% 
-  group_by(name) %>% 
-  summarise(tot=sum(count)) %>% 
-  mutate( rank=rank(desc(tot))) %>%
-  filter( name=="Fernando")
+  group_by( name ) %>% 
+  summarise( tot=sum(count) ) %>% 
+  mutate( rank=rank(desc(tot)) ) %>%
+  filter( name=="Fernando" )
 ```
 
 <aside class="answer">
@@ -21,6 +21,18 @@ The first two statements compute the total count of each name.  Case is a name. 
 
 In effect, the commands finds the total count and popularity rank for the name "Fernando".
 </aside>
+
+
+### One B
+
+```
+BabyNames %>% 
+  group_by( name ) %>%   STEP A: how many rows, how many columns
+  summarise( tot=sum(count) ) %>%  STEP B: what are the variables
+  mutate( rank=rank(desc(tot)) ) %>% 
+  filter( name=="Fernando" )  STEP D: How many cases?
+```
+
 
 
 ### Two
