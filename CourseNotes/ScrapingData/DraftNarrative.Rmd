@@ -11,9 +11,187 @@ output:
 
 ```{r include=FALSE}
 require(lubridate)
+library( XML )
+library( RCurl )
+library( data.table )
+
+
 ```
 
 "Every easy data format is alike.  Every difficult data format is difficult in its own way."   --- inspired by Leo Tolstoy, **Anna Kerenina**
+
+
+## Scraping and Cleaning Data
+
+When you are working on a data-oriented project, it's likely that you already have a source of data; that may be what motivated the project in the first place.
+
+These notes are meant to help you identify situations where accessing the data will be easy, and to spot and fix common errors in data files.
+
+### Data Tables
+
+The data table is a very common format for storing data.  If your data are in this format, you likely won't have much problem putting them into a form that can be read directly in to R or any other widely used technical computing environment.  
+
+The first thing is to realize what names are used to refer to data tables.  Here are several, each with a brief description:
+
+* CSV file. A non-proprietary text format that is very widely used for data exchange between different software packages.  
+* Data tables in a technical software-package specific format:
+    * Octave (and through that, MATLAB) widely used in engineering and physics.
+    * Stata, commonly used for economic research
+    * SPSS, commonly used for social science research 
+    * Minitab, often used in business practices
+    * SAS, often used for large data sets
+    * Epi used by the Centers for Disease Control (CDC) for health and epidemiology data.
+* Relational databases.  This is the form that much (most?) of institutional, actively updated data are stored in.  This includes business transaction records, government records, and so on
+* Excel, a set of proprietary spreadsheet formats heavily used in business.  Watch out, though.  Just because something is stored in an Excel format doesn't mean it's a data table.  Excel is sometimes used as a kind of table-cloth for writing down data with no particular scheme in mind.
+* Web-related
+    * HTML `<table>` format
+    * JSON
+    * Google spreadsheets published as HTML
+    * Application Programming Interfaces (APIs) such as SODA
+
+The particular software and techniques for reading data in one of these formats, varies depending on the format.  For Excel or Google spreadsheet data, it's often sufficient to use the application software to export the data as a CSV file.  There are also R packages for reading directly from an Excel spreadsheet, which is useful if the spreadsheet is being updated frequently.
+
+For the technical software package formats, the `foreign` R package's reading and writing functions are very useful.  For relational databases, even if they are on a remote server, there are several useful R packages, including `dplyr` and `data.table`.
+
+CSV and HTML `<table>` formats are frequently encountered.  The next subsections give a bit more detail about how to read them into R.
+
+#### CSV
+
+CSV stands for comma-separated values.  It's a text format that can be read with a huge variety of softare.  It has a data table format, with the values of variables in each case separated by commas.  Here's an example of the first several lines of a CSV file:
+
+```
+"name","sex","count","year"
+"Mary","F",7065,1880
+"Anna","F",2604,1880
+"Emma","F",2003,1880
+"Elizabeth","F",1939,1880
+```
+
+The top row usually (but not always) contains the variable names.  Quotation marks are often used at the start and end of character strings; these quotation marks are not part of the content of the string.
+
+Although CSV files are often named with the `.csv` suffix, it's also common for them to be named with `.txt` or other things.  You will also see characters other than commas being used to delimit the fields, tabs and vertical bars are particularly common.
+
+An excellent function for reading CSV files into R is `fread()` in the `data.table` package.^[Another useful function, part of base R, is `read.csv()`.  The `fread()` function is generally better: faster, more flexible, etc.]  Combined with the `XML` and `RCurl` packages, you can even read files stored on other computers if you have a URL for the file.  For instance, here's a way to access a `.csv` file over the Internet.
+
+```{r}
+library( XML )
+library( RCurl )
+library( data.table )
+
+# Find your own URL!
+# Remember the quotes around the character string.
+myURL <- "http://www.mosaic-web.org/go/datasets/SaratogaHouses.csv"
+MyDataTable <-
+  myURL %>% 
+  getURLContent() %>%
+  data.table::fread()
+head( MyDataTable )
+```
+
+Reading from a file on your own computer is even easier.  You just need to have the file path, as can be found using `file.choose()`.  For instance:
+
+```{r eval=FALSE}
+# Call file.choose() then copy the string with the file path below
+fileName <- "~/Project1/Important.csv"
+MyDataTable2 <- 
+  fileName %>%
+  data.table::fread()
+```
+
+Useful arguments to `fread()`:
+
+* `stringsAsFactors=FALSE` is useful particularly when you plan to be cleaning the data.
+* `nrows=0` --- just read the variable names.  This is helpful when you are checking into the format and variable names of a data table.  Of course, you might also want to look at a few rows of data, by setting `nrows` to a small positive integer, e.g. `nrows=3`.
+* `select=c(1,4,5,10)` allows you to specify the variables you want to read in.  This is very useful for large data files with extraneous information.
+* `drop=c(2,3,6)` is like `select`, but drops the columns.
+
+### HTML Tables
+
+Web pages are usually in HTML format.  This format is much more general than the data table format; it's used for text, page arrangement, etc.  Sometimes, however, there is tabular data contained within the HTML page.  This will often look in your browser like the following:
+
+![Part of a page on world records in the [one-mile race](http://en.wikipedia.org/wiki/Mile_run_world_record_progression) from Wikipedia.](wikipedia-running.png)
+
+<div class="clear">&nbsp;</div>
+
+Within HTML, such tables are represented with the HTML `<table>` tag.
+
+When you have the URL of a page containing one or more tables, it can be easy to read them in to R as data tables.
+```{r}
+library( XML )
+library( RCurl )
+SetOfTables <- 
+  "http://en.wikipedia.org/wiki/Mile_run_world_record_progression" %>%
+  getURLContent() %>%
+  readHTMLTable()
+```
+
+`SetOfTables` is not a table, it is a list of the tables found in the web page.  You can access any of those tables like this:
+
+```{r}
+length( SetOfTables )
+```
+There are `r length( SetOfTables )` identified by `readHTMLTable()`.
+
+To look at the first one, 
+```{r}
+head( SetOfTables[[1]] ) # Note: double square brackets
+```
+
+You can look at the second, third, and so on in the same way.  When you have found the table or tables you want, assign them to an object name.  For instance, the two tables shown in the figure above happen to be the second and third in `setOfTables`.
+
+```{r}
+MyTable <- SetOfTables[[3]]
+MyOtherTable <- SetOfTables[[4]]
+```
+
+```{r}
+head( MyTable, 2 )
+head( MyOtherTable, 2 )
+```
+
+### Shared Online Resources 
+
+Another situation when you may want to read an HTML table is when you are accessing data from a shared online resource such as Google Spreadsheets.  You might want to do this, for instance, when there are people actively changing the data in the spreadsheet and you want to see what's going on at this instant.
+
+Within Google Spreadsheets, use the menu to "publish" your spreadsheet to the web as HTML.  (If you have multiple tabs, you can publish each one separately.)  Doing this will generate a URL that you can access in the same way as in the above Wikipedia example.
+
+For example, [this link](https://docs.google.com/spreadsheet/pub?key=0Am13enSalO74dENZNjhRZ3FoTUh4REkwcWVJcWhScVE&single=true&gid=0&output=html) contains the URL to one such published page. You can use your browser --- typically right clicking on the link --- to copy the URL itself.  Then paste it in to R like this:
+
+```{r eval=FALSE}
+pageURL <- 
+  "https://docs.google.com/spreadsheet/d/11Cg99eQV" 
+  # This name has been shortened.  Get the full name from the 
+  # link in the preceeding paragraph
+```
+
+
+```{r echo=FALSE}
+pageURL <- 
+  "https://docs.google.com/spreadsheets/d/11Cg99eQVlltpEEcF_TV2b2fwBWVHm8A_SgI4CY3Nd0E/pubhtml?gid=0&single=true"  
+```
+
+```{r}
+setOfTables <-
+  pageURL %>% 
+  getURLContent() %>%
+  readHTMLTable()
+```
+
+Again, `setOfTables` is not itself a data table but a list of one or more data tables.  These need a bit of processing.  The following lines are very obscure.  Don't expect them to make sense, just copy them to turn `setOfTables` from a Google spreadsheet into `MyGoogleData`. 
+```{r}
+tmp <- setOfTables[[1]]
+MyGoogleData <- 
+  tmp[ , ] %>%
+  data.frame()
+MyGoogleData <- MyGoogleData[-1,] 
+tmp2 <- lapply( data.frame( tmp[1,] ),
+                as.character )
+names( MyGoogleData ) <- tmp2
+```
+
+
+
+
 
 
 ## Data Formats
@@ -46,36 +224,6 @@ Two good ways of reading `.csv` files to create a data table in R:
 * `read.csv()` which takes as an argument the quoted character string giving the name of the file.
 * `fread()` in the `data.table` package, which is used in the same way but more clever in dealing with a wider range of files.  It's also very fast, and so is the function to use when reading large files.
 
-Here's a standard way to access a `.csv` file over the Internet.
-
-```{r}
-library( XML )
-library( RCurl )
-library( data.table )
-
-# Find your own URL!
-# Remember the quotes around the character string.
-myURL <- "http://www.mosaic-web.org/go/datasets/DCF/CountryCodes.csv"
-myDataTable <-
-  myURL %>% 
-  getURLContent() %>%
-  data.table::fread()
-```
-
-Useful arguments to `fread()`:
-
-* `stringsAsFactors=FALSE` is useful particularly when you plan to be cleaning the data.
-* `nrows=0` --- just read the variable names.  This is helpful when you are checking into the format and variable names of a data table.  Of course, you might also want to look at a few rows of data, by setting `nrows` to a small positive integer, e.g. `nrows=3`.
-* `select=c(1,4,5,10)` allows you to specify the variables you want to read in.  This is very useful for large data files with extraneous information.
-* `drop=c(2,3,6)` is like `select`, but drops the columns.
-
-```{r}
-myURL <- "http://www.mosaic-web.org/go/datasets/DCF/CountryCodes.csv"
-JustAPeek <- myURL %>% 
-  getURLContent() %>%
-  data.table::fread( nrows=2 ) 
-names( JustAPeek )
-```
 
 #### Example: 311 Calls
 
