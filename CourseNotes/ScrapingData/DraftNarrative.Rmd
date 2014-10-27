@@ -14,6 +14,7 @@ require(lubridate)
 library( XML )
 library( RCurl )
 library( data.table )
+options( width=100 )
 
 
 ```
@@ -111,21 +112,26 @@ Web pages are usually in HTML format.  This format is much more general than the
 
 ![Part of a page on world records in the [one-mile race](http://en.wikipedia.org/wiki/Mile_run_world_record_progression) from Wikipedia.](wikipedia-running.png)
 
-<div class="clear">&nbsp;</div>
+
+
+<div style="clear:both;"></div> <!-- break between caption and text -->
+
+
 
 Within HTML, such tables are represented with the HTML `<table>` tag.
 
-When you have the URL of a page containing one or more tables, it can be easy to read them in to R as data tables.
+When you have the URL of a page containing one or more tables, it can be easy to read them in to R as data tables.  Here's the pattern.
 ```{r}
 library( XML )
 library( RCurl )
 SetOfTables <- 
   "http://en.wikipedia.org/wiki/Mile_run_world_record_progression" %>%
   getURLContent() %>%
-  readHTMLTable()
+  readHTMLTable( stringsAsFactors=FALSE )
 ```
 
-`SetOfTables` is not a table, it is a list of the tables found in the web page.  You can access any of those tables like this:
+
+The result, `SetOfTables`, is not a table, it is a list of the tables found in the web page.  You can access any of those tables like this:
 
 ```{r}
 length( SetOfTables )
@@ -134,364 +140,151 @@ There are `r length( SetOfTables )` identified by `readHTMLTable()`.
 
 To look at the first one, 
 ```{r}
-head( SetOfTables[[1]] ) # Note: double square brackets
+head( SetOfTables[[1]], 2 ) # Note: double square brackets
 ```
 
-You can look at the second, third, and so on in the same way.  When you have found the table or tables you want, assign them to an object name.  For instance, the two tables shown in the figure above happen to be the second and third in `setOfTables`.
+You can look at the second, third, and so on in the same way.  When you have found the table or tables you want, assign them to an object name.  For instance, the two tables shown in the figure above happen to be the third and fourth in `SetOfTables`.
 
 ```{r}
 MyTable <- SetOfTables[[3]]
 MyOtherTable <- SetOfTables[[4]]
 ```
 
+```{r eval=FALSE,echo=FALSE}
+save( SetOfTables, file="RunnersTables.rda")
+# Save these so that you can keep the example even after the Wikipedia page changes
+```
+
+
+<div class="displayAsFigure">
+
+
+`head( MyTable, 2 )`    
+```{r results='asis', echo=FALSE}
+head( MyTable, 2 ) %>% xtable
+```
+`head( MyOtherTable, 2 )`    
+```{r results="asis", echo=FALSE}
+head( MyOtherTable, 2 ) %>% xtable
+```
+
+<p class="caption"> The second and third tables embedded in the [Wikipedia page on records in the one-mile race](http://en.wikipedia.org/wiki/Mile_run_world_record_progression).</p>
+</div> <!-- end of figure -->
+
+<div style="clear:both;"></div> <!-- break between caption and text -->
+
+
+
+### Cleaning Data
+
+A person somewhat knowledgable about running would have little trouble interpreting the previous tables correctly.  The `Time` is in minutes and seconds.  The `Date` gives the day on which the record was set.
+
+*Data cleaning* refers to taking the information contained in a variable and transforming it to a form in which that information can be used.  As an example, consider the spreadsheet from which the `OrdwayBirds` data table was extracted.
+
+![The Ordway bird data as originally entered in a Google spreadsheet.](OrdwaySpreadsheet.png)
+
+It's a simple matter to use the Google toolbar to download these data as a CSV file:
+
+![Downloading data in a Google spreadsheet to a CSV file.](DownloadingOrdway.png)
+
+When the menu choice is made, the CSV file is put into a directory, from which it can be read with `fread()`.  Here, a random set of 50 is read. `r set.seed(101)`
 ```{r}
-head( MyTable, 2 )
-head( MyOtherTable, 2 )
+Random5000 <- 
+  fread( "~/Downloads/BirdBanding-Sheet1.csv" ) %>%
+  sample_n( size=5000 )
 ```
 
-### Shared Online Resources 
-
-Another situation when you may want to read an HTML table is when you are accessing data from a shared online resource such as Google Spreadsheets.  You might want to do this, for instance, when there are people actively changing the data in the spreadsheet and you want to see what's going on at this instant.
-
-Within Google Spreadsheets, use the menu to "publish" your spreadsheet to the web as HTML.  (If you have multiple tabs, you can publish each one separately.)  Doing this will generate a URL that you can access in the same way as in the above Wikipedia example.
-
-For example, [this link](https://docs.google.com/spreadsheet/pub?key=0Am13enSalO74dENZNjhRZ3FoTUh4REkwcWVJcWhScVE&single=true&gid=0&output=html) contains the URL to one such published page. You can use your browser --- typically right clicking on the link --- to copy the URL itself.  Then paste it in to R like this:
-
-```{r eval=FALSE}
-pageURL <- 
-  "https://docs.google.com/spreadsheet/d/11Cg99eQV" 
-  # This name has been shortened.  Get the full name from the 
-  # link in the preceeding paragraph
+```{r echo=FALSE,results='hide'}
+# the original file from Google had a line break at line 81 that needed fixing in emacs
+# https://docs.google.com/spreadsheet/ccc?key=0AgaxNKIOAIuXdGNQM0U1S0ViZFB2aHlxODZZMWN6S0E&usp=sharing_eid#gid=0
+varNames <- c( '1730-20842','Year (19xx)','Day','Month','Time of capture','species name','Sex','Age','Band number','Trap identification','Weather','Banding report?','Recapture?','Recapture date (month)','Recapture date (day)','Condition','Release','Comments','Data entry person','Weight','Wing chord','Temperature','"Recapture, original"','"Recapture, previous"','Tail length','Capture location')
+names( Random5000 ) <- varNames
 ```
 
-
-```{r echo=FALSE}
-pageURL <- 
-  "https://docs.google.com/spreadsheets/d/11Cg99eQVlltpEEcF_TV2b2fwBWVHm8A_SgI4CY3Nd0E/pubhtml?gid=0&single=true"  
-```
-
+The initial step in cleaning a file is often to give the variables useful names.  Here are the names that come originally with the file:
 ```{r}
-setOfTables <-
-  pageURL %>% 
-  getURLContent() %>%
-  readHTMLTable()
+names( Random5000 )
 ```
+At best, these are too long to be convenient. 
 
-Again, `setOfTables` is not itself a data table but a list of one or more data tables.  These need a bit of processing.  The following lines are very obscure.  Don't expect them to make sense, just copy them to turn `setOfTables` from a Google spreadsheet into `MyGoogleData`. 
+One way to change the names is like this:
 ```{r}
-tmp <- setOfTables[[1]]
-MyGoogleData <- 
-  tmp[ , ] %>%
-  data.frame()
-MyGoogleData <- MyGoogleData[-1,] 
-tmp2 <- lapply( data.frame( tmp[1,] ),
-                as.character )
-names( MyGoogleData ) <- tmp2
+newNames <- c('code','year','day','month','time','species','sex','age','bandNum',
+              'trapID','weather','bandingReport','recapture','recapMonth',
+              'recapDay','condition','release','comments','dataEntryPerson',
+              'weight','wingChord','temperature','OrigRecapture','previousRecapture',
+              'tailLength','captureLocation')
+names( Random5000 ) <- newNames
 ```
 
-
-
-
-
-
-## Data Formats
-
-It's often surprisingly easy to access data tables in a variety of common formats.  When it's not easy, it can be very difficult indeed, requiring sophisticated programming skills and knowledge of data transmission formats, understanding of web-programming conventions, and so on.
-
-These notes are not intended to show you how to solve the problems associated with difficult data formats.  Instead, the point is to help you identify when acquiring data is going to be easy.  When it is, you win.  When it's not, you likely want to enlist the help of an experienced programmer and data analyst.
-
-### Computer Files
-
-You may be aware that all computer files --- text, images, sounds, data tables, etc. --- are sequences of "binary digits," generally called "bits."  In this sense, all computer files are the same.  What's different between different "types" of files is how the bits are intended to be interpreted: the format of the file.
-
-Often, data tables are made available in one of several standard formats for computer files that are specifically designed for data tables.  If the data you need are in one of these formats, you are likely to to have a pretty short path from the file you get to a data table that you can transfigure using the tools presented earlier.
-
-Sometimes, the `.csv` files you want are already on the computer you are using for R (e.g., your own laptop).  For files distributed over the Internet, the file location is usually specified by a complete URL, for instance:    
-`http://www.mosaic-web.org/go/datasets/DCF/CountryCodes.csv`
-
-When a file is on your own computer, you can use the `file.choose()` function to find the complete path name interactively.  (But, because it's interactive, don't use `file.choose()` inside an RMD document.)
-
-When a file is on the Internet, you can use a web browser to navigate to the site and then copy the URL for the file as a quoted character string in R.
-
-#### CSV: Comma Separated Values
-
-This is a simple format and widely used for data tables.  All data analysis software --- or even consumer or business software --- that you are likely to use can read this format.
-
-Generally, CSV files will be named with the suffix `.csv`. 
-
-Two good ways of reading `.csv` files to create a data table in R:
-
-* `read.csv()` which takes as an argument the quoted character string giving the name of the file.
-* `fread()` in the `data.table` package, which is used in the same way but more clever in dealing with a wider range of files.  It's also very fast, and so is the function to use when reading large files.
-
-
-#### Example: 311 Calls
-
-In New York City, dialing 311 connects you to a complaint/request service.^[In the US, 911 is the phone number for emergency services.  311 is for non-emergency services.]  New York provides information about individual calls to 311 on a [web site](https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2010-to-Present/erm2-nwe9?).
-
-I want to see how the number of 311 calls for different reasons varies over time of day and day of the week.  I'm also interested in finding out whether there are hot spots for 311 calls, and how this depends on factors such as income.
-
-![311 data web site](311-Calls.png)
-
-That site provides an "Export" feature.  You can download the data in several formats: CSV is appropriate.  The resulting file is slightly larger than 1GB.  Using a web browser, I downloaded it to my `Downloads` directory.
-
-##### What are the variables?
-
+For simplicity, consider just a few variables:
 ```{r}
-CallsFile <- "~/Downloads/311_Service_Requests_from_2010_to_Present.csv"
-CallsFile <- "~/Downloads/311-3-Cols.csv"
-JustAPeek <- 
-  CallsFile %>% 
-  data.table::fread( nrows=2 ) 
-
-names( JustAPeek )
+BirdData <- Random5000 %>%
+  select( year, day, month, time, species, 
+          weight, wingChord, tailLength )
+head( BirdData )
 ```
 
-For my purposes, `CreatedDate`, `Complaint Type`, and `Incident Zip` are all I need.  For other purposes, other variables might be important.
-
-The three variables I need are numbers 2, 6, and 9.  I'll read in a few rows just to make sure things are working:
-```{r eval=FALSE}
-# Not being evaluated 
-# SmallData <- 
-#   CallsFile %>%
-#   fread( nrows=10, select=c(2,6,9))
+A first step can be to check which *type* each of the variables is.
+```{r}
+str( BirdData )
 ```
 
-That looks like what I want.  Notice that the `Created Date` variable gives both date and time.  I'm going to want to convert that to a standard date/time object so that I can use the tools developed for that purpose.
-
-Try more data, say, 10,000 calls, just to see if things work out:
-
-```{r complaint0}
-callsFile <- "~/Downloads/311-3-Cols.csv"
-CallData <- 
-  fread( callsFile, nrows=10000,
-         na.strings=c("NA","N/A",""),
-         stringsAsFactors=FALSE ) %>%
-  select( time=`Created Date`, 
-          complaint=`Complaint Type`,
-          zip=`Incident Zip` ) %>%
-  mutate( when=mdy_hms( time )) 
+Although the `weight`, `wingChord`, and `tailLength` variables are supposed to be numerical, they have been read in as character strings. The `as.numeric()` function can be used to convert them to actual numbers.  If the entries are non-numeric, they will be turned into `NA`.
+```{r}
+BirdData <- BirdData %>%
+  mutate( weight=as.numeric(weight), 
+          wingChord=as.numeric(wingChord),
+          tailLength=as.numeric(tailLength) )
+```
+  
+It's helpful to plot the distribution of each of the variables to look for outliers.
+```{r fig.height=3, fig.width=5}
+ggplot( data=BirdData, aes(x=weight)) + geom_density() 
+ggplot( data=BirdData, aes(x=wingChord)) + geom_density() 
+ggplot( data=BirdData, aes(x=tailLength)) + geom_density()
 ```
 
-
-### Develop your analysis using a small file
-
-Pick a random subset of a few dozen cases.  Develop your analysis on that.  When something goes wrong, you may be able to figure it out by looking at the data tables to make sure they are what you expect them to be. 
-
-When you have something that works, you can increase the same to a few hundred, a few thousand, and so on.  At each size, deal with the new problems that appear.
+There are a few birds with a weight below zero but no other obvious anomolies.  When there are, you can filter those cases out of the data or turn them to `NA`.
 
 ```{r}
-testSize <- 500
+BirdData <- BirdData %>%
+  filter( weight > 0 )
 ```
 
-```{r echo=FALSE}
-set.seed(1001)
-```
-
-```{r complaint1}
-Small <-
-  CallData %>%
-  sample_n( size=testSize )
-```
-
-Take the most common forms of complaints.  Graph the number of complaints per hour on each of the days of the week.
-
-Convert the date-time to hour and day of the week:
-```{r complaint2}
-Small <- Small %>%
-  mutate( hour=hour(when), day=wday(when) )
-```
-
-Pull out the five most common kinds of complaints.
-
-1. Count the type of each kind of complaint, pick out the top five.
-    ```{r complaint3}
-    howManyTypes <- 5
-    CommonComplaints <- Small %>%
-    group_by( complaint ) %>%
-  summarise( count=n() ) %>%
-  filter( row_number( desc(count)) <= howManyTypes )
-```
-2. Pull out only those complaints that are among the common ones.
-    ```{r complaint4}
-    JustBigOnes <- Small %>%
-  inner_join( CommonComplaints )
-```
-
-Find how many complaints of each major type there are in each hour.
-```{r complaint5}
-CountByHour <- JustBigOnes %>% 
-  group_by( complaint, hour ) %>% 
+Similarly, check the other variables to make sure values are in line.  For instance, the month should be between 1 and 12 (inclusive):
+```{r}
+BirdData %>% 
+  group_by( month ) %>% 
   summarise( count=n() )
 ```
 
-Plot out the number versus hour.
-```{r complaint6}
-ggplot( data=CountByHour, 
-          aes( x=hour, y=count )) +
-  geom_point( aes(color=complaint) ) + 
-  geom_line( aes(group=complaint))
-```
+Checking variables in this way is tedious, but saves trouble in the future.
 
-That's promising.  The graphic doesn't show much, but there are not very many cases.  Try repeating the calculation, with about 10 times as much data.
-
+Some variables provide no easy way to check, for instance `species`.  One helpful strategy is to count the number of instances of each level, and organize them in descending order of count.
 ```{r}
-testSize <- 1000
+SpeciesCount <- BirdData %>% 
+  group_by( species ) %>% 
+  summarise( count=n() ) %>%
+  arrange( desc(count) )
+nrow(SpeciesCount)
 ```
 
-```{r echo=FALSE}
-set.seed(1001)
+Examine the counts by eye, using a spreadsheet program.  To do this, write the data to a CSV file:
+```{r eval=FALSE}
+write.csv( SpeciesCount, file="SpeciesCount.csv" )
 ```
 
-```{r echo=FALSE,ref.label=paste0("complaint",1:6)}
-```
+![A spreadsheet listing the counts of each species and providing a slot for a corrected name.](birdSpecies.png)
 
-Looks good.  But look carefully for things that are not as you expect.  For instance, here, the only time complaints are made about heat/hot water, unsanitary condition, or plumbing is at hour zero.  It seems unlikely that people only call in about these problems at mid-night.  Therefore, you should look carefully at the data, tracing back the problem toward the original data.
-
-For instance, look at a few of the plumbing problems in the data table that was used to create the glyph-ready data:
-```{r}
-JustBigOnes %>%
-  filter( complaint=="HEAT/HOT WATER" ) %>%
-  head()
-```
-
-All of the suspect complaints are recorded exactly at midnight!  Perhaps such complaints are entered in a different process, storing up all the complaints from the previous day.  In any event, some cleaning is called for.  Let's delete all the complaints recorded at 12:00:00 AM.
-
-There are several ways to do this, for instance, before calculating the leading complaints, filter out the ones exactly at midnight:
-```{r complaint2b}
-Small <- Small %>%
-  filter( hour!=0, minute(when)!=0, second(when)!=0 )
-```
-
-```{r echo=FALSE}
-callsFile <- "~/Downloads/311-3-Cols.csv"
-CallData <- 
-  fread( callsFile,
-         na.strings=c("NA","N/A",""),
-         stringsAsFactors=FALSE ) %>%
-  select( time=`Created Date`, 
-          complaint=`Complaint Type`,
-          zip=`Incident Zip` ) %>%
-  mutate( when=mdy_hms( time ))
-  
-```
-
-```{r}
-testSize <- 50000
-```
-
-
-Try again ...
-
-```{r echo=FALSE,ref.label=paste0("complaint",c(1,2,"2b",3,4,5,6))}
-```
-
-```{r}
-testSize <- 50000
-```
-
-
-```{r echo=FALSE}
-testSize <- 2131700
-```
-
-```{r echo=FALSE,ref.label=paste0("complaint",c(1,2,"2b",3,4,5,6))}
-```
+In the count of species, you can see that the first several have large counts.  Species with very low counts may be mis-spellings.  Create another variable in the spreadsheet to place the corrected spelling.  Then, read the spreadsheet file back into R, filter out the cases where corrections were made, and join them with the original data.  (A join such as `left_join()` that keeps all the rows in the original table is appropriate.) 
 
 
 
-#### Are deaths seasonal?
-
-[NY Deaths database](https://health.data.ny.gov/Health/Genealogical-Research-Death-Index-Beginning-1957/vafa-pf2s)
-
-### Databases
-
-
-### The Codebook
-
-In addition to the data table itself, you will want to have access to the codebook.  Sometimes these are separate files, sometimes separate "tabs" in a spreadsheet, sometimes listings on web sites, and a variety of other formats.
-
-Data table and codebook.  Even there, there is a lot of variation.
-
-### CSV
-
-* Use `read.csv()` --- 
-    * do you want categorical as strings or factors
-    * header and varnames
-    
-GOOGLE DRIVE: download as CSV.  Alternative: Publish as HTML
-
-```{r}
-name <- "https://docs.google.com/spreadsheet/pub?key=0Am13enSalO74dDR6OTdJUXRfRXM3SEdnOGpKWDl5Y3c&single=true&gid=0&output=html"
-foo <- getURLContent( name ) # from RCurl
-goo <-  readHTMLTable(foo)
-```
-
-#### Marital Status
-
-```{r}
-Navy <- "https://docs.google.com/spreadsheets/d/1Ow6Cm4z-Z1Yybk3i352msulYCEDOUaOghmo9ALajyHo/pubhtml?gid=1877566408&single=true"
-foo <- getURLContent( Navy )
-goo <- readHTMLTable( foo )
-```
-
-#### SPSS, SAS, STATA
-
-* Use foreign package
-
-#### EXCEL
-
-    * Not just data, formulas and formatting as well.
-    * Corresponding to a data table is one "sheet" in the spreadsheet.
-    
-#### Zip
-
-### Databases
-
-
-### Data on the Web
-
-Download/Export
-
-Example [311 Calls in NYC](https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2010-to-Present/erm2-nwe9?)
-
-How to read a URL
-
-* queries and parameters 
-
-`http://real-chart.finance.yahoo.com/table.csv?s=%5EGSPC&a=00&b=3&c=1950&d=09&e=21&f=2014&g=d&ignore=.csv`
-
-Stock price data over the last 100 years --- it's a CSV file
-
-#### Easy
-
-HTML tables: look for `<tr>` `<td>`
-
-XML package: `readHTMLTable()`
-
-`readHTMLList()`
-
-#### Medium
-
-Special data format --- NYC Restaurants
+<!-- SharedOnlineResources.Rmd -->
 
 
 
-#### Difficult
 
-Something other than a table.
+<!-- 311-Calls.Rmd -->
 
-
-Grab some baby-related names [here](http://baby-names.familyeducation.com/browse/origin/african).  Use this, along with `BabyNames` to figure out the ethnicity distribution over the years.
-
-### Some tools for big files
-
-Data files available over the web are often stored in a way that 
-
-`data.table::fread()` and other `data.table` functions?
-
-`csvcut` from UNIX command line.
-
-```
-csvcut -c 1,2,3,4,6,9,50,51 311Calls.csv > 311Simple.csv
-```

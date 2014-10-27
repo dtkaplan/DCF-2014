@@ -1,0 +1,47 @@
+---
+title: "Shared Online Resources"
+author: "Daniel Kaplan"
+date: "October 27, 2014"
+output: html_document
+---
+
+### Shared Online Resources ---  
+
+Another situation when you may want to read an HTML table is when you are accessing data from a shared online resource such as Google Spreadsheets.  You might want to do this, for instance, when there are people actively changing the data in the spreadsheet and you want to see what's going on at this instant.
+
+Within Google Spreadsheets, use the menu to "publish" your spreadsheet to the web as HTML.  (If you have multiple tabs, you can publish each one separately.)  Doing this will generate a URL that you can access in the same way as in the above Wikipedia example.
+
+For example, [this link](https://docs.google.com/spreadsheet/pub?key=0Am13enSalO74dENZNjhRZ3FoTUh4REkwcWVJcWhScVE&single=true&gid=0&output=html) contains the URL to one such published page. You can use your browser --- typically right clicking on the link --- to copy the URL itself.  Then paste it in to R like this:
+
+```{r eval=FALSE}
+pageURL <- 
+  "https://docs.google.com/spreadsheet/d/11Cg99eQV" 
+  # This name has been shortened.  Get the full name from the 
+  # link in the preceeding paragraph
+```
+
+
+```{r echo=FALSE}
+pageURL <- 
+  "https://docs.google.com/spreadsheets/d/11Cg99eQVlltpEEcF_TV2b2fwBWVHm8A_SgI4CY3Nd0E/pubhtml?gid=0&single=true"  
+```
+
+```{r}
+setOfTables <-
+  pageURL %>% 
+  getURLContent() %>%
+  readHTMLTable()
+```
+
+Again, `setOfTables` is not itself a data table but a list of one or more data tables.  These need a bit of processing.  The following lines are very obscure.  Don't expect them to make sense, just copy them to turn `setOfTables` from a Google spreadsheet into `MyGoogleData`. 
+```{r}
+tmp <- setOfTables[[1]]
+MyGoogleData <- 
+  tmp[ , ] %>%
+  data.frame()
+MyGoogleData <- MyGoogleData[-1,] 
+tmp2 <- lapply( data.frame( tmp[1,] ),
+                as.character )
+names( MyGoogleData ) <- tmp2
+```
+
