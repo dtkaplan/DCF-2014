@@ -115,6 +115,12 @@ Debt %>%
 gsub("^\\$|€|¥|£|¢$","", c("$100.95", "45¢"))
 ```
 
+#### Remove leading or trailing spaces
+
+```{r}
+gsub( "^ +| +$", "", "   My name is Julia     ")
+```
+
 #### How often do boys' names end in vowels?
 
 ```{r}

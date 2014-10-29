@@ -199,6 +199,11 @@ Groups: name
 <pre class="r"><code>gsub(&quot;^\\$|€|¥|£|¢$&quot;,&quot;&quot;, c(&quot;$100.95&quot;, &quot;45¢&quot;))</code></pre>
 <pre><code>[1] &quot;100.95&quot; &quot;45&quot;    </code></pre>
 </div>
+<div id="remove-leading-or-trailing-spaces" class="section level4">
+<h4>Remove leading or trailing spaces</h4>
+<pre class="r"><code>gsub( &quot;^ +| +$&quot;, &quot;&quot;, &quot;   My name is Julia     &quot;)</code></pre>
+<pre><code>[1] &quot;My name is Julia&quot;</code></pre>
+</div>
 <div id="how-often-do-boys-names-end-in-vowels" class="section level4">
 <h4>How often do boys’ names end in vowels?</h4>
 <pre class="r"><code>NameList %&gt;%
