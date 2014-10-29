@@ -1,0 +1,43 @@
+---
+title: "Getting the Medicare Procedures Data"
+author: "Daniel Kaplan"
+date: "October 28, 2014"
+output: html_document
+---
+
+```{r}
+require(data.table)
+require(DCF)
+```
+
+```{r}
+dataFile <- "/Users/kaplan/Downloads/Medicare-Physician-and-Other-Supplier-PUF-CY2012/Medicare-Physician-and-Other-Supplier-PUF-CY2012.txt"
+Orig <- fread( dataFile ) # 9M rows.
+```
+
+Pull out just the providers
+```{r}
+Orig %>% select( 1,5,6,11,14 ) %>% unique() %>% data.frame() -> Providers
+Orig %>% select( 17, 18 ) %>% unique() %>% data.frame() -> Procedures
+save(Providers, file="~/Downloads/Providers.rda")
+save(Procedures, file="~/Downloads/Procedures.rda")
+```
+
+And the count of procedures and billing
+```{r}
+Orig %>% select(1,17,19,20,21,22,24,26) %>% data.frame() -> CountsAndBilling
+save( CountsAndBilling, file="~/Downloads/CountsAndBilling.rda")
+```
+
+A small file illustrating the structure of the data.
+
+```{r}
+Orig %>% arrange( npi ) %>% head(1000) %>% sample_n(size=50) %>% arrange(npi) -> one
+Orig %>% arrange( hcpcs_code ) %>% head(10000) %>% sample_n(size=50) %>% arrange( hcpcs_code ) -> two
+CMSProceduresSmall <- rbind(one,two)
+save( CMSProceduresSmall, file="~/Downloads/CMSProceduresSmall.rda")
+```
+
+
+
+Explanation of line_srvc_cnt <https://questions.cms.gov/faq.php?id=5005&faqId=9954>

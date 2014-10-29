@@ -110,5 +110,24 @@ Join and filter: Pick out the results for the G20 countries.
 Join exercise: Give a set of synonyms for countries: two columns: standard and other.  Join the synonym set "other" with the source, read off the standard.
 
 
+### Birds
 
+As from Week 6 `DatesAsNumbers.Rmd`, what will these statements do:
+```{r eval=FALSE}
+CleanedSpeciesNames <- OrdwaySpeciesNames %>%
+  mutate(SpeciesName=as.character(SpeciesName),
+         SpeciesNameCleaned=as.character(SpeciesNameCleaned) )
+Mistakes <- OrdwayBirds %>%
+  select(Who=DataEntryPerson, When=Timestamp, SpeciesName) %>%
+  mutate( When=mdy_hms(When), 
+          SpeciesName=as.character(SpeciesName) ) %>%
+  inner_join( CleanedSpeciesNames ) %>%
+  mutate( mistake=SpeciesName != SpeciesNameCleaned )
+Mistakes %>% 
+  ggplot( aes( y=hour(When),x=mistake)) + 
+  geom_violin( ) + 
+  facet_wrap( ~ Who )
+```
+
+Make a sketch showing roughly what the plot will look like.
 

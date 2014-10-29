@@ -1,0 +1,129 @@
+---
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
+    fig_caption: yes
+    toc: no
+---
+
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
+```
+
+```{r include=FALSE}
+require(lubridate)
+library( XML )
+library( RCurl )
+library( data.table )
+options( width=100 )
+```
+
+"Regular expressions" are a notation for describing patterns in strings of characters.  What is such a "pattern?" A few examples:
+
+* Telephone numbers.  Although called "numbers," they of often written in a nonstandard numerical format, e.g., 
+    * (651) 696-6000
+    * +1 651.696.6000
+* Times of day are written according to a pattern.  10:30 AM, 9 o'clock, 13:15.54.  Durations are also written in a similar way.  The a world class time in the marathon is 2:02:57.
+* POSTAL CODES.  In the US, postal codes are written in several formats: 
+    * five digits, e.g., 55105, 
+    * Zip + 4, 9 digits written 55105-1362 
+    
+Regular expressions are used to detect whether a pattern is contained in a string, to replace the elements of that pattern with something else, or to extract the components that match the patterns.
+
+To illustrate, consider the baby names data, summarised to give the total count of each name for each sex.
+```{r}
+NameList <- BabyNames %>% 
+  mutate( name=tolower(name) ) %>%
+  group_by( name, sex ) %>%
+  summarise( total=sum(count) ) %>%
+  arrange( desc(total)) 
+```
+
+Here are some examples of patterns in names and the use of a regular expression to detect them.  The regular expression is the string in quotes.  `grepl()` is a function that compares a regular expression to a string, returning TRUE if there's a match, FALSE otherwise.
+
+* The name contains "shine", as in "sunshine" or "moonshine"
+    ```{r}
+NameList %>% 
+  filter( grepl( "shine", name ) ) %>% 
+  head()
+```
+* The name contains three or more vowels in a row.
+```{r}
+NameList %>% 
+  filter( grepl( "[aeiou]{3,}", name ) ) %>% 
+  head()
+```
+* The name contains three or more consonants in a row.
+```{r}
+NameList %>% 
+  filter( grepl( "[^aeiou]{3,}", name ) ) %>% 
+  head()
+```
+* The name contains "mn"
+```{r}
+NameList %>% 
+  filter( grepl( "mn", name ) ) %>% 
+  head()
+```
+* The first, third, and fifth letters are consonants.
+```{r}
+NameList %>% 
+  filter( grepl( "^[^aeiou].[^aeiou].[^aeiou]", name ) ) %>% 
+  head()
+```
+
+### Examples of accomplishing tasks with regular expressions.
+
+#### How often do boys' names end in vowels?
+
+```{r}
+NameList %>%
+  filter( grepl( "[aeiou]$", name ) ) %>% 
+  group_by( sex ) %>% 
+  summarise( total=sum(total) )
+```
+
+Girls' names are almost five times as likely to end in vowels as boys' names.
+
+#### What are the most common end vowels for names?
+
+To answer this question, you have to extract the last vowel from the name.  The `extract()` transformation function can do this.  
+
+You'll have to bring in the `extract()` function; it's not yet a part of the DCF package.
+
+```{r}
+source( url( "http://tinyurl.com/m4o4n2b/DCF/extract.R" ))
+```
+
+```{r}
+NameList %>% 
+  extract(data=., "([aeiou])$", name, vowel=1 ) %>%
+  group_by( sex, vowel ) %>% 
+  summarise( total=sum(total) ) %>%
+  arrange( sex, desc(total) )
+```
+
+### Reading Regular Expressions
+
+There are simple regular expressions and complicated ones.  All of them look foreign until you learn how to read them.
+
+There are many regular expression tutorials on the Internet, for instance [this interactive one](http://regexone.com/).  The basic structure is outlined [here](http://www.zytrax.com/tech/web/regex.htm).
+
+Some basics:
+
+* Very simple patterns:
+    * A single `.` means "any character."
+    * A character, e.g., `b`, means just that character.
+    * Characters enclosed in square brackets, e.g., `[aeiou]` means any of those characters.  (So, `[aeiou]` is a pattern describing a vowel.) 
+    * The `^` inside square brackets means "any except these."  So, a consonant is `[^aeiou]`
+* Repeats
+     * Two simple patterns in a row, means those patterns consecutively.  Example: `M[aeiou]` means a capital M followed by a lower-case vowel.
+     * A simple pattern followed by a `+` means "zero or more times."
+     * A simple pattern followed by a `?` means "zero or one times."
+     * A simple pattern followed by a `*` means "one or more times."
+     * A simple pattern followed by `{2}` means "exactly two times."  Similarly, `{2,5}` means between two and five times, `{6,}` means six times or more.
+* Start and end of strings.  For instance, `[aeiou]{2}` means "exactly two vowels in a row."
+    * `^` at the beginning of a regular expression means "the start of the string"
+    * `$` at the end means "the end of the string."
+* Extraction
+
+

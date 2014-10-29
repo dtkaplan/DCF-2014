@@ -35,6 +35,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </script>
 
 
+<link href="data:text/css,body%20%7B%0A%20%20%20%20%20%20%20%20font%2Dfamily%3A%20%27Lora%27%2C%20serif%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Efigure%20%7B%0A%20%20%20%20%20%20%20%20background%2Dcolor%3Aghostwhite%3B%0A%20%20%20%20%20%20%20%20padding%3A12pt%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Ecaption%7B%0A%20%20%20%20%20%20%20%20font%2Dstyle%3Aitalic%3B%0A%20%20%20%20%20%20%20%20width%3A40%25%3B%0A%20%20%20%20%20%20%20%20margin%3A12pt%3B%0A%20%20%20%20%20%20%20%20float%3A%20left%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2EdisplayAsFigure%7B%0A%20%20%20%20%20%20%20%20background%2Dcolor%3A%20ghostwhite%3B%0A%20%20%20%20%20%20%20%20padding%3A12pt%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Etable%2Dscroller300%20%7B%0A%20%20%20%20%20%20%20%20width%3A%20300px%3B%0A%20%20%20%20%20%20%20%20height%3A%20200px%3B%0A%20%20%20%20%20%20%20%20overflow%2Dx%3A%20scroll%3B%0A%20%20%20%20%20%20%20%20overflow%2Dy%3A%20scroll%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2Etable%2Dscroller600%20%7B%0A%20%20%20%20%20%20%20%20width%3A%20600px%3B%0A%20%20%20%20%20%20%20%20height%3A%20200px%3B%0A%20%20%20%20%20%20%20%20overflow%2Dx%3A%20scroll%3B%0A%20%20%20%20%20%20%20%20overflow%2Dy%3A%20scroll%3B%0A%20%20%20%20%20%20%7D%0A%0A%7D" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -52,21 +53,197 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 
 
-<div id="week-6" class="section level2">
-<h2>Week 6</h2>
-<div id="one" class="section level4">
-<h4>One</h4>
-<p>Here is a character string with a regular expression:</p>
-<p><code>&quot;([2-9][0-9]{2})[- .]([0-9]{3})[- .]([0-9]{4})&quot;</code></p>
-<p>To explain the first bit …<br />* <code>[2-9]</code> means “one digit from 2 to 9. * <code>[0-9]</code> refers to one digit from 0 to 9. * <code>[0-9]{2}</code> refers to two consecutive digits, 0 to 9. * <code>[2-9][0-9]{2}</code> means one digit 2 to 9 followed by two digits 0 to 9 * <code>[- .]</code> means”any of the characters dash, space, period, just once. * The parentheses refer to the matching contents to be extracted. The whole expression has the structure <code>(stuff)[- .](more stuff)[- .](still more stuff)</code>. The three sets of parentheses mean to extract those three pieces from strings thatmatch.</p>
-<p>Explain what familiar kinds of strings the entire general expression would match. What components of those strings is being extracted?</p>
-</div>
-<div id="two" class="section level4">
-<h4>Two</h4>
+<!--
+% Common elements of a DCF document
+-->
+
+<!-- UNCOMMENT THE NEXT LINE FOR PRODUCTION -->
+<!--
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lora">
+-->
+
+
+
+<!-- Change this to add parameters for the scroller -->
+
+
+
+
+
+
+<p>“Regular expressions” are a notation for describing patterns in strings of characters. What is such a “pattern?” A few examples:</p>
 <ul>
-<li>What does <code>readHTMLTable()</code> do?</li>
+<li>Telephone numbers. Although called “numbers,” they of often written in a nonstandard numerical format, e.g.,
+<ul>
+<li><ol start="651" style="list-style-type: decimal">
+<li>696-6000</li>
+</ol></li>
+<li>+1 651.696.6000</li>
+</ul></li>
+<li>Times of day are written according to a pattern. 10:30 AM, 9 o’clock, 13:15.54. Durations are also written in a similar way. The a world class time in the marathon is 2:02:57.</li>
+<li>POSTAL CODES. In the US, postal codes are written in several formats:
+<ul>
+<li>five digits, e.g., 55105,</li>
+<li>Zip + 4, 9 digits written 55105-1362</li>
+</ul></li>
 </ul>
+<p>Regular expressions are used to detect whether a pattern is contained in a string, to replace the elements of that pattern with something else, or to extract the components that match the patterns.</p>
+<p>To illustrate, consider the baby names data, summarised to give the total count of each name for each sex.</p>
+<pre class="r"><code>NameList &lt;- BabyNames %&gt;% 
+  mutate( name=tolower(name) ) %&gt;%
+  group_by( name, sex ) %&gt;%
+  summarise( total=sum(count) ) %&gt;%
+  arrange( desc(total)) </code></pre>
+<p>Here are some examples of patterns in names and the use of a regular expression to detect them. The regular expression is the string in quotes. <code>grepl()</code> is a function that compares a regular expression to a string, returning TRUE if there’s a match, FALSE otherwise.</p>
+<ul>
+<li><p>The name contains “shine”, as in “sunshine” or “moonshine”</p>
+<pre class="r"><code>NameList %&gt;% 
+  filter( grepl( &quot;shine&quot;, name ) ) %&gt;% 
+  head()</code></pre>
+<pre><code>Source: local data frame [6 x 3]
+Groups: name
+
+      name sex total
+1 sunshine   F  4959
+2  shineka   F   150
+3    shine   F    95
+4    shine   M    44
+5 sunshine   M    37
+6 shinequa   F    27</code></pre></li>
+<li><p>The name contains three or more vowels in a row.</p></li>
+</ul>
+<pre class="r"><code>NameList %&gt;% 
+  filter( grepl( &quot;[aeiou]{3,}&quot;, name ) ) %&gt;% 
+  head()</code></pre>
+<pre><code>Source: local data frame [6 x 3]
+Groups: name
+
+      name sex  total
+1    louis   M 389910
+2   louise   F 331551
+3   isaiah   M 177412
+4    louie   M  27121
+5     beau   M  26693
+6 precious   F  18268</code></pre>
+<ul>
+<li>The name contains three or more consonants in a row.</li>
+</ul>
+<pre class="r"><code>NameList %&gt;% 
+  filter( grepl( &quot;[^aeiou]{3,}&quot;, name ) ) %&gt;% 
+  head()</code></pre>
+<pre><code>Source: local data frame [6 x 3]
+Groups: name
+
+         name sex   total
+1 christopher   M 1984307
+2     matthew   M 1540182
+3     anthony   M 1391462
+4      andrew   M 1244667
+5     dorothy   F 1105281
+6     timothy   M 1057538</code></pre>
+<ul>
+<li>The name contains “mn”</li>
+</ul>
+<pre class="r"><code>NameList %&gt;% 
+  filter( grepl( &quot;mn&quot;, name ) ) %&gt;% 
+  head()</code></pre>
+<pre><code>Source: local data frame [6 x 3]
+Groups: name
+
+     name sex  total
+1  autumn   F 104408
+2  sumner   M   2287
+3    amna   F   1099
+4 domnick   M    405
+5  tatumn   F    280
+6  autumn   M    258</code></pre>
+<ul>
+<li>The first, third, and fifth letters are consonants.</li>
+</ul>
+<pre class="r"><code>NameList %&gt;% 
+  filter( grepl( &quot;^[^aeiou].[^aeiou].[^aeiou]&quot;, name ) ) %&gt;% 
+  head()</code></pre>
+<pre><code>Source: local data frame [6 x 3]
+Groups: name
+
+         name sex   total
+1       james   M 5091189
+2      robert   M 4789776
+3       david   M 3565229
+4      joseph   M 2557792
+5 christopher   M 1984307
+6     matthew   M 1540182</code></pre>
+<div id="examples-of-accomplishing-tasks-with-regular-expressions." class="section level3">
+<h3>Examples of accomplishing tasks with regular expressions.</h3>
+<div id="how-often-do-boys-names-end-in-vowels" class="section level4">
+<h4>How often do boys’ names end in vowels?</h4>
+<pre class="r"><code>NameList %&gt;%
+  filter( grepl( &quot;[aeiou]$&quot;, name ) ) %&gt;% 
+  group_by( sex ) %&gt;% 
+  summarise( total=sum(total) )</code></pre>
+<pre><code>Source: local data frame [2 x 2]
+
+  sex    total
+1   F 96702371
+2   M 21054791</code></pre>
+<p>Girls’ names are almost five times as likely to end in vowels as boys’ names.</p>
 </div>
+<div id="what-are-the-most-common-end-vowels-for-names" class="section level4">
+<h4>What are the most common end vowels for names?</h4>
+<p>To answer this question, you have to extract the last vowel from the name. The <code>extract()</code> transformation function can do this.</p>
+<p>You’ll have to bring in the <code>extract()</code> function; it’s not yet a part of the DCF package.</p>
+<pre class="r"><code>source( url( &quot;http://tinyurl.com/m4o4n2b/DCF/extract.R&quot; ))</code></pre>
+<pre class="r"><code>NameList %&gt;% 
+  extract(data=., &quot;([aeiou])$&quot;, name, vowel=1 ) %&gt;%
+  group_by( sex, vowel ) %&gt;% 
+  summarise( total=sum(total) ) %&gt;%
+  arrange( sex, desc(total) )</code></pre>
+<pre><code>Source: local data frame [12 x 3]
+Groups: sex
+
+   sex vowel     total
+1    F    NA  68578358
+2    F     a  56088501
+3    F     e  36432218
+4    F     i   3693024
+5    F     o    403120
+6    F     u     85508
+7    M    NA 147082250
+8    M     e  14341114
+9    M     o   4041190
+10   M     a   1844041
+11   M     i    753311
+12   M     u     75135</code></pre>
+</div>
+</div>
+<div id="reading-regular-expressions" class="section level3">
+<h3>Reading Regular Expressions</h3>
+<p>There are simple regular expressions and complicated ones. All of them look foreign until you learn how to read them.</p>
+<p>There are many regular expression tutorials on the Internet, for instance <a href="http://regexone.com/">this interactive one</a>. The basic structure is outlined <a href="http://www.zytrax.com/tech/web/regex.htm">here</a>.</p>
+<p>Some basics:</p>
+<ul>
+<li>Very simple patterns:
+<ul>
+<li>A single <code>.</code> means “any character.”</li>
+<li>A character, e.g., <code>b</code>, means just that character.</li>
+<li>Characters enclosed in square brackets, e.g., <code>[aeiou]</code> means any of those characters. (So, <code>[aeiou]</code> is a pattern describing a vowel.)</li>
+<li>The <code>^</code> inside square brackets means “any except these.” So, a consonant is <code>[^aeiou]</code></li>
+</ul></li>
+<li>Repeats
+<ul>
+<li>Two simple patterns in a row, means those patterns consecutively. Example: <code>M[aeiou]</code> means a capital M followed by a lower-case vowel.</li>
+<li>A simple pattern followed by a <code>+</code> means “zero or more times.”</li>
+<li>A simple pattern followed by a <code>?</code> means “zero or one times.”</li>
+<li>A simple pattern followed by a <code>*</code> means “one or more times.”</li>
+<li>A simple pattern followed by <code>{2}</code> means “exactly two times.” Similarly, <code>{2,5}</code> means between two and five times, <code>{6,}</code> means six times or more.</li>
+</ul></li>
+<li>Start and end of strings. For instance, <code>[aeiou]{2}</code> means “exactly two vowels in a row.”
+<ul>
+<li><code>^</code> at the beginning of a regular expression means “the start of the string”</li>
+<li><code>$</code> at the end means “the end of the string.”</li>
+</ul></li>
+<li>Extraction</li>
+</ul>
 </div>
 
 

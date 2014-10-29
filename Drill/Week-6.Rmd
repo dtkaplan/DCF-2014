@@ -8,117 +8,26 @@ require(ScoreR)
 startProblem("DCF-Assignment6")
 ```
 
-
 ## Week 6
 
-### Multiple Choice
+#### One
+Here is a character string with a regular expression:
 
-There are three (simple) steps to creating a multiple-choice problem in *ScoreR*:
-
-1. Initialization of the question
-2. Creation of the individual items, typically embedded in *markdown* statements
-3. Termination of the question.
-
-Initialization is done with the `newMC()` function.
-
-```{r}
-f = newMC(totalPts=5,name="minus1") # Ordinarily, make this silent
-```
-
-The function name, in this case `f`, is arbitrary.  You will use that name to create the individual items with statements like `I(f(TRUE))` and I(f(FALSE))`, which will be embedded in text.  For instance:
-
-Which of these is equal to $-1$?  
-`r I(f(FALSE))` The value of $a x^2 + b x - c$ for all $a$, $b$, and $c$  
-`r I(f(TRUE))`  $e^{i\pi}$  
-`r I(f(FALSE))` $\ln(0)$  
-`r I(f(FALSE))` There's no such thing as a negative number, just a negative attitude.
-`r I(f(finish=TRUE))`
-
-After the items have been defined, terminate the question by calling the function with the argument `finish=TRUE`
-```{r eval=FALSE} 
-I(f(finish=TRUE))
-```
-You may well want to use inline knitr notation --- that's up to you.
-
-### Select from a set
-
-What's the value of $\pi$?
-```{r}
-piQuestion3 = selectSet(name="piValue3",totalPts=4,
-                        "2.71727"=FALSE,
-                        "3.0"=FALSE,
-                        "3.14159"=TRUE,
-                        "6.28318"=FALSE)
-```
-
-* Let's try that again ... `r I(piQuestion3)`
+`"([2-9][0-9]{2})[- .]([0-9]{3})[- .]([0-9]{4})"`
 
 
-### Free Text
+To explain the first bit ...     
+* `[2-9]` means "one digit from 2 to 9.
+* `[0-9]` refers to one digit from 0 to 9.
+* `[0-9]{2}` refers to two consecutive digits, 0 to 9.
+* `[2-9][0-9]{2}` means one digit 2 to 9 followed by two digits 0 to 9
+* `[- .]` means "any of the characters dash, space, period, just once.
+* The parentheses refer to the matching contents to be extracted.  The whole expression has the structure `(stuff)[- .](more stuff)[- .](still more stuff)`.  The three sets of parentheses mean to extract those three pieces from strings thatmatch.
 
-The `freeText()` function in `ScoreR` implements free-text entry.  It's very, very simple to add a free-text question to a problem.  Just
+Explain what familiar kinds of strings the entire general expression would match.  What components of those strings is being extracted?
 
-`r I(textItem(name="question-topic",rows=2,totalPts=10))`
+#### Two  
 
-The name, of course, should be unique within the problem.  The optional arguments `rows` and `cols` sets the size of the text entry box.  On many browsers, this block can be resized by the user, so a small box is useful in for adding in extended text.
+* What does `readHTMLTable()` do?
 
-
-### Second Part
-
-A perennial problem when writing scientific reports is figuring out
-how many significant digits to report.  It's naïve to 
-copy all the digits from one's calculator or computer
-output; the data generally do not justify such
-precision. 
-
-Once you have a confidence interval, however, you do not need to guess
-how many significant digits are appropriate.  The standard error
-provides good guidance.  Here is a rule of thumb: keep two significant
-digits of the margin of error and round the point estimate to the same
-precision.  
-
-For example, suppose you have a confidence interval of $1.7862 \pm
-0.3624$ with 95% confidence.  Keeping the first two significant
-digits of the margin of error gives $0.36$.  We'll keep the point
-estimate to the same number of digits, giving altogether $1.79 \pm
-0.36$.
-
-Another example: suppose the confidence interval is $6548.23 \pm
-1321$.  Keeping the first two digits of the margin of error gives
-$1300$, with a corresponding margin of error of $6500 \pm 1300$.
-
-* Suppose the computer output is $0.03234232 \pm 0.01837232$.
-
-```{r include=FALSE}
-f=newMC(totalPts=1, name="confidence.interval")
-```
-Using this rule of thumb, what should you report in as the
-confidence interval?      
-`r I(f(FALSE))` $0.3234 \pm 0.01837$     
-`r I(f(FALSE))` $0.3234 \pm 0.0183$     
-`r I(f(FALSE))` $0.0323 \pm 0.0184$    
-`r I(f(FALSE))` $0.0323 \pm 0.018$     
-`r I(f(TRUE))` $0.032 \pm 0.018$     
-`r I(f(FALSE))` $0.032 \pm 0.01$     
-`r I(f(FALSE))` $0.03 \pm 0.01$   
-`r I(f(finish=TRUE))`
-
-
-* Now suppose the computer output were $99.63742573 \pm 1.48924367$.
-
-```{r include=FALSE}
-g=newMC(totalPts=1, name="confidence.interval.2")
-```
-What should you report as the confidence interval?     
-`r I(g(FALSE))` $100 \pm 1$     
-`r I(g(FALSE))` $99 \pm 1.5$     
-`r I(g(TRUE))` $99.6 \pm 1.5$     
-`r I(g(FALSE))` $99.64 \pm 1.49$     
-`r I(g(FALSE))` $99.647 \pm 1.489$ 
-`r I(g(finish=TRUE))`
-
-`r I(endProblem())`
-
-```{r child="../CSS/DisqusTemplate.Rmd"}
-```
 

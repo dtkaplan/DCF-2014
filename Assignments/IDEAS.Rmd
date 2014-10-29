@@ -1,0 +1,51 @@
+
+
+## Review
+
+* CVC/Summer2014/Activities/NCI60.Rmd.  There's only one join operation in the thing, but that's why the topic is in this week rather than week 3.
+
+## Country Names 
+
+Standardizing country codes: See the CVC/Summer2014 exercise: WorldPop.Rmd
+
+Disasters --- join with population data to produce a risk factor for each state.
+
+### Entropy of Baby Names
+
+Turn each name count into a fraction for that year.  Then calculate the entropy over time for boys and girls separately.
+
+```{r}
+Entropy <- BabyNames %>%
+  group_by( sex, year ) %>%
+  mutate( frac=count/sum(count) ) %>%
+  ungroup() %>%
+  group_by( sex, year ) %>% 
+  summarise( entropy=sum( -frac*log2(frac)))
+```
+
+Plot it out:
+```{r}
+ggplot( Entropy, aes(x=year, y=entropy, group=sex, color=sex ) ) +
+  geom_line( )
+```
+
+Higher entropy corresponds to a greater diversity of names.  An entropy of 7 is equivalent to $2^7 = 128$ different names, each of equal likelihood.  An entropy of 10 is equivalent to $2^{10} = 1024$ different names.
+
+### Arrange within group_by()
+
+Or maybe it should be one of the rank functions in filter.
+
+Within each precinct, which ward had the largest number of votes?  (Hint: Make a data table with the number of votes in each `Precinct` `Ward` combination.  Arrange this by `Precinct` and the number of votes.)
+
+### Immigration data
+
+In data scraping, convert the wide format to narrow.  Move to week 7.
+
+### NCI60
+
+Convert the wide format to narrow.
+
+### Pull out the 50 most popular gender-neutral baby names
+
+Then plot out a line graph to see how they change in balance over time.
+

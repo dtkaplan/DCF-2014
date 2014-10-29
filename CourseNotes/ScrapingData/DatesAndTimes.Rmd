@@ -1,0 +1,63 @@
+---
+title: "Dates and Times"
+author: "Daniel Kaplan"
+date: "October 27, 2014"
+output: html_document
+---
+
+
+
+
+Times and dates have properties that are obvious to a person.  Among others, you can subtract times from one another and you can find the time elapsed between dates. Thomas Finch bested Cadet Marshall by 7 seconds.  Just over 6 years passed between their record-breaking runs. In that you can perform arithmetic on them, both times and dates are numbers.
+
+Look back to how the data were extracted from the host web page: `readHTMLTable( stringsAsFactors=FALSE )`.  The `readHTMLTable()` function, like many other data reading functions, knows how to distinguish numbers from text, but it does not know about times and dates. 
+
+```{r}
+str( MyTable )
+```
+
+Data "cleaning" refers to the process of manipulating the contents of a data table in order to put individual variables into a form suitable for analysis.  In the running data, for instance, `Time` and `Date` should have a form that makes them easy to subtract.
+
+There are several classes of objects that support easy handling of times and dates.  The `lubridate` package^[So named because it reduces the "friction" of working with times and dates.] has period and time classes.
+
+Instructing R to translate the character string "4:52" into a time interval can be done with the `ms()` function from `lubridate`.
+
+```{r}
+MyTable <- MyTable %>%
+  mutate( Time=ms(Time) )
+head( MyTable, 2 )
+```
+
+The change is subtle.  When printing the table, instead of `"4:52"` the time interval is printed as `4M 52S`.  In itself, this is no big deal.  But it does facilitate doing arithmetic.  Here are the seven seconds between 4:52 and 4:45
+```{r}
+ms("4:52") - ms( "4:45" )
+```
+
+
+Dates work similarly.  You can convert character strings like `"2 September 1852"` to dates.  Since the string is in the format day month year, the `dmy()` function is appropriate:
+```{r}
+dmy( "3 November 1858" ) - dmy( "2 September 1852" ) 
+```
+
+This bit of cleaning can be handled by `mutate()` along with the `ms()` and `dmy()` functions.
+
+```{r}
+MyTable <- MyTable %>%
+  mutate( Time=ms(Time), Date=dmy(Date) )
+```
+
+Once in the right form, seemingly simple operations like subtraction become simple in fact.  For instance, you can compare each time to the one in the next row.  The `lead()` function does this --- taking the value from the next row:
+```{r}
+RecordChanges <- MyTable %>%
+  mutate( change = Time - lead(Time), 
+          daysElapsed = lead(Date) - Date ) %>%
+  select( change, daysElapsed )
+```
+
+Many data-cleaning tasks are a matter of taking a variable in one form and converting it to another.  The variables `Time` and `Date` have been spotted as things that should not be simple character strings, and converted to the appropriate type using the functions provided by the `lubridate` package.
+
+Doing the same thing for `MyOtherTable` is not so simple.  There, the date strings are not immediately in the right form: `31 May 1913[5]`.  The `[5]` originates in a footnote on the date in Wikipedia.  (See)
+
+
+
+gsub( "\\[.+\\]$", "", goo)
