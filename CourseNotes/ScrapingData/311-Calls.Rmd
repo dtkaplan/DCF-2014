@@ -5,6 +5,18 @@ date: "October 27, 2014"
 output: html_document
 ---
 
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
+```
+
+```{r include=FALSE}
+require(data.table)
+require(lubridate)
+require(stringr)
+require(XML)
+require(RCurl)
+```
+
+
 ## Data Formats
 
 It's often surprisingly easy to access data tables in a variety of common formats.  When it's not easy, it can be very difficult indeed, requiring sophisticated programming skills and knowledge of data transmission formats, understanding of web-programming conventions, and so on.
@@ -209,99 +221,17 @@ testSize <- 2131700
 ```{r echo=FALSE,ref.label=paste0("complaint",c(1,2,"2b",3,4,5,6))}
 ```
 
-
-
-#### Are deaths seasonal?
-
-[NY Deaths database](https://health.data.ny.gov/Health/Genealogical-Research-Death-Index-Beginning-1957/vafa-pf2s)
-
-### Databases
-
-
-### The Codebook
-
-In addition to the data table itself, you will want to have access to the codebook.  Sometimes these are separate files, sometimes separate "tabs" in a spreadsheet, sometimes listings on web sites, and a variety of other formats.
-
-Data table and codebook.  Even there, there is a lot of variation.
-
-### CSV
-
-* Use `read.csv()` --- 
-    * do you want categorical as strings or factors
-    * header and varnames
-    
-GOOGLE DRIVE: download as CSV.  Alternative: Publish as HTML
-
-```{r}
-name <- "https://docs.google.com/spreadsheet/pub?key=0Am13enSalO74dDR6OTdJUXRfRXM3SEdnOGpKWDl5Y3c&single=true&gid=0&output=html"
-foo <- getURLContent( name ) # from RCurl
-goo <-  readHTMLTable(foo)
-```
-
-#### Marital Status
-
-```{r}
-Navy <- "https://docs.google.com/spreadsheets/d/1Ow6Cm4z-Z1Yybk3i352msulYCEDOUaOghmo9ALajyHo/pubhtml?gid=1877566408&single=true"
-foo <- getURLContent( Navy )
-goo <- readHTMLTable( foo )
-```
-
-#### SPSS, SAS, STATA
-
-* Use foreign package
-
-#### EXCEL
-
-    * Not just data, formulas and formatting as well.
-    * Corresponding to a data table is one "sheet" in the spreadsheet.
-    
-#### Zip
-
-### Databases
-
-
-### Data on the Web
-
-Download/Export
-
-Example [311 Calls in NYC](https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2010-to-Present/erm2-nwe9?)
-
-How to read a URL
-
-* queries and parameters 
-
-`http://real-chart.finance.yahoo.com/table.csv?s=%5EGSPC&a=00&b=3&c=1950&d=09&e=21&f=2014&g=d&ignore=.csv`
-
-Stock price data over the last 100 years --- it's a CSV file
-
-#### Easy
-
-HTML tables: look for `<tr>` `<td>`
-
-XML package: `readHTMLTable()`
-
-`readHTMLList()`
-
-#### Medium
-
-Special data format --- NYC Restaurants
+DO SOME REGULAR EXPRESSIONS TO pull out noice-related, car-related, etc. classes of complaints.
 
 
 
-#### Difficult
-
-Something other than a table.
+### For Instructors: Some tools for big files
 
 
-Grab some baby-related names [here](http://baby-names.familyeducation.com/browse/origin/african).  Use this, along with `BabyNames` to figure out the ethnicity distribution over the years.
 
-### Some tools for big files
+`data.table::fread()` is much faster and other `data.table` functions?
 
-Data files available over the web are often stored in a way that 
-
-`data.table::fread()` and other `data.table` functions?
-
-`csvcut` from UNIX command line.
+`csvcut` from UNIX command line.  Let's you select variables and cleans up the CSV
 
 ```
 csvcut -c 1,2,3,4,6,9,50,51 311Calls.csv > 311Simple.csv
