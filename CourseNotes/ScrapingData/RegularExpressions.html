@@ -86,8 +86,9 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <li>five digits, e.g., 55105,</li>
 <li>Zip + 4, 9 digits written 55105-1362</li>
 </ul></li>
+<li>Leading and trailing spaces. Sometimes the content of a string is preceeded or followed by blank statements, like this: <code>&quot;     henry     &quot;</code>.</li>
 </ul>
-<p>Regular expressions are used to detect whether a pattern is contained in a string, to replace the elements of that pattern with something else, or to extract the components that match the patterns.</p>
+<p>Regular expressions are used for several purposes: * to detect whether a pattern is contained in a string. Use <code>filter()</code> and <code>grepl()</code> * to replace the elements of that pattern with something else. Use <code>mutate()</code> and <code>gsub()</code> * to extract a component that matches the patterns. Use <code>extract()</code> from the DCF package.</p>
 <p>To illustrate, consider the baby names data, summarised to give the total count of each name for each sex.</p>
 <pre class="r"><code>NameList &lt;- BabyNames %&gt;% 
   mutate( name=tolower(name) ) %&gt;%
@@ -175,6 +176,29 @@ Groups: name
 6     matthew   M 1540182</code></pre>
 <div id="examples-of-accomplishing-tasks-with-regular-expressions." class="section level3">
 <h3>Examples of accomplishing tasks with regular expressions.</h3>
+<div id="get-rid-of-percent-signs-and-commas-in-numerals" class="section level4">
+<h4>Get rid of percent signs and commas in numerals</h4>
+<p>Numbers often come with comma separators or unit symbols such as % or $. For instance, here is part of a table about public debt from <a href="http://en.wikipedia.org/wiki/Government_debt">Wikipedia</a>.</p>
+<pre class="r"><code>head(Debt,3)</code></pre>
+<pre><code>         country            debt percentGDP perCapita percentWorldPublicDebt
+1          World $56,308 billion        64%     7,936                100.00%
+2 United States* $17,607 billion     73.60%    36,653                 31.27%
+3          Japan  $9,872 billion    214.30%    77,577                 17.53%</code></pre>
+<p>To use these numbers for computations, they must be cleaned up.</p>
+<pre class="r"><code>Debt %&gt;% 
+  mutate( debt=gsub(&quot;[$,%]|billion&quot;,&quot;&quot;,debt),
+          percentGDP=gsub(&quot;[,%]&quot;, &quot;&quot;, percentGDP)) %&gt;%
+  head(3)</code></pre>
+<pre><code>         country   debt percentGDP perCapita percentWorldPublicDebt
+1          World 56308          64     7,936                100.00%
+2 United States* 17607       73.60    36,653                 31.27%
+3          Japan  9872      214.30    77,577                 17.53%</code></pre>
+</div>
+<div id="remove-a-currency-sign" class="section level4">
+<h4>Remove a currency sign</h4>
+<pre class="r"><code>gsub(&quot;^\\$|€|¥|£|¢$&quot;,&quot;&quot;, c(&quot;$100.95&quot;, &quot;45¢&quot;))</code></pre>
+<pre><code>[1] &quot;100.95&quot; &quot;45&quot;    </code></pre>
+</div>
 <div id="how-often-do-boys-names-end-in-vowels" class="section level4">
 <h4>How often do boys’ names end in vowels?</h4>
 <pre class="r"><code>NameList %&gt;%
@@ -229,6 +253,7 @@ Groups: sex
 <li>Characters enclosed in square brackets, e.g., <code>[aeiou]</code> means any of those characters. (So, <code>[aeiou]</code> is a pattern describing a vowel.)</li>
 <li>The <code>^</code> inside square brackets means “any except these.” So, a consonant is <code>[^aeiou]</code></li>
 </ul></li>
+<li>Alternatives. A vertical bar means “either.” The regular expression</li>
 <li>Repeats
 <ul>
 <li>Two simple patterns in a row, means those patterns consecutively. Example: <code>M[aeiou]</code> means a capital M followed by a lower-case vowel.</li>

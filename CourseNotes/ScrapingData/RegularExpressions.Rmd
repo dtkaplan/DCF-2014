@@ -26,8 +26,13 @@ options( width=100 )
 * POSTAL CODES.  In the US, postal codes are written in several formats: 
     * five digits, e.g., 55105, 
     * Zip + 4, 9 digits written 55105-1362 
+* Leading and trailing spaces.  Sometimes the content of a string is preceeded or followed by blank statements, like this: `"     henry     "`.  
+
     
-Regular expressions are used to detect whether a pattern is contained in a string, to replace the elements of that pattern with something else, or to extract the components that match the patterns.
+Regular expressions are used for several purposes:
+* to detect whether a pattern is contained in a string. Use `filter()` and `grepl()`
+* to replace the elements of that pattern with something else. Use `mutate()` and `gsub()`
+* to extract a component that matches the patterns. Use `extract()` from the DCF package.
 
 To illustrate, consider the baby names data, summarised to give the total count of each name for each sex.
 ```{r}
@@ -73,6 +78,43 @@ NameList %>%
 
 ### Examples of accomplishing tasks with regular expressions.
 
+```{r echo=FALSE,include=FALSE}
+require(XML)
+require(RCurl)
+Ts <- readHTMLTable(
+  getURLContent("http://en.wikipedia.org/wiki/Government_debt"),
+  stringsAsFactors=FALSE )
+Debt <- Ts[[2]]
+names(Debt) <- c("country", "debt", "percentGDP", 
+                 "perCapita", "percentWorldPublicDebt")
+Debt <- Debt %>%
+  mutate( debt=paste0("$",debt, " billion"))
+write.csv(Debt,file="WikiDebt.csv",row.names=FALSE)
+```
+
+```{r echo=FALSE}
+Debt <- read.csv("WikiDebt.csv")
+```
+#### Get rid of percent signs and commas in numerals
+
+Numbers often come with comma separators or unit symbols such as % or $.  For instance, here is part of a table about public debt from [Wikipedia](http://en.wikipedia.org/wiki/Government_debt).
+```{r}
+head(Debt,3)
+```
+To use these numbers for computations, they must be cleaned up.
+```{r}
+Debt %>% 
+  mutate( debt=gsub("[$,%]|billion","",debt),
+          percentGDP=gsub("[,%]", "", percentGDP)) %>%
+  head(3)
+```
+
+#### Remove a currency sign 
+
+```{r}
+gsub("^\\$|€|¥|£|¢$","", c("$100.95", "45¢"))
+```
+
 #### How often do boys' names end in vowels?
 
 ```{r}
@@ -115,6 +157,7 @@ Some basics:
     * A character, e.g., `b`, means just that character.
     * Characters enclosed in square brackets, e.g., `[aeiou]` means any of those characters.  (So, `[aeiou]` is a pattern describing a vowel.) 
     * The `^` inside square brackets means "any except these."  So, a consonant is `[^aeiou]`
+* Alternatives.  A vertical bar means "either."  The regular expression 
 * Repeats
      * Two simple patterns in a row, means those patterns consecutively.  Example: `M[aeiou]` means a capital M followed by a lower-case vowel.
      * A simple pattern followed by a `+` means "zero or more times."
