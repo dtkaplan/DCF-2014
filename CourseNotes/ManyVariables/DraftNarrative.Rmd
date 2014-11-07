@@ -9,6 +9,277 @@ output:
 ```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
 ```
 
+```{r include=FALSE}
+library("party")
+library("NHANES")
+library("mclust")
+```
+
+Up to now, the representation of data has been in the form of graphics.  Graphics are often easy to interpret (but not always).  They can be used  to identify patterns and relationships --- this is termed *exploratory analysis*.  They are also useful for telling a story --- presenting a pattern or relationship that is important for some purpose.
+
+But graphics are not always the best way to explore or to present data.  Graphics work well when there are two or three or even four variables involved in the patterns to be explored or in the story to be told.  Why two, three or four?  Two variables can be represented with position on the paper or screen or, ultimately, the eye's retina.  To represent a third variable, color or size can be used.  In principle, more variables can be represented by other graphical aesthetics: shape, angle, color saturation, opacity, facets, etc.  Doing so raises problems for human cognition; people simply don't do very well at integrating so many graphical modes into a coherent whole.
+
+There are, of course, occasions when a multivariate graphical representation works.  A famous example is [Charles Minard's] map, made in 1869, of the march on Moscow of Napoleon's army in 1812-1813.  
+
+![Figurative map of the successive losses of men from the French Army in that Russian campaign 1812-1812.  From [wikimedia](http://en.wikipedia.org/wiki/Wikipedia:Featured_picture_candidates/Napoleon's_Invasion_of_Russia). A higher resolution version is available [here](http://en.wikipedia.org/wiki/Wikipedia:Featured_picture_candidates/Napoleon's_Invasion_of_Russia#mediaviewer/File:Minard.png).](MarchOnMoscow.png)
+
+<div style="clear:both;"></div> <!-- break between caption and text -->
+
+The map shows location (latitude and longitude), size of the army, terrain features, and expeditions off of the main force.  The second graphic, on the bottom, shows time and temperature.  
+
+The Minard graphic is famous because it is exceptional. Such exceptions are not common.
+
+In general, when dealing with multiple variables, a different mode of exploration or presentation is used: machine learning.  This chapter introduces a few of the many methods of machine learning.
+
+Keep in mind that with machine learning, as with graphics, techniques and operations are used to transfigure data into ready-to-use form.  For graphics, this was called "glyph-ready form."  The same term will be used when working with machine learning, even though there are no glyphs.   
+
+### Regression or Learning?
+
+The most important methods pre-date the introduction of the term "machine learning."  These are the *regression* techniques, particularly *linear least squares* and *logistic regression*.
+
+Presenting the concepts of regression requires a book-length treatment. It's inappropriate to do that here.  Instead, this chapter will focus on machine-learning techniques that can be understood more intuitively.  Do remember, however, that mastery of the regression techniques is an essential component of any well-trained data analyst.
+
+## Supervised 
+
+A *function*, as you know, is a relationship between inputs and an output.  Outdoor temperature is a function of season: season is the input; temperature is the output.  Length of the day --- i.e. how many hours of daylight --- is a function of latitude and day of the year: latitude and day-of-the-year (e.g. March 22) are the inputs; day length is the output.  Risk of colon cancer is a function of ... well what?
+
+There is a new bit of R syntax to help with defining functions: the tilde.  The tilde is used to indicate what is the output variable and what are the input variables.  You'll see expressions like this:
+```
+diabetic ~ age + sex + weight + height
+```
+Here, the variable `diabetic` is marked as the output, simply because it's to the left of the tilde.  The variables `age`, `sex`, `weight`, and `height` are to be the inputs to the function.  You'll also see the syntax `diabetic ~ .`.  The dot to the right of the tilde means "use all the available variables (except the output)."
+
+There are several different goals that might motivate constructing a function:
+
+* Predict the output given an input.  It's February, what will the temperature be?  On June 15 in Saint Paul, Minnesota, USA (latitude 45 deg N), how many hours of daylight will there be.
+* Determine which variables are useful inputs.  It's obvious from experience that temperature is a function of season. But in less familiar situations, e.g. colon cancer, the relevant inputs are uncertain or unknown.
+* Generating hypotheses.  For a scientist trying to figure out the causes of colon cancer, it can be useful to construct a predictive model, then look to see what variables turn out to be related to risk of colon cancer.  For instance, you might find that diet, age, and blood pressure are risk factors for colon cancer.  Knowing some physiology suggests that blood pressure is not a direct cause of colon cancer, but it might be that there is a common cause of blood pressure and cancer.  That "might be" is a hypothesis, and one that you probably would not have thought of before finding a function relating risk of colon cancer to those inputs.
+* Understand how a system works. For instance, a reasonable function relating hours of daylight to day-of-the-year and latitude reveals that the the northern and southern hemisphere have reversed patterns: long days in the southern hemisphere will be short days in the northern hemisphere.
+
+Depending on your motivation, the kind of model and the input variables will differ.  In understanding how a system works, the variables you use should be related to the actual, causal mechanisms involved, e.g. the genetics of cancer.  For predicting an output, it hardly matters what the causal mechanisms are. Instead, all that's required is that the inputs are known at a time *before* the prediction is to be made.
+
+Consider the relationship between age and colon cancer.  As with many diseases, the risk of colon cancer increases with age.  Knowing this can be very useful in practice.  For instance, it could help you design a screening program to test people for colon cancer.  On the other hand, age does not suggest a way to avoid colon cancer: there's no way for you to change your age.  You can, however, change things like diet, physical fitness, etc.
+
+*[Supervised learning](http://en.wikipedia.org/wiki/Supervised_learning)* (also known as *function fitting*) is the process of constructing a function from data.  The defining thing about supervised learning is that the data you have includes as a variable the outcome of the function.  With this outcome variable in hand, you can try many different possible functions of input variables and choose those that give a good match to the actual outcome.
+
+Another broad category of machine learning is *unsupervised* learning.  More about that later.
+
+The *form* or *architecture* of a function refers to the mathematics behind the function and the approach to finding a specific function that is a good match to the data. Examples of the names of such forms are *linear least squares*, *logistic regression*, *neural networks*, *radial basis functions*, *discriminant functions*, *nearest neighbors*, etc.
+
+Here the focus will be on a single, general-purpose function architecture: *recursive partitioning*.  Software for constructing recursive partitioning function is in the `party` package:
+```{r}
+library(party)
+```
+
+To start, take a very familiar condition: pregnancy.  You already know what factors predict pregnancy, so you can compare the findings of the machine learning technique of recursive partitioning to what you already know.
+
+The `party::ctree()` function builds a recursive-partitioning function. The `NHANES` data has a variable `pregnant` that identifies whether the person is pregnant.  
+
+```{r include=FALSE}
+source('funCT.R')
+```
+
+```{r}
+whoIsPregnant <- 
+  ctree( pregnant ~ age + income + sex, data=NHANES )
+```
+
+There are different ways to look at the function contained in `whoIsPregnant`.  An important one is the output produced for any given input.  Here's how to calculate that output when the inputs are an age of 25 (years), an income of 6 (times the poverty threshold), and sex female: 
+
+```{r}
+f <- funCT( whoIsPregnant ) # get the function
+f( age=25, income=6, sex="female")
+```
+
+The input values are repeated to make it easier to compare inputs to outputs.  Since the output is a yes-or-no, the output is given as the probability of each of these.  So, for a 25-year-old woman with an income level of 6, the probability of being pregnant is 38.6%.
+
+Another way to look at a recursive partitioning function is as a "decision tree".
+
+```{r fig.width=20,out.width="2000px"}
+plot(whoIsPregnant, type="simple")
+```
+
+To read the tree, start at the top.  The top node, drawn as an oval, specifies the variable `sex`.  From that oval there are two branches: one labeled "male" and the other "female." This is the partitioning of the node from which the branches stem.  As you follow a branch, you may come to another node, which itself branches, or you may come to a terminal (shown in the gray box).  The terminal gives the output of the model.
+
+For the 26-year-old female with an income level of 6, the function output can be read off by following the appropriate nodes.  Starting at the top, follow the "female" branch.  The node that leads to is about the `income` variable; the two branches from that node indicate the criterion for going left or right.  In this case, the threshold for branching right is an income greater than 4.73.  For an income level of 6, then, branch right.
+
+The right branch from income leads to a node involving `age`. The threshold for branching right is an age greater than 39 years.  The 26-year-old does not reach the threshold, so branch *left*.
+
+That left branch leads to another node involving `age`.  The threshold for branching right is 21 years old.  The 26-year-old meets that threshold, so branch right.  The right branch leads to a terminal: the gray box marked "22".  The output for the example person --- income 6, age 25, female --- is 0.386.  Admittedly, the format of the terminal is a bit obscure, but the information is there.
+
+Within each node there is a notation like $p < 0.001$.  This is not part of the function itself.  Instead, it reflects the process by which the function was constructed.  Roughly speaking, $p < 0.001$ means there's less than a 1-in-1000 chance that the node's two branches are really the same.^[Somewhat more technically, $p$ is the p-value from a hypothesis test. The hypothesis being tested with the data is that the observed difference between the left and right branches is merely the result of random, meaningless chance, and likely wouldn't show up if the NHANES data were collected on a new group of people.]  
+
+What has been learned in constructing this function.  First, without having been told that `sex` is related to pregnancy, the recursive partitioning has figured out that sex makes a difference; only females get pregnant.  Of course you knew that already, but the machine learned that fact from the data.  The machine also identified the fact that females under 14 years old are not likely to be pregnant, and women over 40 are also unlikely to be pregnant.  Again, you knew that already, but the machine learned it from the data.  The machine also learned something that might be unfamiliar to you, that age patterns of pregnancy are different for low-income and high-income people.  
+
+It might be easier to see the income-related patterns by looking at the specific model outputs. Here's the function's output for low-income females from 10 to 20 years old:
+```{r}
+f( age=10:20, income=3, sex="female")
+```
+And for high-income females:
+```{r}
+f( age=25, income=6, sex="female")
+```
+
+You can see that, at any given age, high-income girls are less likely to be pregnant than low-income girls.
+
+Part of the machine learning is finding out which variables appear to be useful in matching the patterns of pregnancy in the NHANES data.  For instance, the following recursive-partitioning tree can make use of several more variables.  To avoid rediscovering the obvious, only females will be considered.
+
+```{r}
+whoIsPregnant2 <- 
+  ctree( pregnant ~ 
+           age + income + ethnicity + 
+           height + smoker + bmi, 
+         data=NHANES %>% filter(sex=="female") )
+```
+
+
+```{r  fig.width=30,fig.height=15,out.width="2000px",out.height="2000px"}
+plot( whoIsPregnant2, type="simple")
+```
+
+
+## Unsupervised Learning
+
+
+## Dimension Reduction
+
+It often happens a variable carries little information that's relevant to the task at hand.  Even for variables that are informative, there can be redundancy or near duplication of variables.  That is, two or more variables are giving essentially the same information; they have very similar patterns across the cases.  
+
+Such irrelevant or redundant variables make it harder to learn from data.  The irrelevant variables are simply noise that obscures actual patterns.  Similarly, when two or more variables are redundant, the differences between them may represent random noise.
+
+It's helpful to remove irrelevant or redundant variables so that they, and the noise they carry, don't obscure the patterns that machine learning could learn.
+
+As an example of such a situation, consider votes in a congress or parliament.  Each representative (in the US congress) or member (in parliaments) casts votes on a variety of matters.  The pattern of yeas and nays may indicate which members are affiliated, i.e. members of the same political party.  To test this idea, you might try clustering the members by their voting record.
+
+Take one such voting record: the Scottish Parliament in 2008.^[The example was constructed by then-student Caroline Ettinger and her faculty advisor, Andrew Beveridge, at Macalester College, and presented in Ms Ettinger's honors thesis.] 
+
+```{r echo=FALSE}
+Votes <- read.csv( "VotesS1-tally.csv", skip=1 )
+Votes <- subset(Votes, complete.cases(Votes) )
+rownames( Votes ) <- Votes$VOTE
+memberNames <- names(Votes)[-(1:2)]
+nBallots <- nrow( Votes )
+VotesM <- matrix( unlist( Votes ), nrow=nBallots )
+# VotesM <- VotesM[1:nBallots,1:ncol(Votes)] # drop the ballot names
+# Put in alphabetical order
+inds <- order( names(Votes)[-(1:2)] ) + 2
+VAlpha <- VotesM[,inds]
+remove <- which( apply( VAlpha, 2, function(x) sum(abs(x))) < 100 )
+memberNames <- memberNames[-remove]
+Valpha <- VAlpha[,-remove]
+res <- svd( VAlpha )
+showVotes <- Votes[,inds]
+```{r}
+a1 <- res$u[,1,drop=FALSE]
+b1 <- res$v[,1,drop=FALSE] %>% t
+a2 <- res$u[,2,drop=FALSE]
+b2 <- res$v[,2,drop=FALSE] %>% t
+```
+```
+
+Here's a small part of the voting record:
+```{r echo=FALSE}
+xtable(t(showVotes)[1:10,1:6], rotate.colnames=TRUE )
+```
+
+The names of the members of parliament are the cases.  Each ballot --- identified by a file number such as "S1M-4.3" --- is a variable. A $1$ means and aye vote, $-1$ is a yay, and $0$ is an abstention.  There are more than 130 members and more than 700 ballots.  It's impractical to show all of the 100,000+ votes in a table.  But since there are only 3 levels for each variable, displaying the table as an image works well:
+
+```{r echo=FALSE}
+library(reshape2) # for melt
+melt( VAlpha ) %>%
+  mutate( Vote=factor(value, labels=c("Nay","Abstain","Yay"))) %>% 
+  ggplot( aes(x=Var1, y=Var2, fill=Vote)) +
+  geom_tile() +
+  xlab("Ballot") + ylab("Member of Parliament")
+```
+
+Hard to see much of a pattern here, although you may notice the Scottish tartan structure.^[The tartan pattern provides an indication to experts that the matrix can be approximated by a matrix of low-rank.] 
+
+![The official tartan pattern of West Virginia University. (Source: Richinstead at Wikimedia. CC-BY-SA-3.0. )](http://upload.wikimedia.org/wikipedia/commons/d/d0/West-Virginia-University-Official-Tartan.jpg)
+
+<div style="clear:both;"></div> <!-- break between caption and text -->
+
+As a start, here's a graphic showing the ballot values for all of the members of parliament for two randomly selected ballots. (Jittering is used to give a better idea of the point count at each position. The red dots are the actual positions.)
+
+```{r echo=FALSE}
+Random2 <- data.frame( ballot48=VAlpha[48,], ballot118=VAlpha[118,] )
+ggplot( Random2, aes(x=ballot48, y=ballot118)) +
+  geom_point( alpha=.7, position=position_jitter(width = .1, height = .1) )+
+  geom_point( alpha=.01, size=10, color="red" )
+```
+Each point is one member of parliament.  Similarly aligned members are grouped together at one of the nine possibilities marked in red: (Yay, Nay), (Yay, Abstain), (Yay, Yay), ..., (Nay, Nay).  In these two ballots, eight of the nine is populated.  This hardly indicates that there are 8 clusters of members.
+
+Intuition suggests that it would be better to use *all* of the ballots, rather than just two.  In ne next plot, the first 336 ballots have been added together, as have the remaining ballots:
+```{r echo=FALSE}
+AllOfThem <- data.frame( First336=colSums( Valpha[1:336,]), 
+                         RemainingOnes=colSums(Valpha[337:773,]))
+ggplot( AllOfThem, aes(x=First336, y=RemainingOnes)) +
+  geom_point( alpha=.7, size=5 )
+```
+
+This graphic suggests that there might be two clusters of members who are aligned with each other.  Using all of the data seems to give more information than using just two ballots.  
+
+You may ask why the choice was made to add up the first 336 ballots as $x$ and the remaining ballots as $y$.  Perhaps there is a better choice to display the underlying patterns, adding up the ballots in a different way.
+
+In fact, there is a mathematical approach to finding the *best* way to add up the ballots, called "singular value decomposition" (SVD).  The mathematics of SVD draw on a knowledge of matrix algebra, but the operation itself is readily available to anyone.^[In brief, SVD calculates the best way to add up (i.e. linearly combine) the columns and the rows of a matrix to produce the largest possible variance.  Then SVD finds  the best way to add up the what's left, and so on.]  The next plot shows the position of each member on the best two ways of summing up the ballots.
+
+```{r}
+Best <- data.frame( one=c(b1), two=c(b2), three=res$v[,3], four=res$v[,4], five=res$v[,5] )
+clusts <- kmeans( Best, centers=5)
+Best$cluster <- as.factor(clusts$cluster)
+ggplot( data=Best, aes( x=one, y=two )) +
+    geom_point( shape=1, color='red', size=7, aes(x=0,y=0)) + 
+  geom_point( size=5, alpha=.6 ) + 
+  xlab("Best Vector from SVD") + 
+  ylab("Next Best Vector from SVD") + 
+  ggtitle("Political Positions of Members of Parliament")
+```
+
+At a glance, you can see that there are three main clusters.  The red circle marks the "average" member.  The three clusters move away from average in different directions.  There are several members whose position is in-between the average and the cluster to which they are closest.
+
+Just as there are clusters of political positions, there are clusters of ballots that might correspond to such factors as social effect, economic effect, etc.  Here's a graphic showing the position of ballots, using the best two SVD sums.
+
+```{r}
+BestBallots <- data.frame( one=res$u[,1], two=res$u[,2], three=res$u[,3], four=res$u[,4], five=res$u[,5] )
+clustBallots <- kmeans( BestBallots, centers=16 )
+BestBallots$cluster <- as.factor(clustBallots$cluster)
+ggplot( data=BestBallots, aes( x=one, y=two )) +
+    geom_point( shape=1, color='red', size=7, aes(x=0,y=0)) + 
+  geom_point( size=5, alpha=.6 ) + 
+  xlab("Best Vector from SVD") + 
+  ylab("Next Best Vector from SVD") + 
+  ggtitle('Orientation of \"issues\" among the ballots')
+```
+
+There are obvious clusters in this plot.  Still, interpretation can be tricky.  Remember that, on each issue, there are both yay and nay votes.  This is what accounts for the symmetry of the dots around the center (indicated in red).  The opposing dots along each angle from the center might be interpretted in terms of "socially liberal" vs "socially conservative", "economically liberal" versus "economically" conservative.  Deciding which is which likely involves reading the bill itself.
+
+Finally, the "best" sums from SVD can be used to re-arrange cases and separately re-arrange variables  while keeping exactly the same values for each case in each variable.  This amounts simply to re-ordering the members in a way other than alphabetical and similarly with the ballots.  This can simplify the appearance of the data.
+
+```{r}
+inds1 <- order(c(res$u[,1]))
+inds2 <- order(c(res$v[,1]))
+VA <- VAlpha[ inds1, inds2 ]
+image( VA, xlab="Ballots", ylab="Members")
+```
+
+Cases: e.g. NCI60 
+
+Variables: 
+* hierarchical modeling typically uses only a few variables even when many are available.
+* SVD and the Scottish parliament.
+
+
+## Working with Multiple (> 3) Variables
+
+The most important methods are ones that will not be described here: regression methods.  
+    * Linear regression and a set of related regression techniques such as logistic regression.
+
+Why not?  Using them properly requires understanding some theory and several concepts: residual, colinearity, coefficients and multivariable polynomials, confidence interval, significance.  
+    * Explanatory vars and response
+    * 
+
+## Ideas
+
 The United Nations publishes the ["World Happiness Report"](http://en.wikipedia.org/wiki/World_Happiness_Report) that attempts to quantify happiness country by country.  The `Happiness` data table contains the results based on data collected in 2010-2012.  Here's a map of the happiness scores:
 ```{r}
 mosaic::mWorldMap( HappinessIndex, key="country", fill="score")
@@ -51,9 +322,9 @@ M <-
   select( -country, -region ) %>%
   cor( use="complete")
 M2 <- M[,(sort(colnames(M)))] %>% 
-  as.data.frame(M2) %>% mutate( var1=as.character(rownames(M))) %>%
+  as.data.frame(M) %>% mutate( var1=as.character(rownames(M))) %>%
   arrange(desc(var1))
-Mlong <- gather(data.frame(M2), key="var2", value='r', -var1 ) 
+Mlong <- tidyr::gather(data.frame(M2), key="var2", value='r', -var1 ) 
 ggplot( Mlong, aes(x=var1, y=var2 )) + geom_tile( aes(fill=r) ) +
   theme(axis.text.x=element_text(angle=60,hjust=1)) +
   xlab("") + ylab("")

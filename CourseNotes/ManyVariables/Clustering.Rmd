@@ -1,0 +1,35 @@
+---
+output:
+  html_document:
+    css: ~/KaplanFiles/DCF-2014/CSS/DCF-style.css
+    fig_caption: yes
+    toc: no
+---
+
+```{r child="/Users/kaplan/KaplanFiles/DCF-2014/CSS/DCF-common.Rmd"}
+```
+
+City data.  Plot out the big cities.  Then cluster them.
+
+```{r}
+BigCities <- WorldCities %>%
+  arrange( desc(population) ) %>%
+  head( 2000 ) 
+ggplot( data=BigCities, aes(x=longitude, y=latitude)) +
+  geom_point()
+```
+
+Cluster them ...
+```{r}
+clusts <- BigCities %>% 
+  select( longitude, latitude ) %>% 
+  Mclust( data=., G=1:7)
+plot( clusts, what="classification" )
+```
+
+
+
+```{r child="../../CSS/DisqusTemplate.Rmd"}
+```
+
+
