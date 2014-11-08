@@ -39,7 +39,7 @@ The most important methods pre-date the introduction of the term "machine learni
 
 Presenting the concepts of regression requires a book-length treatment. It's inappropriate to do that here.  Instead, this chapter will focus on machine-learning techniques that can be understood more intuitively.  Do remember, however, that mastery of the regression techniques is an essential component of any well-trained data analyst.
 
-## Supervised 
+## Supervised Learning
 
 A *function*, as you know, is a relationship between inputs and an output.  Outdoor temperature is a function of season: season is the input; temperature is the output.  Length of the day --- i.e. how many hours of daylight --- is a function of latitude and day of the year: latitude and day-of-the-year (e.g. March 22) are the inputs; day length is the output.  Risk of colon cancer is a function of ... well what?
 
@@ -139,6 +139,97 @@ plot( whoIsPregnant2, type="simple")
 
 
 ## Unsupervised Learning
+
+
+You may have seen an evolutionary tree like this one of mammals:
+
+<a href="http://upload.wikimedia.org/wikipedia/commons/0/0e/An_evolutionary_tree_of_mammals.jpeg"><img src="http://upload.wikimedia.org/wikipedia/commons/0/0e/An_evolutionary_tree_of_mammals.jpeg" width=400></a>
+
+We humans ([hominidae](http://en.wikipedia.org/wiki/Hominidae)) are on the far left of the tree.  The numbers at the branch points are estimates of how long ago --- in millions of years --- the branches separated.  According to the diagram, rodents and we primates diverged about 90 million years ago.
+
+How do evolutionary biologists construct a tree like this?  They look at various traits of different kinds of mammals.  Two mammals that have similar traits were deemed closely related.  Animals with dissimilar traits are distantly related.  Putting together all this information about what is close to what results in the evolutionary tree.
+
+The tree, sometimes called a **dendrogram**, is a nice organizing structure for relationships.  Evolutionary biologists imagine that at each branch point there was an actual animal whose descendents split into groups that developed in different directions. In evolutionary biology, the inferences about branches come from comparing existing creatures to one another (as well as creatures from the fossil record).  Creatures with similar traits are in nearby branches, creatures with different traits are in further branches.  It takes considerable expertise in anatomy and morphology to know what similarities and differences to look for.
+
+But there is no outcome variable, just a construction of what is closely related or distantly related to what.
+
+Trees can describe degrees of similarity between different things, regardless of how those relationships came to be.  If you have a set of objects or cases, and you can measure how similar any two of the objects are, you can construct a tree.  The tree may or may not reflect some deeper relationship among the objects, but it often provides a simple way to visualize relationships.
+
+When the description of an object consists of a set of numerical variables, there are two main steps in constructing a tree:
+
+1. Represent each object as a point in a Cartesian space.
+2. Make branching decisions based on how close together points or clouds of points are.
+
+The data about automobile characteristics in `mtcars` can illustrate.
+```{r}
+data(mtcars)
+names(mtcars)
+summary(mtcars)
+```
+
+For an individual quantitative variable, it's easy to measure how far apart any two cars are: take the difference between the numerical values.  The different variables are, however, on different scales.  For example, `gear` ranges only from 3 to 5, while `hp` goes from 52 to 355.  This means that some decision needs to be made about rescaling the variables so that the differences along each variable reasonably reflect how different the respective cars are.  There is more than one way to do this. The `dist()` function takes a simple and pragmatic point of view: each variable is equally important.
+```{r}
+carDiffs = dist(mtcars)
+```
+The result gives the "distance" from each individual car to every other car.  Here's a small sample from the distance table:
+
+```{r results='asis'}
+xtable( round(as.matrix(carDiffs)[1:5,1:5]))
+```
+
+It's much like the tables that used to be printed on road maps giving the distance from one city to another, like this one of cities in the US:
+
+<!-- <a href="http://www.ual.es/Universidad/AsEcon/images/ke.gif"><img src="http://www.ual.es/Universidad/AsEcon/images/ke.gif" width=400></a> -->
+
+![Distances between some US Cities](http://www.snavi.com/en//tips/Highway%20TIPS%20Image%208.jpg)
+
+<div style="clear:both;"></div> <!-- break between caption and text -->
+
+
+
+Notice that the distances are symmetrical: it's the same distance from Boston to San Francisco as from San Francisco to Boston (3043 mi, according to the table).
+
+Knowing the distances between the cities is not the same thing as knowing their locations.  But the set of mutual distances is enough information to reconstruct the relative positions.  
+
+Cities, of course, lie on the surface of the earth.  That need not be true for the abstract distance between automobile types.  Even so, the set of mutual distances provides information equivalent to knowing the relative positions.  This can be used to construct branches between nearby items, then to connect those branches, and so on to construct an entire tree.  The process is called "hierarchical clustering."  For example:
+
+```{r}
+hc = hclust( carDiffs )
+plot(hc, hang=-1)
+```
+
+Performance-related measures
+```{r}
+perfDist = dist(getVarFormula(~mpg+hp+wt+qsec, data=mtcars))
+hc = hclust(perfDist)
+plot(hc, hang=-1)
+```
+
+There are many ways to graph such trees.  For examples, see [Visualizing Dendrograms in R](http://rpubs.com/gaston/dendrograms).
+
+Another way to group similar cases considers just the cases, without constructing a heirarchy.  The output is not a tree but a choice of which group each case belongs to.^[There can be more detail than this, for instance a probability for each group that a specific case belongs to the group.]
+
+As an example, consider the cities of the world (in `WorldCities`).  Cities can be different and similar in many ways: population, age structure, public transport and roads, building space per person, etc.  The choice of features depends on the purpose you have for making the grouping.
+
+My purpose is to show you that clustering via machine learning can actually learn genuine patterns in the data.  So I'll choose features that are utterly familiar: the latitude and longitude of each cities.
+
+Now you know about the location of cities.  They are on land. And you know about the organization of land on earth; most land falls in one of the large clusters called continents. But the `WorldCities` data doesn't have any notion of continents. Perhaps it's possible that this feature, which you are completely aware of, can be learned by a computer that never even took grade-school geography.
+
+For simplicity, consider the 4000 biggest cities in the world and their longitudes and latitudes:
+```{r}
+require(mclust)
+set.seed(104)
+BigCities <- WorldCities %>%
+  arrange( desc(population) ) %>%
+  head( 4000 ) %>% select( longitude, latitude )
+clusts2 <- BigCities %>%
+  kmeans( centers=6 )
+BigCities$cluster <- as.factor(clusts2$cluster)
+ggplot( BigCities, aes( x=longitude, y=latitude, color=cluster, shape=cluster) ) + geom_point()
+```
+
+The clustering algorithm seems to have identified the continents.  North and South America are clearly distinguished, as well as most of Africa.  (The cities in North Africa are matched to Europe.)  The distinction between Europe and Asia is essentially historic, not geographic.  The cluster for Europe extends a ways into what's called Asia.  East Asia and central Asia are marked as distinct, largly because the low population areas of Tibet and Siberia look the same as the major oceans to the algorithm.
+
 
 
 ## Dimension Reduction
