@@ -240,48 +240,64 @@ Such irrelevant or redundant variables make it harder to learn from data.  The i
 
 It's helpful to remove irrelevant or redundant variables so that they, and the noise they carry, don't obscure the patterns that machine learning could learn.
 
-As an example of such a situation, consider votes in a congress or parliament.  Each representative (in the US congress) or member (in parliaments) casts votes on a variety of matters.  The pattern of yeas and nays may indicate which members are affiliated, i.e. members of the same political party.  To test this idea, you might try clustering the members by their voting record.
+As an example of such a situation, consider votes in a congress or parliament.  Each representative (in the US congress) or member (in parliaments) casts votes on a variety of matters.  The pattern of ayes and nays may indicate which members are affiliated, i.e. members of the same political party.  To test this idea, you might try clustering the members by their voting record.
 
 Take one such voting record: the Scottish Parliament in 2008.^[The example was constructed by then-student Caroline Ettinger and her faculty advisor, Andrew Beveridge, at Macalester College, and presented in Ms Ettinger's honors thesis.] 
 
 ```{r echo=FALSE}
+# Get the party names
+Parties <-  read.csv( "VotesS1-tally.csv", as.is=TRUE, 
+                      header=FALSE, nrows=1 )
+# Get rid of the first column and turn into a vector.
+Parties <- as.character(Parties[,-1])
+
 Votes <- read.csv( "VotesS1-tally.csv", skip=1 )
 Votes <- subset(Votes, complete.cases(Votes) )
 rownames( Votes ) <- Votes$VOTE
-memberNames <- names(Votes)[-(1:2)]
+Votes <- Votes[,-1]
+memberNames <- names(Votes)
 nBallots <- nrow( Votes )
 VotesM <- matrix( unlist( Votes ), nrow=nBallots )
 # VotesM <- VotesM[1:nBallots,1:ncol(Votes)] # drop the ballot names
 # Put in alphabetical order
-inds <- order( names(Votes)[-(1:2)] ) + 2
+inds <- order( memberNames )
 VAlpha <- VotesM[,inds]
-remove <- which( apply( VAlpha, 2, function(x) sum(abs(x))) < 100 )
-memberNames <- memberNames[-remove]
-Valpha <- VAlpha[,-remove]
+Parties <- Parties[inds]
+# remove <- which( apply( VAlpha, 2, function(x) sum(abs(x))) < 100 )
+# memberNames <- memberNames[-remove]
+# Parties <- Parties[-remove]
+# Valpha <- VAlpha[,-remove]
 res <- svd( VAlpha )
 showVotes <- Votes[,inds]
-```{r}
+```
+
+```{r echo=FALSE}
 a1 <- res$u[,1,drop=FALSE]
 b1 <- res$v[,1,drop=FALSE] %>% t
 a2 <- res$u[,2,drop=FALSE]
 b2 <- res$v[,2,drop=FALSE] %>% t
 ```
-```
+
 
 Here's a small part of the voting record:
+
 ```{r echo=FALSE}
-xtable(t(showVotes)[1:10,1:6], rotate.colnames=TRUE )
+old=options(width=120)
+t(showVotes)[1:10,1:6]
+options(old)
 ```
 
-The names of the members of parliament are the cases.  Each ballot --- identified by a file number such as "S1M-4.3" --- is a variable. A $1$ means and aye vote, $-1$ is a yay, and $0$ is an abstention.  There are more than 130 members and more than 700 ballots.  It's impractical to show all of the 100,000+ votes in a table.  But since there are only 3 levels for each variable, displaying the table as an image works well:
+The names of the members of parliament are the cases.  Each ballot --- identified by a file number such as "S1M-4.3" --- is a variable. A $1$ means an aye vote, $-1$ is nay, and $0$ is an abstention.  There are more than 130 members and more than 700 ballots.  It's impractical to show all of the 100,000+ votes in a table.  But since there are only 3 levels for each variable, displaying the table as an image works well:
 
 ```{r echo=FALSE}
 library(reshape2) # for melt
-melt( VAlpha ) %>%
-  mutate( Vote=factor(value, labels=c("Nay","Abstain","Yay"))) %>% 
+melt( VAlpha ) %>% 
+  mutate( Vote=factor(value, labels=c("Nay","Abstain","Aye"))) %>% 
   ggplot( aes(x=Var1, y=Var2, fill=Vote)) +
   geom_tile() +
-  xlab("Ballot") + ylab("Member of Parliament")
+  xlab("Ballot") + ylab("Member of Parliament") + 
+  scale_fill_manual( values=c(rgb(.2,.2,.2,.6), rgb(.95,.95,.95), rgb(209/255,148/255,12/255)))
+
 ```
 
 Hard to see much of a pattern here, although you may notice the Scottish tartan structure.^[The tartan pattern provides an indication to experts that the matrix can be approximated by a matrix of low-rank.] 
@@ -298,12 +314,12 @@ ggplot( Random2, aes(x=ballot48, y=ballot118)) +
   geom_point( alpha=.7, position=position_jitter(width = .1, height = .1) )+
   geom_point( alpha=.01, size=10, color="red" )
 ```
-Each point is one member of parliament.  Similarly aligned members are grouped together at one of the nine possibilities marked in red: (Yay, Nay), (Yay, Abstain), (Yay, Yay), ..., (Nay, Nay).  In these two ballots, eight of the nine is populated.  This hardly indicates that there are 8 clusters of members.
+Each point is one member of parliament.  Similarly aligned members are grouped together at one of the nine possibilities marked in red: (Aye, Nay), (Aye, Abstain), (Aye, Aye), ..., (Nay, Nay).  In these two ballots, eight of the nine is populated.  This hardly indicates that there are 8 clusters of members.
 
-Intuition suggests that it would be better to use *all* of the ballots, rather than just two.  In ne next plot, the first 336 ballots have been added together, as have the remaining ballots:
+Intuition suggests that it would be better to use *all* of the ballots, rather than just two.  In next plot, the first 336 ballots have been added together, as have the remaining ballots:
 ```{r echo=FALSE}
-AllOfThem <- data.frame( First336=colSums( Valpha[1:336,]), 
-                         RemainingOnes=colSums(Valpha[337:773,]))
+AllOfThem <- data.frame( First336=colSums( VAlpha[1:336,]), 
+                         RemainingOnes=colSums(VAlpha[337:773,]))
 ggplot( AllOfThem, aes(x=First336, y=RemainingOnes)) +
   geom_point( alpha=.7, size=5 )
 ```
@@ -314,13 +330,15 @@ You may ask why the choice was made to add up the first 336 ballots as $x$ and t
 
 In fact, there is a mathematical approach to finding the *best* way to add up the ballots, called "singular value decomposition" (SVD).  The mathematics of SVD draw on a knowledge of matrix algebra, but the operation itself is readily available to anyone.^[In brief, SVD calculates the best way to add up (i.e. linearly combine) the columns and the rows of a matrix to produce the largest possible variance.  Then SVD finds  the best way to add up the what's left, and so on.]  The next plot shows the position of each member on the best two ways of summing up the ballots.
 
-```{r}
+```{r echo=FALSE}
 Best <- data.frame( one=c(b1), two=c(b2), three=res$v[,3], four=res$v[,4], five=res$v[,5] )
-clusts <- kmeans( Best, centers=5)
+clusts <- kmeans( Best, centers=6)
 Best$cluster <- as.factor(clusts$cluster)
+# I lost the first member: Canavan.  Figure out later.
+Best$actualParty <- Parties
 ggplot( data=Best, aes( x=one, y=two )) +
     geom_point( shape=1, color='red', size=7, aes(x=0,y=0)) + 
-  geom_point( size=5, alpha=.6 ) + 
+  geom_point( size=5, alpha=.6, aes(color=cluster) ) + 
   xlab("Best Vector from SVD") + 
   ylab("Next Best Vector from SVD") + 
   ggtitle("Political Positions of Members of Parliament")
@@ -328,9 +346,22 @@ ggplot( data=Best, aes( x=one, y=two )) +
 
 At a glance, you can see that there are three main clusters.  The red circle marks the "average" member.  The three clusters move away from average in different directions.  There are several members whose position is in-between the average and the cluster to which they are closest.
 
-Just as there are clusters of political positions, there are clusters of ballots that might correspond to such factors as social effect, economic effect, etc.  Here's a graphic showing the position of ballots, using the best two SVD sums.
+Two is as many variables as can be used for position.  In these data, the first 4 or 5 SVD sums are much larger than the rest.  These additional sums may allow the three clusters to be split up further.  The color in the plot above shows the result of asking for 6 clusters using the 5 best SVD sums.
 
-```{r}
+How well did clustering do.  As you might expect, the party affiliation of each member of parliament is known, even though it wasn't used in finding the clusters.  The table shows the machine-learning classification compared against the actual party with which the member is affiliated.
+
+```{r echo=FALSE}
+old <- options("width")
+options( width=140)
+with(Best, table( Party <- actualParty, cluster))
+options( old )
+```
+
+The Labour party is cluster 2, the National Party is cluster 4, the Conservative and Unionist Party is cluster 1, and the Liberal Democrats are cluster 5.  There are two parties with just one member each: Green, Socialist, and an isolated Member for Falkirk West.  All of these are gathered into cluster 3 along with one member each from the Conservative and Unionist Party and the National Party, and two from Labour.  Out of the 131 members associated with a major party, 116 were correctly identified as such.  Labour has 10 of 48 members who don't follow the party line.  They and the other strays are perhaps the people to talk to when whipping votes.
+
+There's more information to be extracted from the ballot data.  Just as there are clusters of political positions, there are clusters of ballots that might correspond to such factors as social effect, economic effect, etc.  Here's a graphic showing the position of ballots, using the best two SVD sums.
+
+```{r echo=FALSE}
 BestBallots <- data.frame( one=res$u[,1], two=res$u[,2], three=res$u[,3], four=res$u[,4], five=res$u[,5] )
 clustBallots <- kmeans( BestBallots, centers=16 )
 BestBallots$cluster <- as.factor(clustBallots$cluster)
@@ -342,218 +373,24 @@ ggplot( data=BestBallots, aes( x=one, y=two )) +
   ggtitle('Orientation of \"issues\" among the ballots')
 ```
 
-There are obvious clusters in this plot.  Still, interpretation can be tricky.  Remember that, on each issue, there are both yay and nay votes.  This is what accounts for the symmetry of the dots around the center (indicated in red).  The opposing dots along each angle from the center might be interpretted in terms of "socially liberal" vs "socially conservative", "economically liberal" versus "economically" conservative.  Deciding which is which likely involves reading the bill itself.
+
+
+There are obvious clusters in this plot.  Still, interpretation can be tricky.  Remember that, on each issue, there are both aye and nay votes.  This is what accounts for the symmetry of the dots around the center (indicated in red).  The opposing dots along each angle from the center might be interpretted in terms of "socially liberal" vs "socially conservative", "economically liberal" versus "economically" conservative.  Deciding which is which likely involves reading the bill itself.
 
 Finally, the "best" sums from SVD can be used to re-arrange cases and separately re-arrange variables  while keeping exactly the same values for each case in each variable.  This amounts simply to re-ordering the members in a way other than alphabetical and similarly with the ballots.  This can simplify the appearance of the data.
 
-```{r}
+```{r echo=FALSE}
 inds1 <- order(c(res$u[,1]))
 inds2 <- order(c(res$v[,1]))
 VA <- VAlpha[ inds1, inds2 ]
-image( VA, xlab="Ballots", ylab="Members")
+foo <- data.frame( vote=factor(c(t(VA)), labels=c("Nay","Abstain","Aye")), 
+  y=rep(1:134,times=773),
+  x=rep(1:773, each=134) )
+ggplot( foo, aes(x=x, y=y, fill=vote)) +
+  geom_tile() +
+  xlab("Ballot") + ylab("Member of Parliament") + 
+  scale_fill_manual( values=c(rgb(.2,.2,.2,.6), rgb(.95,.95,.95), rgb(209/255,148/255,12/255)))
 ```
-
-Cases: e.g. NCI60 
-
-Variables: 
-* hierarchical modeling typically uses only a few variables even when many are available.
-* SVD and the Scottish parliament.
-
-
-## Working with Multiple (> 3) Variables
-
-The most important methods are ones that will not be described here: regression methods.  
-    * Linear regression and a set of related regression techniques such as logistic regression.
-
-Why not?  Using them properly requires understanding some theory and several concepts: residual, colinearity, coefficients and multivariable polynomials, confidence interval, significance.  
-    * Explanatory vars and response
-    * 
-
-## Ideas
-
-The United Nations publishes the ["World Happiness Report"](http://en.wikipedia.org/wiki/World_Happiness_Report) that attempts to quantify happiness country by country.  The `Happiness` data table contains the results based on data collected in 2010-2012.  Here's a map of the happiness scores:
-```{r}
-mosaic::mWorldMap( HappinessIndex, key="country", fill="score")
-```
-
-Presumably the 11 other quantitative variables --- e.g. `corruption`, `lifeExpectancy`, etc. --- are combined in some way to make up the happiness score.  You're used to looking at 2 or 3 or 4 variables in a graphic, but 11 is out of hand.
-
-These notes are about how to deal with data that has many variables.
-
-## Dimension Reduction
-
-Individual variables are often related to one another.  It can be helpful to show these connections as a network.  Instead of connecting *cases*, the network connects *variables*.
-
-A simple and widely used way to measure the strength of a connection is the *correlation coefficient*.  This will be familiar to anyone who has taken a statistics course. It's a number between $-1$ and $1$.
-
-```{r echo=FALSE,results="hold",out.width="25%"}
-Small <- 
-  HappinessIndex %>% 
-  select( freedom, corruption, 
-          gdpPerCapita, lifeExpectancy,socialSupport,generosity) 
-ggplot( Small, aes(x=corruption, y=freedom)) + geom_point() +
-  stat_smooth( method=lm )
-ggplot( Small, aes(x=socialSupport, y=generosity)) + 
-  geom_point() +
-  stat_smooth( method=lm )
-ggplot( Small, aes(x=gdpPerCapita, y=lifeExpectancy)) + 
-  geom_point() +
-  stat_smooth( method=lm )
-```
-
-![Correlation between variables in `HappinessIndex`.  Left: negative correlation; Center: zero correlation; Right: positive correlation.](blank.png)
-
-
-Imagine taking every possible pair of variables and calculating the correlation coefficient within the pair.  This *correlation matrix* could be displayed with a heat map: bright colors for positive correlations, dark colors for negative.
-
-
-```{r echo=FALSE}
-M <-
-  HappinessIndex %>%
-  select( -country, -region ) %>%
-  cor( use="complete")
-M2 <- M[,(sort(colnames(M)))] %>% 
-  as.data.frame(M) %>% mutate( var1=as.character(rownames(M))) %>%
-  arrange(desc(var1))
-Mlong <- tidyr::gather(data.frame(M2), key="var2", value='r', -var1 ) 
-ggplot( Mlong, aes(x=var1, y=var2 )) + geom_tile( aes(fill=r) ) +
-  theme(axis.text.x=element_text(angle=60,hjust=1)) +
-  xlab("") + ylab("")
-```
-
-![The correlation matrix.  Bright colors reflect a positive correlation near 1.  Dark colors are for negative correlations.](blank.png)
-
-The `r nrow(Mlong)` pairwise correlations here can be hard to interpret.  You can see that `corruption` and `affectNeg` are negatively correlated with just about everything else.  Among the other variables, there is no clear pattern.
-
-The correlation is an imperfect measure of connection; the straight-line model underlying it does not always capture the pattern of the points.  Nonetheless, it's a place to start.
-
-Another straightforward visualization of the relationships among variables is a network connecting the most highly correlated pairs.  In the following graph, an edge has been included for each vertex for the 3 most highly correlated variables.
-
-```{r echo=FALSE}
-set.seed(104)
-keepers <- 
-  Mlong %>% 
-  filter( r < 1 ) %>% 
-  group_by( var1 ) %>%
-  filter(rank(desc(abs(r)))<=3)
-V <- edgesToVertices( keepers, from=var1, to=var2 )
-E <- edgesForPlotting( V, ID=ID, x, y, from=var1, to=var2, Edges=keepers)
-ggplot( V ) + 
-  geom_segment( data=E, 
-                aes( x=x, y=y, xend=xend, yend=yend,
-                     color=factor(sign(r)),
-                     size=5*(abs(r))) ) +
-  geom_text(size=6, aes(label=ID, x=x, y=y))  + 
-  theme(axis.ticks=element_blank(),      
-        axis.text=element_blank(), 
-        panel.background=element_blank()) +
-  xlab("") + ylab("")  + guides( color=FALSE, size=FALSE )
-```
-
-![A network connecting the most highly correlated variables.  Red is a negative correlation, blue a positive.  Line thickness indicates the size of r.](blank.png)
-```
-
-```{r echo=FALSE}
-M <-
-  CountryData %>%
-  select( -country ) %>%
-  cor( use="complete")
-M2 <- M[,(sort(colnames(M)))] %>% 
-  as.data.frame(M2) %>% mutate( var1=as.character(rownames(M))) %>%
-  arrange(desc(var1))
-Mlong <- gather(data.frame(M2), key="var2", value='r', -var1 ) 
-ggplot( Mlong, aes(x=var1, y=var2 )) + geom_tile( aes(fill=r) ) +
-  theme(axis.text.x=element_text(angle=60,hjust=1)) +
-  xlab("") + ylab("")
-```
-
-
-```{r echo=FALSE}
-set.seed(104)
-keepers <- 
-  Mlong %>% 
-  filter( r < 1 ) %>% 
-  group_by( var1 ) %>%
-  filter(rank(desc(abs(r-.3)))<=5)
-V <- edgesToVertices( keepers, from=var1, to=var2 )
-E <- edgesForPlotting( V, ID=ID, x, y, from=var1, to=var2, Edges=keepers)
-ggplot( V ) + 
-  geom_segment( data=E, 
-                aes( x=x, y=y, xend=xend, yend=yend,
-                     color=factor(sign(r)),
-                     size=5*(abs(r))) ) +
-  geom_text(size=6, aes(label=ID, x=x, y=y))  + 
-  theme(axis.ticks=element_blank(),      
-        axis.text=element_blank(), 
-        panel.background=element_blank()) +
-  xlab("") + ylab("")  + guides( color=FALSE, size=FALSE )
-```
-
-Singular Value decomposition:
-```{r}
-foo <- 
-  CountryData %>% 
-  select(-country) %>% 
-  as.matrix()
-foo[is.na(foo)] <- 0
-#  cor(use="complete") %>% 
-goo <-  svd(foo) 
-```
-## Clustering
-
-## Partition Models
-
-## Statistical Models
-
-The `CountryData` data table includes the name of the country and `r length(CountryData)-1` variables.  It's easy to come up with hypotheses about the relationships between variables, for instance that money savings should go along with Gross Domestic Product.
-
-```{r include=FALSE,eval=FALSE}
-require(XML)
-foo <- getURLContent(
-  "http://en.wikipedia.org/wiki/World_Happiness_Report")
-goo <- readHTMLTable( foo )
-Happiness <-
-  goo[[1]] %>% 
-  mutate( country=as.character(Country),
-          happinessChange=
-            as.numeric(as.character(
-              `Change in happiness\nfrom 2005-07`)), 
-          happiness=as.numeric(as.character(Happiness))) %>% 
-  select(country, happiness, happinessChange) %>%
-  mutate( country=ifelse(country="South Korea","Korea, South",country))
-CountryData <- inner_join(CountryData, Happiness)
-```
-
-```
-Happyr <- 
-  pairCor(select(CountryData,-country)) %>% 
-  filter( name1=="happiness" | name2=="happiness")
-arrange( Happyr, desc(abs(r))) %>% head
-```
-
-Country [Happiness index](http://en.wikipedia.org/wiki/World_Happiness_Report)
- 
-```{r eval=FALSE,echo=FALSE}
-library(tm)
-pdf <- readPDF(control=list(text = "-layout"))
-
-dat <- pdf(elem = list(uri='/Users/kaplan/Downloads/HappinessData.pdf'), language='en', id='id1')
-chars <- paste(dat$content, collapse="\\n")
-```
- 
-# Notes in draft
-
-## Dimension Reduction
-
-Data can be a picture of Mindo.  It's the numbers that constitute the datatable.  But the information (for us humans or dogs) is the overall shape.  This amount of data is overkill: you can see the pattern even if we take every second or third row --- so only one-half or one-third of the variables convey the information.  The other ones are redundant.  
-
-How far can we push it?  [Make a very coarse representation of the picture, showing it both in pixelated and smoothed form.]  That we can get a lot of the information from a much smaller set of data means that there is a "low-dimensional" approximation to the information in the photo (for the purpose of seeing what Mindo looks like).
-
-How to do this when there's not a person doing the interpretation.  SVD of NCI data, showing cumulative of the square eigenvalues to figure out how much the first few vectors capture.  Then show the SVD of a submatrix, but with the eigenvalues used to sort the vectors, so that the image becomes smooth.
-
-### Model based dimension reduction
-
-Fit linear models to, say, cardiac death versus BMI and sex and other variables.  Which ones are important.  We can capture a lot of the information using just a few main effects and perhaps some interactions.
 
 
 ```{r child="../../CSS/DisqusTemplate.Rmd"}
