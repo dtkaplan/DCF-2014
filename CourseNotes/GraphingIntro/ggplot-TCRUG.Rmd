@@ -1,0 +1,222 @@
+---
+title: "20 Minutes with ggplot2"
+author: "Daniel Kaplan"
+date: "TCRUG --- November 20, 2014"
+output: ioslides_presentation
+---
+
+```{r include=FALSE}
+library( mosaicData )
+library( NHANES )
+library( ggplot2 )
+library( ggthemes )
+library( dplyr )
+library( knitr )
+opts_chunk$set( warning=FALSE, message=FALSE,  
+                out.width="30%", fig.height=6,
+                results="hold", fig.align="center")
+set.seed(101)
+NHANES <- sample_n( NHANES, 5000 )
+```
+
+## Why Use ggplot?
+
+The `ggplot2` package provides a system for
+
+* data graphics with a ...
+* professional look, that can ...
+* easily be layered and extended.
+
+Decisions about axis ranges and "keys" are  
+
++ made sensibly out of the box and 
++ can be overridden manually.
+
+## Lattice Graphics? Base Graphics?
+
+For graphing data, your choice is between lattice and ggplot
+
+`lattice` provides many of the same features as ggplot.  
+
+    * lattice has an easier basic syntax
+    * ggplot has a more consistent notation
+
+"*Base graphics are good for drawing pictures; ggplot2 graphics are good for understanding the data*." --- Wickham, 2012
+
+## Resources
+
+* *R Graphics Cookbook: Practical Recipes for Visualizing Data*, Winston Chang (2012) O'Reilly 
+* *Introduction to ggplot2*, Dawn Koffman (2014) [slides](http://opr.princeton.edu/workshops/201401/ggplot2Jan2014DawnKoffman.pdf)
+* Many, many others, particularly oriented to the beginner.
+
+## My Goal
+
+Describe the conceptual structure of ggplot commands and cover the basic vocabularly.
+
+I want you to be able to **read** ggplot commands.
+
+If you can read, you can decide what to copy.  Most programming starts with copying something that already works.  
+
+
+## The Grammar's "Parts of Speech"
+
+Once you know these, you can read, which means you can extend the many examples available on the Internet.
+
+* Data:  data.frames only^[with a few exceptions], variables within data.frames
+* Frame: the spatial area in which the plot is made
+* Aesthetic: a perceivable attribute, e.g. position, color, size, shape, ...
+* "Glyph" or "Mark" or `geom`: Something with graphical attributes, "aesthetics", to be shown in the frame.
+* Scale: a translation from a specific graphical attribute (e.g. color) to the levels of a specific variable.
+* Guide: a text/graphical depiction of a scale
+
+## Data and the Frame
+
+The frame is the meaning of space in the graphic.
+
+A graphic requires a frame and one or more layers.
+
+`ggplot()` creates a new frame for you to add layers to.
+
+## Start Building a Graphic: Frame
+
+"I want to start a new graphic."
+```{r}
+ex1 <- ggplot()
+```
+
+"Start it, holding the data for further reference, and assigning these variables to be represented by space."
+```{r}
+ex2 <- ggplot( data=NHANES, aes( x=age, y=height ) )
+```
+
+## Add a layer ...
+
+If you've set up the frame with reference data and variables for space, just say what kind of glyph you want ...
+
+```{r}
+ex2 + geom_point( )
+```
+
+## Set properties of a layer
+
+Within a layer, you can specify values for graphical characteristics.  When these are the same for all cases, this is called "setting."
+
+```{r}
+ex2 + geom_point( alpha=.3, color="blue" )
+```
+
+## Map properties of a layer
+
+When the graphical characteristics of each glyph are to be properties based on individual cases in the data, you **map** a variable onto the property. This is signaled by stating the equivalence within `aes()`.
+
+```{r}
+#                 setting        mapping
+ex2 + geom_point( alpha=.3, aes( color=sex ) )
+```
+
+## There are many geoms available
+
+```{r echo=FALSE}
+ls(getNamespace("ggplot2"), pattern="^geom_")
+```
+
+## Another layer: Who are the smokers?
+
+```{r}
+Smokers <- NHANES %>% 
+  filter( smoker=="yes" )
+```    
+```{r}
+ex2 +                                   # start a new graph
+  geom_point( alpha=.2, aes( color=sex ) ) +  # First layer
+  #               Override data                   why in aes()?
+  geom_rug( data=Smokers, sides="r", alpha=.05, aes( color=sex ) ) +
+  geom_rug( data=Smokers, sides="t", alpha=.05, aes( color=sex ), position="jitter" )
+```
+
+
+## Stats
+
+Geoms show individual cases in the data.
+
+Stats show aggregate properties of the cases.
+
+```{r}
+ex2 + stat_smooth( aes( color=sex ))
+```
+
+## Standard Stats
+
+* density plots (1- and 2-d)
+* box-and-whisker plots
+* linear and logistic regression
+* smoothers
+
+## A Stat is a Layer
+
+```{r}
+ex2 + stat_smooth( aes( color=sex )) +
+  geom_point(alpha=.1, aes( color=sex ) )
+```
+
+## Themes
+
+```{r}
+basicPlot <- ex2 + stat_smooth( aes( color=sex )) +
+  geom_point(alpha=.1, aes( color=sex ))
+```
+
+
+```{r}
+basicPlot + theme_economist()
+```
+
+## 
+
+```{r}
+basicPlot + theme_excel()
+```
+
+##
+
+```{r}
+basicPlot + theme_wsj()
+```
+
+## 
+
+```{r}
+basicPlot + theme_tufte()
+```
+
+
+
+## Quiz
+
+* What is the frame?
+* What are the glyphs?
+* How many layers?
+* What is a guide?
+
+Some weather graphics [here](https://www.google.com/search?q=new+york+times+temperature+high+low+weekly+by+city&espv=2&biw=1280&bih=706&source=lnms&tbm=isch&sa=X&ei=KCBqVPuxGIL4yQSi44HICA&ved=0CAgQ_AUoAw#tbm=isch&q=temperature+graphic+error+bars&imgdii=_)
+
+## Facets
+
+## Themes
+
+## Common Mistakes
+
+* Failing to wrap a mapping in `aes()`, e.g. `geom_point( color=sex )`
+* Wrapping a setting in `aes()`, e.g. `geom_point( aes(color="blue") )`
+
+
+
+Others:
+
+* facet
+* annotation
+
+Specialized vocabulary:
+
+* statistic --- based on many cases, collectively
+* geom, glyph, mark --- based on a single case
