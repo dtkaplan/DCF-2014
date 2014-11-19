@@ -8,14 +8,18 @@ output: ioslides_presentation
 ```{r include=FALSE}
 library( mosaicData )
 library( NHANES )
+library( mosaicData )
 library( ggplot2 )
 library( ggthemes )
 library( dplyr )
 library( knitr )
-opts_chunk$set( warning=FALSE, message=FALSE,  
-                out.width="30%", fig.height=6,
+library( DCF )
+opts_chunk$set( warning=FALSE, message=FALSE, 
+                tidy=FALSE,
+                out.width="40%", fig.height=6,
                 results="hold", fig.align="center")
 set.seed(101)
+options( width=100 )
 NHANES <- sample_n( NHANES, 5000 )
 ```
 
@@ -38,8 +42,8 @@ For graphing data, your choice is between lattice and ggplot
 
 `lattice` provides many of the same features as ggplot.  
 
-    * lattice has an easier basic syntax
-    * ggplot has a more consistent notation
+* lattice has an easier basic syntax
+* ggplot has a more consistent notation
 
 "*Base graphics are good for drawing pictures; ggplot2 graphics are good for understanding the data*." --- Wickham, 2012
 
@@ -47,7 +51,15 @@ For graphing data, your choice is between lattice and ggplot
 
 * *R Graphics Cookbook: Practical Recipes for Visualizing Data*, Winston Chang (2012) O'Reilly 
 * *Introduction to ggplot2*, Dawn Koffman (2014) [slides](http://opr.princeton.edu/workshops/201401/ggplot2Jan2014DawnKoffman.pdf)
-* Many, many others, particularly oriented to the beginner.
+* Many other tutorials, particularly oriented to the beginner.
+* Galleries, e.g. [one](http://rstudio-pubs-static.s3.amazonaws.com/5051_39c30acbb432498fa1a290f166c6b403.html)
+* `GGally` package with extensions to `ggplot2`.
+* `ggthemes` package for systematic styling of graphics.
+
+Link to source file for this presentation ...
+```{r echo=FALSE,results='asis'}
+includeSourceDocuments("ggplot-TCRUG.Rmd")
+```
 
 ## My Goal
 
@@ -62,14 +74,46 @@ If you can read, you can decide what to copy.  Most programming starts with copy
 
 Once you know these, you can read, which means you can extend the many examples available on the Internet.
 
-* Data:  data.frames only^[with a few exceptions], variables within data.frames
-* Frame: the spatial area in which the plot is made
-* Aesthetic: a perceivable attribute, e.g. position, color, size, shape, ...
-* "Glyph" or "Mark" or `geom`: Something with graphical attributes, "aesthetics", to be shown in the frame.
-* Scale: a translation from a specific graphical attribute (e.g. color) to the levels of a specific variable.
-* Guide: a text/graphical depiction of a scale
+* **Data**:  data.frames only^[with a few exceptions], variables within data.frames
+* **Frame**: the spatial area in which the plot is made
+* **Aesthetic**: a perceivable attribute, e.g. position, color, size, shape, ...
+* **Glyph** or "Mark" or `geom`: Graphical attributes for each data case, "aesthetics", to be shown in the frame.
+* **Stat**: Display of aggregate properties of data.
+* **Scale**: a translation from a specific graphical attribute (e.g. color) to the levels of a specific variable.
+* **Guide**: a text/graphical depiction of a scale
 
-## Data and the Frame
+## Others parts not covered here:
+
+* **Coordinate system**: e.g. map projections, radial, logarithmic ...
+* **Facet**: split up into sub-plots
+* **Annotation**
+* Fine tuning to set scales (esp. for color)
+
+## Grammar Drill
+
+<img src="http://www.sciencesurvivalblog.com/wp-content/uploads/2009/11/temp_zonder_errors.jpg" width="500px">
+
+Variables? Frame? Layers? Glyphs and their aesthetics, Guides?
+
+## Grammar Drill
+
+<img src="http://www.sciencesurvivalblog.com/wp-content/uploads/2009/11/temp_met_errors.jpg" width="500px">
+
+Variables? Frame? Layers? Glyphs and their aesthetics, Guides?
+
+## Grammar Drill
+
+<img src="http://ccnmtl.columbia.edu/projects/mmt/frontiers/web/images/figures/03/fig03.gif" width="500px">
+
+Variables? Frame? Layers? Glyphs and their aesthetics, Guides?
+
+## Grammar Drill
+
+<img src="http://www.reportingclimatescience.com/typo3temp/pics/9821618bca.png" width="500px">
+
+Variables? Frame? Layers? Glyphs and their aesthetics, Guides?
+
+## Making a Frame
 
 The frame is the meaning of space in the graphic.
 
@@ -77,16 +121,48 @@ A graphic requires a frame and one or more layers.
 
 `ggplot()` creates a new frame for you to add layers to.
 
-## Start Building a Graphic: Frame
+### Data for Examples
 
-"I want to start a new graphic."
-```{r}
-ex1 <- ggplot()
+```{r echo=FALSE}
+monthNames <- factor( 1:12, levels=1:12, 
+                      labels=c("Jan","Feb","Mar","Apr","May","June", 
+                               "July","Aug","Sept", "Oct","Nov","Dec"))
+seasons <- c(Jan="Winter", Feb="Winter", Dec="Winter", Mar="Winter",
+             Apr="Spring", May="Spring", 
+             June="Summer", July="Summer", Aug="Summer",
+             Sept="Fall", Oct="Fall", Nov="Fall"
+             )
+theSeasons <- c("Winter","Spring","Summer", "Fall")
 ```
 
-"Start it, holding the data for further reference, and assigning these variables to be represented by space."
 ```{r}
-ex2 <- ggplot( data=NHANES, aes( x=age, y=height ) )
+data( Utilities, package="mosaicData" ) 
+# see slide source file for details
+# of adding categorical "month" and "season"
+```
+
+```{r echo=FALSE}
+Utilities <- Utilities %>%
+  mutate( month=monthNames[month], 
+          season=factor(seasons[as.character(month)],levels=theSeasons) )
+```
+
+```{r}
+names( Utilities )
+```
+
+## Some Frames
+
+x and y can be either categorical or quantitative.
+
+```{r}
+ex1 <- ggplot( data=Utilities, aes( x=month, y=ccf ))
+ex2 <- ggplot( data=Utilities, aes( x=temp, y=gasbill ))
+```
+
+Until there is a layer, there's nothing to display!
+```{r error=TRUE}
+ex2
 ```
 
 ## Add a layer ...
@@ -97,7 +173,7 @@ If you've set up the frame with reference data and variables for space, just say
 ex2 + geom_point( )
 ```
 
-## Set properties of a layer
+## *Set* properties of a layer
 
 Within a layer, you can specify values for graphical characteristics.  When these are the same for all cases, this is called "setting."
 
@@ -105,35 +181,37 @@ Within a layer, you can specify values for graphical characteristics.  When thes
 ex2 + geom_point( alpha=.3, color="blue" )
 ```
 
-## Map properties of a layer
+Note: Scales for $x$- and $y$-axes indicated by *guides*.
+
+## *Map* properties of a layer
 
 When the graphical characteristics of each glyph are to be properties based on individual cases in the data, you **map** a variable onto the property. This is signaled by stating the equivalence within `aes()`.
 
 ```{r}
-#                 setting        mapping
-ex2 + geom_point( alpha=.3, aes( color=sex ) )
+ex3 <- ex2 + geom_point( aes( color=month, size=kwh/billingDays ) )
+ex3
 ```
+
+Note: Scales and guides for `ccf` and `month` created and shown
 
 ## There are many geoms available
 
-```{r echo=FALSE}
-ls(getNamespace("ggplot2"), pattern="^geom_")
-```
+[Graphical list](http://docs.ggplot2.org/current/)
 
-## Another layer: Who are the smokers?
+<div style="font-size:10px"><code>
+```{r echo=FALSE, results='asis',prompt=FALSE,comment=""}
+help.search("^geom_",package="ggplot2")$matches[,1:2]
+# ls(getNamespace("ggplot2"), pattern="^geom_")
+```
+</code></div>
+
+## Another layer
 
 ```{r}
-Smokers <- NHANES %>% 
-  filter( smoker=="yes" )
-```    
-```{r}
-ex2 +                                   # start a new graph
-  geom_point( alpha=.2, aes( color=sex ) ) +  # First layer
-  #               Override data                   why in aes()?
-  geom_rug( data=Smokers, sides="r", alpha=.05, aes( color=sex ) ) +
-  geom_rug( data=Smokers, sides="t", alpha=.05, aes( color=sex ), position="jitter" )
+ex4 <- ex3 + geom_point( aes(y=elecbill) ) + 
+  ylab("Amount of Bill ($)")
+ex4
 ```
-
 
 ## Stats
 
@@ -142,54 +220,74 @@ Geoms show individual cases in the data.
 Stats show aggregate properties of the cases.
 
 ```{r}
-ex2 + stat_smooth( aes( color=sex ))
+ggplot( Utilities, aes(x=season, y=temp) ) +
+  stat_boxplot( aes( fill=season ) )
 ```
 
-## Standard Stats
+## There are many stats ...
+
+[Graphical list](http://docs.ggplot2.org/current/)
+
+<div style="font-size:10px"><code>
+```{r echo=FALSE, results='asis',prompt=FALSE,comment=""}
+help.search("^stat_",package="ggplot2")$matches[,1:2]
+```
+</code></div>
+
+## Commonly used stats
 
 * density plots (1- and 2-d)
 * box-and-whisker plots
 * linear and logistic regression
 * smoothers
 
-## A Stat is a Layer
+## Layers can be both geoms and stats
 
 ```{r}
-ex2 + stat_smooth( aes( color=sex )) +
-  geom_point(alpha=.1, aes( color=sex ) )
+ggplot( Utilities, aes(x=month, y=temp) ) +
+  stat_boxplot( alpha=.3, aes( fill=season ) ) +
+  geom_point( aes( color=season ) )
 ```
 
-## Themes
+## Use a different aesthetic for each variable
+
+All geoms and stats must work with the same frame.
 
 ```{r}
-basicPlot <- ex2 + stat_smooth( aes( color=sex )) +
-  geom_point(alpha=.1, aes( color=sex ))
-```
-
-
-```{r}
-basicPlot + theme_economist()
-```
-
-## 
-
-```{r}
-basicPlot + theme_excel()
-```
-
-##
-
-```{r}
-basicPlot + theme_wsj()
-```
-
-## 
-
-```{r}
-basicPlot + theme_tufte()
+ex5 <- ggplot( Utilities, aes(x=month, y=temp) ) +
+  stat_boxplot( alpha=.3, aes( fill=season ) ) +
+  geom_point( aes(size=elecbill, color=season ) ) +
+  stat_smooth( aes(group=1) ) 
+ex5
 ```
 
 
+## Theme
+
+
+```{r}
+ex5 + theme_economist()
+```
+
+## Theme
+
+```{r}
+ex5 + theme_excel()
+```
+
+## Theme
+
+```{r}
+ex5 + theme_wsj()
+```
+
+## Theme
+
+```{r}
+ex5 + theme_tufte()
+```
+
+<!--
 
 ## Quiz
 
@@ -200,23 +298,28 @@ basicPlot + theme_tufte()
 
 Some weather graphics [here](https://www.google.com/search?q=new+york+times+temperature+high+low+weekly+by+city&espv=2&biw=1280&bih=706&source=lnms&tbm=isch&sa=X&ei=KCBqVPuxGIL4yQSi44HICA&ved=0CAgQ_AUoAw#tbm=isch&q=temperature+graphic+error+bars&imgdii=_)
 
-## Facets
+-->
 
-## Themes
+## Moving Forward
 
-## Common Mistakes
+Remember ... Start with a working example and tweak it!
 
-* Failing to wrap a mapping in `aes()`, e.g. `geom_point( color=sex )`
-* Wrapping a setting in `aes()`, e.g. `geom_point( aes(color="blue") )`
+### Common Blunders ...    
 
+* Leaving out the `+`
+* Failing to wrap a mapping in `aes()`     
+    e.g. ~~`geom_point( color=sex )`~~
+* Wrapping a setting in `aes()`     
+    e.g. ~~`geom_point( aes(color="blue") )`~~
+    
+## Conceptual/Style mistakes ...  
 
-
-Others:
-
-* facet
-* annotation
-
-Specialized vocabulary:
-
-* statistic --- based on many cases, collectively
-* geom, glyph, mark --- based on a single case
+* Using mis-matched variables for the position in a layer
+    e.g. when frame is `temp` vs `month`, each geom or stat must have y as a `temp`-like value, and x as a `month`-like value.
+    
+    * `mean( temp )` as y -- Yes
+    * `sd( temp )` or SE or CI as y -- Yes
+    * `var( temp )` as y -- Not reasonable
+    * `elecbill` as y -- Not reasonable 
+    * `season` as x -- No
+* Using continuous color scales for non-contiguous glyphs.
