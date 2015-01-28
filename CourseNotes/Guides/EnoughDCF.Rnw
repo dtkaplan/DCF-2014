@@ -52,14 +52,14 @@ require(DCF)
 library(DCF)
 @
 Don't have DCF?  Install the package:
-<<>>=
+<<eval=FALSE>>=
 library( devtools )
-install\_github("dtkaplan/DCFdevel)
+install_github("dtkaplan/DCFdevel")
 @
 
 \smallskip
 
-\asection{Overview} The data verbs, summary functions, and transformation functions enable you to transfigure data into a glyph- or analysis-ready form.
+\asection{Overview} The data verbs, reduction functions, and transformation functions enable you to transfigure data into a glyph- or analysis-ready form.
 
 \smallskip
 
@@ -191,8 +191,7 @@ Note: output has *both* of Alma's sports.
 
 
 $\bullet$ Keep all cases from left table:\\
-\texttt{DT \%>\% merge( Sports, all.x=TRUE )}\\
-Use \texttt{all=TRUE} to keep all cases from both tables.
+\texttt{DT \%>\% left\_join( Sports )}\\
 
 $\bullet$ Keep unmatched cases:\\
 \texttt{DT \%>\% anti\_join( Sports )}
@@ -207,7 +206,7 @@ $\bullet$ Keep unmatched cases:\\
 
 \medskip
 
-\asection{Summary Functions} take a variable as input and return a single number.
+\asection{Reduction Functions} take a variable as input and return a single number.
 
 <<eval=FALSE>>=
 mean( height, na.rm=TRUE )

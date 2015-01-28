@@ -6,3 +6,7 @@ output: html_document
 Hadley's "Tidy Data" article: <https://github.com/hadley/tidy-data>
 
 His data set on deaths is under `case-study`, with the basic data in a file `deaths.rds`.
+
+Crime statistics.  There is county level data available, e.g. [here](http://www.fbi.gov/about-us/cjis/ucr/crime-in-the-u.s/2013/crime-in-the-u.s.-2013/tables/table-10/table_10_offenses_known_to_law_enforcement_by_state_by_metropolitan_and_nonmetropolitan_counties_2013.xls/view)
+
+The overall crime site is <http://www.fbi.gov/stats-services/crimestats>
