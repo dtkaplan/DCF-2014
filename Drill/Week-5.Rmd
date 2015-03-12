@@ -49,6 +49,7 @@ pp <-
   geom_point( alpha=.03, position="jitter" ) +
     geom_density2d( alpha=.4, color="red", size=1) +
   ylim(17,42)
+pp
 ```
 
 What's the most likely BMI for a 40-year old?  For a 70-year old?
